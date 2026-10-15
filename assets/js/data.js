@@ -95,7 +95,15 @@ export const TESTS = [
 export const testById = (id) => TESTS.find((x) => x.id === id);
 
 // ---------- ДЕМО: спортсмены для рейтинга ----------
-const A = (id, name, age, region, style, weight, score, delta) => ({ id, name, age, region, style, weight, score, delta, demo: true });
+const A = (id, name, age, region, style, weight, score, delta) => {
+  // Демо-статистика выводится из индекса, чтобы цифры были согласованы между собой
+  const n = parseInt(id.slice(1), 10);
+  const bouts = 10 + ((n * 7) % 14) + Math.round((score - 78) / 2);
+  const wins = Math.min(bouts, Math.round(bouts * (0.55 + (score - 78) / 40)));
+  const tournaments = 3 + ((n * 5) % 6);
+  const medals = Math.max(0, Math.round((score - 80) / 3));
+  return { id, name, age, region, style, weight, score, delta, bouts, wins, tournaments, medals, photo: 'athlete-' + id, demo: true };
+};
 export const DEMO_ATHLETES = [
   A('d1', 'Merdan A.', 15, 'mary', 'greco', 55, 91.4, 2),
   A('d2', 'Döwlet K.', 14, 'lebap', 'greco', 51, 89.7, -1),
@@ -165,6 +173,18 @@ export const EVENTS = [
     title: { tk: 'Göreş: finallar', ru: 'Гореш: финалы', en: 'Goresh: finals' },
     matches: [],
   },
+  {
+    id: 'e4', demo: true, status: 'upcoming', price: 0, style: 'women', date: '2026-11-22T11:00:00+05:00',
+    venue: { tk: 'Türkmenabat', ru: 'Туркменабат', en: 'Turkmenabat' },
+    title: { tk: 'Gyzlaryň arasynda kubok', ru: 'Кубок среди девушек', en: "Girls' cup" },
+    matches: [],
+  },
+  {
+    id: 'e5', demo: true, status: 'upcoming', price: 25, style: 'greco', date: '2026-12-13T12:00:00+05:00',
+    venue: { tk: 'Aşgabat', ru: 'Ашхабад', en: 'Ashgabat' },
+    title: { tk: 'Ýurt çempionaty: ýaşlar', ru: 'Чемпионат страны среди молодёжи', en: 'National youth championship' },
+    matches: [],
+  },
 ];
 
 // ---------- ДЕМО: товары ----------
@@ -226,3 +246,8 @@ export const NUTRI_CATS = ['all', 'protein', 'electrolyte', 'bars'];
 
 export const regionName = (id) => REGIONS.find((r) => r.id === id)?.name;
 export const styleName = (id) => STYLES.find((s) => s.id === id)?.name;
+
+// ---------- Фото ----------
+// Кладите снимки в assets/photos/ с этими именами (jpg). Если файла нет — показывается фирменная графика.
+export const PHOTO = (key) => `assets/photos/${key}.jpg`;
+export const photoStyle = (key) => `--img:url('${PHOTO(key)}')`;

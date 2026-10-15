@@ -23,9 +23,10 @@ export function priceLabel(ev) {
   return ev.price > 0 ? `${ev.price} TMT` : t('media.free');
 }
 
-const TABS = ['news', 'events', 'rankings'];
+const TABS = ['events', 'news'];
 
 export default function media({ query }) {
+  if (query.tab === 'rankings') return { redirect: '/rankings' };
   let tab = TABS.includes(query.tab) ? query.tab : 'events';
   let group = 'kids';
   let style = 'all';

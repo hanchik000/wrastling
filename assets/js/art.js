@@ -36,3 +36,72 @@ export const testArt = {
 export function artBox(svg, extra = '') {
   return `<div class="ph-art" ${extra}>${svg}</div>`;
 }
+
+// ---------- Силуэты борцов: запасная графика вместо фото ----------
+const golD = (x, y, r) => { const a = r * 0.414; return `M${x - a} ${y - r}h${2 * a}l${r - a} ${r - a}v${2 * a}l${a - r} ${r - a}h${-2 * a}l${a - r} ${a - r}v${-2 * a}z`; };
+const LIMBS = [['neck', 'head'], ['shF', 'elF'], ['elF', 'wrF'], ['shB', 'elB'], ['elB', 'wrB'], ['hipF', 'knF'], ['knF', 'anF'], ['hipB', 'knB'], ['knB', 'anB']];
+const SKEL = [['neck', 'shF'], ['neck', 'shB'], ['shF', 'hipF'], ['shB', 'hipB'], ['hipF', 'hipB'], ...LIMBS.slice(1)];
+
+function figure(P, uid, { width = 30, skeleton = true, rim = true } = {}) {
+  const line = (a, b, w, stroke, extra = '') => `<line x1="${P[a][0]}" y1="${P[a][1]}" x2="${P[b][0]}" y2="${P[b][1]}" stroke="${stroke}" stroke-width="${w}" stroke-linecap="round" ${extra}/>`;
+  const torso = `M${P.shF[0]} ${P.shF[1]}L${P.shB[0]} ${P.shB[1]}L${P.hipB[0]} ${P.hipB[1]}L${P.hipF[0]} ${P.hipF[1]}Z`;
+  // Толщина по сегментам: бёдра шире, предплечья и голени уже
+  const K = { 'neck-head': 0.62, 'shF-elF': 0.82, 'elF-wrF': 0.64, 'shB-elB': 0.82, 'elB-wrB': 0.64, 'hipF-knF': 1.08, 'knF-anF': 0.72, 'hipB-knB': 1.08, 'knB-anB': 0.72 };
+  const body = (fill, w) => `<path d="${torso}" fill="${fill}" stroke="${fill}" stroke-width="${w * 0.9}" stroke-linejoin="round"/>${LIMBS.map(([a, b]) => line(a, b, w * (K[a + '-' + b] || 1), fill)).join('')}<circle cx="${P.head[0]}" cy="${P.head[1]}" r="${w * 0.66}" fill="${fill}"/>`;
+  let out = '';
+  if (rim) out += `<g transform="translate(-3 -3)" opacity=".75">${body(`url(#rim-${uid})`, width + 2)}</g>`;
+  out += `<g>${body(`url(#body-${uid})`, width)}</g>`;
+  if (skeleton) {
+    out += `<g opacity=".9">${SKEL.map(([a, b]) => line(a, b, 1.6, 'rgba(244,242,238,.85)')).join('')}</g>`;
+    out += Object.entries(P).map(([k, [x, y]]) => {
+      const key = ['hipF', 'knF', 'shF', 'elF'].includes(k);
+      return `<path d="${golD(x, y, key ? 6 : 4)}" fill="${key ? '#c8a45a' : '#0b0b0c'}" stroke="${key ? '#c8a45a' : '#f4f2ee'}" stroke-width="1.3"/>`;
+    }).join('');
+  }
+  return out;
+}
+function defs(uid, tone = 'gold') {
+  const rimColor = tone === 'red' ? '#e23b3b' : '#c8a45a';
+  return `<defs>
+    <linearGradient id="body-${uid}" x1="0" y1="60" x2="0" y2="490" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#3a3b42"/><stop offset=".55" stop-color="#1f2024"/><stop offset="1" stop-color="#0f1012"/></linearGradient>
+    <linearGradient id="rim-${uid}" x1="80" y1="60" x2="420" y2="480" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="${rimColor}" stop-opacity=".9"/><stop offset=".6" stop-color="${rimColor}" stop-opacity=".15"/><stop offset="1" stop-color="${rimColor}" stop-opacity="0"/></linearGradient>
+    <radialGradient id="glow-${uid}" cx="50%" cy="45%" r="55%"><stop offset="0" stop-color="${rimColor}" stop-opacity=".22"/><stop offset="1" stop-color="${rimColor}" stop-opacity="0"/></radialGradient>
+  </defs>`;
+}
+const mirror = (P, cx) => Object.fromEntries(Object.entries(P).map(([k, [x, y]]) => [k, [2 * cx - x, y]]));
+
+const CLINCH_A = {
+  head: [262, 150], neck: [255, 182], shF: [286, 200], shB: [232, 192], elF: [322, 238], wrF: [338, 196], elB: [274, 256], wrB: [318, 284],
+  hipF: [224, 322], hipB: [204, 316], knF: [262, 392], anF: [246, 474], knB: [168, 398], anB: [126, 474],
+};
+const STANCE_FRONT = {
+  head: [200, 92], neck: [200, 128], shF: [252, 150], shB: [148, 150], elF: [290, 218], wrF: [262, 276], elB: [110, 218], wrB: [138, 276],
+  hipF: [232, 296], hipB: [168, 296], knF: [266, 384], anF: [278, 472], knB: [134, 384], anB: [122, 472],
+};
+const SHOT = {
+  head: [330, 236], neck: [306, 256], shF: [318, 270], shB: [292, 262], elF: [358, 300], wrF: [394, 298], elB: [334, 312], wrB: [372, 320],
+  hipF: [212, 318], hipB: [198, 312], knF: [282, 388], anF: [292, 474], knB: [222, 470], anB: [128, 466],
+};
+
+// Пара в захвате (баннеры), одиночная стойка (карточки спортсменов), проход в ноги (промо)
+export function wrestlersArt(kind = 'clinch', { tone = 'gold', uid = kind, skeleton = true } = {}) {
+  if (kind === 'single') {
+    return `<svg viewBox="0 0 400 500" preserveAspectRatio="xMidYMax meet" aria-hidden="true">${defs(uid, tone)}
+      <ellipse cx="200" cy="300" rx="190" ry="220" fill="url(#glow-${uid})"/>
+      <path d="${golD(200, 260, 170)}" fill="none" stroke="rgba(200,164,90,.12)"/>
+      ${figure(STANCE_FRONT, uid, { width: 34, skeleton })}</svg>`;
+  }
+  if (kind === 'shot') {
+    return `<svg viewBox="0 0 500 500" preserveAspectRatio="xMidYMax meet" aria-hidden="true">${defs(uid, tone)}
+      <ellipse cx="260" cy="320" rx="240" ry="200" fill="url(#glow-${uid})"/>
+      <path d="M90 470 Q 220 250 420 300" fill="none" stroke="rgba(200,164,90,.55)" stroke-width="1.6" stroke-dasharray="4 7"/>
+      ${figure(SHOT, uid, { width: 30, skeleton })}</svg>`;
+  }
+  const B = mirror(CLINCH_A, 300);
+  return `<svg viewBox="0 0 600 500" preserveAspectRatio="xMidYMax meet" aria-hidden="true">${defs(uid, tone)}${defs(uid + 'b', tone)}
+    <ellipse cx="300" cy="300" rx="280" ry="220" fill="url(#glow-${uid})"/>
+    <path d="${golD(300, 280, 200)}" fill="none" stroke="rgba(200,164,90,.1)"/>
+    <ellipse cx="300" cy="480" rx="220" ry="14" fill="rgba(0,0,0,.45)"/>
+    ${figure(B, uid + 'b', { width: 32, skeleton: false })}
+    ${figure(CLINCH_A, uid, { width: 32, skeleton })}</svg>`;
+}

@@ -2,8 +2,10 @@
 export default {
   brand: { name: 'Wrestling Talent AI', country: 'Türkmenistan' },
   a11y: { skip: 'Mazmuna geçmek', main_nav: 'Esasy menýu', language: 'Dil' },
-  nav: { home: 'Baş sahypa', media: 'Media', scout: 'Synag', shop: 'Dükan', profile: 'Profil', cart: 'Sebet' },
-  footer: { note: 'demo wersiýa, maglumatlar mysal hökmünde', about: 'Demo wersiýa barada' },
+  nav: {
+    rankings: 'Reýting', events: 'Ýaryşlar', home: 'Baş sahypa', media: 'Media', scout: 'Synag', shop: 'Dükan', profile: 'Profil', cart: 'Sebet' },
+  footer: {
+    about_text: 'Türkmenistanyň göreşiniň zehin saýlawy, reýtingleri, ýaryşlary we dükany bir ýerde.', c_platform: 'Platforma', c_events: 'Ýaryşlar', c_info: 'Maglumat', note: 'demo wersiýa, maglumatlar mysal hökmünde', about: 'Demo wersiýa barada' },
   common: {
     demo: 'Demo', demo_version: 'Demo wersiýa', all: 'Hemmesi', back: 'Yza', cancel: 'Ýatyr', close: 'Ýap',
     continue: 'Dowam et', ok: 'Düşnükli', error_generic: 'Näsazlyk ýüze çykdy. Sahypany täzeläň we gaýtadan synanyşyň.',
@@ -15,6 +17,19 @@ export default {
   role: { athlete: 'Türgen', coach: 'Tälimçi' },
 
   home: {
+    s1_title: 'Her etrapda <em>çempion</em> tapjak', s1_sub: 'Synagy telefona düşüriň — ulgam hereketi ölçär, federasiýanyň tälimçisi karar berer.', s1_tab: 'Zehin saýlawy',
+    today: 'şu gün', watch_live: 'LIVE görmek', calendar: 'Senenama', s2_tab: 'LIVE ýaryş',
+    s3_title: 'Ýurduň <em>iň gowy</em> göreşijileri', s3_sub: 'Görnüşler, ýaş we agram boýunça reýting. Her ýaryşdan soň täzelenýär.', open_rank: 'Reýtingi açmak', s3_tab: 'Möwsümiň reýtingi',
+    s4_title: 'Göreş üçin <em>enjamlar</em>', s4_sub: 'Aýakgap, triko, goragçylar we sport iýmiti. Ähli welaýatlara kurýer bilen.', to_shop: 'Dükana', s4_tab: 'Dükan',
+    replay: 'Ýazgy', details: 'Jikme-jik', slider_aria: 'Esasy habarlar', promo_scout: 'Synagy mugt tabşyr', sections: 'Bölümler',
+    p_athletes: 'türgen', p_events: 'ýaryş', p_scout: 'Saýlaw', p_tests: 'telefon synagy', p_products: 'haryt',
+    cal_eyebrow: 'Ýakyn wakalar', all_events: 'Ähli ýaryşlar', leader: 'Reýtingiň lideri',
+    banner_title: '7–22 ýaşyňmy?<br>Özüňi görkez', banner_1: 'Diňe telefon we 2 metr ýer gerek', banner_2: 'Ulgam gaýtalamalary, burçlary we depgini hasaplar', banner_3: 'Iň gowulary federasiýa saýlawyna çagyrylar',
+    banner_note: 'Ähli sebitler üçin mugt', news_eyebrow: 'Esasy', all_news: 'Ähli habarlar',
+    store_title: 'Fan-dükan', price_from: 'Bahalar', partners_eyebrow: 'Bize goldaw berýärler', partners: 'Hyzmatdaşlar', partner_slot: 'Hyzmatdaşyň nyşany',
+    become_partner: 'Hyzmatdaş bolmak', partner_text: 'Hemaýatkärlik ähli sebitlerden çagalar üçin saýlawy mugt geçirmäge kömek edýär.',
+    partner_list: ['Saýtda we programmada nyşan', 'Ýaryş ýaýlymlarynda bannerler', 'Atly ýaryş ýa-da baýrak', 'Her aý gerim hasabaty'],
+    partner_contact: 'Hyzmatdaşlar üçin habarlaşmak maglumatlary iş wersiýasynda peýda bolar.',
     eyebrow: 'Ýaş göreşijileri saýlamak · Türkmenistan',
     title: 'Hereket<br><em>bu maglumat</em>',
     lead: 'Synagy telefona düşüriň. Ulgam hereketi belleýär we görkezijileri hasaplaýar, karary bolsa tälimçi kabul edýär.',
@@ -166,6 +181,7 @@ export default {
     recording: 'Ýazgy', upcoming: 'Ýakynda', free: 'Mugt', price_from: 'Giriş — {p} TMT',
   },
   rank: {
+    eyebrow: '2026 möwsümi', title: 'Reýting', weight: 'Agram', wins: 'Ýeňişler', bouts: 'Tutluşyklar', medals: 'Medallar', points: 'Utuklar', all_styles: 'Ähli görnüşler',
     kids: 'Çagalaryň arasynda iň gowular', adults: 'Ulularyň arasynda iň gowular', style: 'Görnüş', all_regions: 'Ähli sebitler',
     kids_note: '18 ýaşa çenli: diňe ady, familiýasynyň ilkinji harpy we sebiti, suratsyz.',
     adults_note: '18–22 ýaş.',

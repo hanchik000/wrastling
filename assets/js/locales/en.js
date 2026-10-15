@@ -1,8 +1,10 @@
 export default {
   brand: { name: 'Wrestling Talent AI', country: 'Turkmenistan' },
   a11y: { skip: 'Skip to content', main_nav: 'Main menu', language: 'Language' },
-  nav: { home: 'Home', media: 'Media', scout: 'Test', shop: 'Shop', profile: 'Profile', cart: 'Cart' },
-  footer: { note: 'demo version, sample data', about: 'About the demo' },
+  nav: {
+    rankings: 'Rankings', events: 'Events', home: 'Home', media: 'Media', scout: 'Test', shop: 'Shop', profile: 'Profile', cart: 'Cart' },
+  footer: {
+    about_text: 'Talent search, rankings, events and a wrestling shop for Turkmenistan in one place.', c_platform: 'Platform', c_events: 'Events', c_info: 'Information', note: 'demo version, sample data', about: 'About the demo' },
   common: {
     demo: 'Demo', demo_version: 'Demo version', all: 'All', back: 'Back', cancel: 'Cancel', close: 'Close',
     continue: 'Continue', ok: 'Got it', error_generic: 'Something went wrong. Refresh the page and try again.',
@@ -14,6 +16,19 @@ export default {
   role: { athlete: 'Athlete', coach: 'Coach' },
 
   home: {
+    s1_title: 'Finding <em>champions</em> in every district', s1_sub: 'Record a test on your phone — the system measures your movement, a federation coach makes the call.', s1_tab: 'Talent search',
+    today: 'today', watch_live: 'Watch LIVE', calendar: 'Calendar', s2_tab: 'LIVE event',
+    s3_title: 'The country’s <em>best</em> wrestlers', s3_sub: 'Rankings by style, age and weight. Updated after every event.', open_rank: 'Open rankings', s3_tab: 'Season rankings',
+    s4_title: 'Gear <em>for wrestling</em>', s4_sub: 'Shoes, singlets, protection and nutrition. Courier delivery to every province.', to_shop: 'Go to shop', s4_tab: 'Shop',
+    replay: 'Replay', details: 'Details', slider_aria: 'Top stories', promo_scout: 'Take the test for free', sections: 'Sections',
+    p_athletes: 'athletes', p_events: 'events', p_scout: 'Talent search', p_tests: 'phone tests', p_products: 'products',
+    cal_eyebrow: 'Coming up', all_events: 'All events', leader: 'Rankings leader',
+    banner_title: 'Aged 7–22?<br>Show what you’ve got', banner_1: 'All you need is a phone and 2 metres of space', banner_2: 'The system counts reps, angles and tempo', banner_3: 'The best get invited to a federation tryout',
+    banner_note: 'Free for every region', news_eyebrow: 'Top stories', all_news: 'All news',
+    store_title: 'Fan shop', price_from: 'Prices from', partners_eyebrow: 'Supported by', partners: 'Partners', partner_slot: 'Partner logo',
+    become_partner: 'Become a partner', partner_text: 'Sponsorship keeps talent search free for children from every region.',
+    partner_list: ['Logo on the website and app', 'Banners in event broadcasts', 'A named tournament or award', 'A monthly reach report'],
+    partner_contact: 'Partner contacts will appear in the live version.',
     eyebrow: 'Youth wrestling talent search · Turkmenistan',
     title: 'Movement<br><em>is data</em>',
     lead: 'Record a test on your phone. The system maps your movement and measures it — a coach makes the call.',
@@ -165,6 +180,7 @@ export default {
     recording: 'Recording', upcoming: 'Upcoming', free: 'Free', price_from: 'Access — {p} TMT',
   },
   rank: {
+    eyebrow: 'Season 2026', title: 'Rankings', weight: 'Weight', wins: 'Wins', bouts: 'Bouts', medals: 'Medals', points: 'Points', all_styles: 'All styles',
     kids: 'Top youth athletes', adults: 'Top adult athletes', style: 'Style', all_regions: 'All regions',
     kids_note: 'Under 18: only first name, surname initial and region, no photos.',
     adults_note: 'Ages 18–22.',

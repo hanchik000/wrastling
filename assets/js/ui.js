@@ -135,3 +135,30 @@ export function countUp(el, to, { digits = 0, ms = 600 } = {}) {
 export function demoBadge() { return `<span class="badge badge-demo">${esc(t('common.demo'))}</span>`; }
 
 export const reduceMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+// ---------- Фото-слоты ----------
+// <div data-photo="hero-1"> ищет assets/photos/hero-1.jpg. Нашлось — показываем фото, нет — остаётся графика.
+const photoCache = new Map();
+function probe(key) {
+  if (!photoCache.has(key)) {
+    photoCache.set(key, new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => resolve(img.src);
+      img.onerror = () => resolve(null);
+      img.src = `assets/photos/${key}.jpg`;
+    }));
+  }
+  return photoCache.get(key);
+}
+export function hydratePhotos(root) {
+  root.querySelectorAll('[data-photo]').forEach(async (el) => {
+    const src = await probe(el.dataset.photo);
+    if (!src) return;
+    el.style.backgroundImage = `url("${src}")`;
+    el.classList.add('has-photo');
+  });
+}
+export function photoSlot(key, art = '', cls = '', shade = true) {
+  // key = null — фото запрещено (например, дети в публичном рейтинге), всегда графика
+  return `<div class="photo ${cls}" ${key ? `data-photo="${esc(key)}"` : ''}><div class="art">${art}</div>${shade ? '<div class="shade"></div>' : ''}</div>`;
+}

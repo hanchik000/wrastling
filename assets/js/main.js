@@ -1,6 +1,6 @@
 // Каркас приложения: шапка, нижнее меню, маршрутизация по #адресам.
 import { t, LANGS, getLang, setLang, onLang } from './i18n.js';
-import { icon, golMark, esc, observeReveals } from './ui.js';
+import { icon, golMark, esc, observeReveals, hydratePhotos } from './ui.js';
 import { cartCount, onChange, getUser } from './store.js';
 
 import home from './views/home.js';
@@ -20,6 +20,7 @@ import product from './views/product.js';
 import cart from './views/cart.js';
 import checkout from './views/checkout.js';
 import about from './views/about.js';
+import rankings from './views/rankings.js';
 import notFound from './views/notfound.js';
 
 const ROUTES = [
@@ -32,6 +33,7 @@ const ROUTES = [
   ['/profile', profile, 'profile'],
   ['/coach', coach, 'profile'],
   ['/coach/review/:id', review, 'profile'],
+  ['/rankings', rankings, 'rankings'],
   ['/media', media, 'media'],
   ['/live/:id', live, 'media'],
   ['/news/:id', news, 'media'],
@@ -71,10 +73,10 @@ function parseHash() {
 // ---------- Шапка и меню ----------
 const NAV = [
   { id: 'home', href: '/', icon: icon.home, key: 'nav.home' },
-  { id: 'media', href: '/media', icon: icon.media, key: 'nav.media' },
+  { id: 'rankings', href: '/rankings', icon: icon.trophy, key: 'nav.rankings' },
   { id: 'scout', href: '/scout', icon: icon.scout, key: 'nav.scout' },
+  { id: 'media', href: '/media', icon: icon.media, key: 'nav.events' },
   { id: 'shop', href: '/shop', icon: icon.bag, key: 'nav.shop' },
-  { id: 'profile', href: '/profile', icon: icon.user, key: 'nav.profile' },
 ];
 
 function shell() {
@@ -95,14 +97,29 @@ function shell() {
             ${LANGS.map((l) => `<button type="button" data-lang="${l.code}" aria-pressed="${l.code === getLang()}">${l.label}</button>`).join('')}
           </div>
           <a class="icon-btn" href="#/cart" aria-label="${esc(t('nav.cart'))}">${icon.cart}<span class="dot" data-cart hidden></span></a>
+          <a class="icon-btn" href="#/profile" data-nav="profile" aria-label="${esc(t('nav.profile'))}">${icon.user}</a>
         </div>
       </div>
     </header>
     <main id="main-content" tabindex="-1"></main>
-    <footer class="footer">
-      <div class="container row row-wrap between">
-        <span>© 2026 Wrestling Talent AI · ${esc(t('footer.note'))}</span>
-        <span class="row"><a href="#/about">${esc(t('footer.about'))}</a></span>
+    <footer class="footer-big">
+      <div class="container">
+        <div class="cols">
+          <div>
+            <a class="brand" href="#/">${golMark()}<span class="brand-word">Wrestling Talent<small>AI · ${esc(t('brand.country'))}</small></span></a>
+            <p class="mt-4" style="max-width:32ch">${esc(t('footer.about_text'))}</p>
+            <p class="mt-4"><a href="https://www.instagram.com/turkmenistanwrestling" target="_blank" rel="noopener">Instagram ↗</a></p>
+          </div>
+          <div><h4>${esc(t('footer.c_platform'))}</h4><ul>
+            <li><a href="#/scout">Talent Scout</a></li><li><a href="#/rankings">${esc(t('nav.rankings'))}</a></li><li><a href="#/coach">${esc(t('coach.open'))}</a></li></ul></div>
+          <div><h4>${esc(t('footer.c_events'))}</h4><ul>
+            <li><a href="#/media?tab=events">${esc(t('media.events'))}</a></li><li><a href="#/media?tab=news">${esc(t('media.news'))}</a></li><li><a href="#/live/e1">LIVE</a></li></ul></div>
+          <div><h4>${esc(t('nav.shop'))}</h4><ul>
+            <li><a href="#/shop">${esc(t('shop.gear'))}</a></li><li><a href="#/shop/nutrition">${esc(t('shop.nutrition'))}</a></li><li><a href="#/cart">${esc(t('nav.cart'))}</a></li></ul></div>
+          <div><h4>${esc(t('footer.c_info'))}</h4><ul>
+            <li><a href="#/about">${esc(t('footer.about'))}</a></li><li><a href="#/profile">${esc(t('nav.profile'))}</a></li></ul></div>
+        </div>
+        <div class="bottom"><span>© 2026 Wrestling Talent AI</span><span>${esc(t('footer.note'))}</span></div>
       </div>
     </footer>
     <nav class="bottomnav" aria-label="${esc(t('a11y.main_nav'))}">
@@ -160,6 +177,7 @@ async function render() {
   current = out;
   try { out.mount?.(main); } catch (e) { console.error(e); }
   observeReveals(main);
+  hydratePhotos(main);
   setTimeout(() => main.classList.remove('view-enter'), 450);
   if (out.focus !== false && document.activeElement === document.body) main.focus({ preventScroll: true });
 }
