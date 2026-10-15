@@ -25,10 +25,10 @@ export function rankTable(list, { full = false } = {}) {
     <tbody>${list.map((a, i) => `
       <tr class="flash" style="animation-delay:${i * 25}ms">
         <td class="pos num">${i + 1}</td>
-        <td><div class="nm"><span class="ava" ${a.age >= 18 ? `data-photo="${esc(a.photo)}"` : ''}>${esc(initials(a.name))}</span><span><b>${esc(a.name)}</b><small>${esc(tr(regionName(a.region)))} · ${a.age} ${esc(t('unit.years'))}</small></span></div></td>
+        <td><div class="nm"><span class="ava" ${a.age >= 18 ? `data-photo="${esc(a.photo)}"` : ''}>${esc(initials(a.name))}</span><span><b>${esc(a.name)}${a.real ? ` <span class="badge badge-gold" style="padding:2px 6px;font-size:.58rem">${esc(t('rank.real'))}</span>` : ''}</b><small>${esc(tr(regionName(a.region)))} · ${a.age} ${esc(t('unit.years'))}</small></span></div></td>
         <td class="hide-sm muted" style="font-size:var(--fs-small)">${esc(tr(styleName(a.style)))}</td>
         <td class="hide-sm num">${a.weight} ${esc(t('unit.kg'))}</td>
-        ${full ? `<td class="hide-sm num">${a.wins} / ${a.bouts}</td>` : ''}
+        ${full ? `<td class="hide-sm num">${a.wins != null ? a.wins + ' / ' + a.bouts : (a.worldScore ? esc(t('rank.world_u20')) : '—')}</td>` : ''}
         <td class="pts num">${a.score.toFixed(1)}</td>
         <td class="chg num">${changeCell(a.delta)}</td>
       </tr>`).join('')}</tbody></table></div>`;
@@ -90,7 +90,11 @@ export default function rankings({ query }) {
       .filter((a) => style === 'all' || a.style === style)
       .filter((a) => region === 'all' || a.region === region)
       .sort((a, b) => b.score - a.score);
-    root.querySelector('#podium').innerHTML = podium(list);
+    root.querySelector('#podium').innerHTML = (group === 'kids' ? `
+      <div class="kids-banner mt-6">
+        ${photoSlot('hero-1', wrestlersArt('clinch', { uid: 'kidsb' }), 'fill')}
+        <div class="in"><span class="tag-gold">${esc(t('rank.future_tag'))}</span><h3>${t('rank.future_title')}</h3><p>${esc(t('rank.future_note'))}</p></div>
+      </div>` : '') + podium(list);
     root.querySelector('#rk-table').innerHTML = rankTable(list, { full: true });
     root.querySelector('#rk-note').textContent = t(group === 'kids' ? 'rank.kids_note' : 'rank.adults_note');
     hydratePhotos(root);

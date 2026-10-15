@@ -120,14 +120,16 @@ export default function home() {
       <div class="sec-title reveal"><h2><small>${esc(t('rank.eyebrow'))}</small>${esc(t('rank.title'))}</h2><div class="row">${demoBadge()}<a class="link-more" href="#/rankings">${esc(t('home.all_rankings'))} ${icon.arrow}</a></div></div>
       <div class="rank-wrap reveal">
         <a class="leader" href="#/rankings">
-          ${photoSlot(leader.photo, wrestlersArt('single', { uid: 'leader' }))}
+          ${photoSlot(leader.photo, wrestlersArt('single', { uid: 'leader' }), 'pos-top')}
           <div class="info">
             <span class="tag-gold">${esc(t('home.leader'))} · ${esc(t('rank.adults'))}</span>
             <div class="row" style="align-items:flex-end;gap:16px;margin-top:14px"><span class="no num">01</span><div><h3>${esc(leader.name)}</h3><span class="muted">${esc(tr(regionName(leader.region)))} · ${esc(tr(styleName(leader.style)))} · ${leader.weight} ${esc(t('unit.kg'))}</span></div></div>
+            ${leader.real ? `<p class="mt-3" style="color:var(--c-gold);font-weight:600;font-size:var(--fs-small)">${esc(tr(leader.titles))}</p>` : ''}
             <div class="stats4">
               <div><b class="num">${leader.score.toFixed(1)}</b><span>${esc(t('rank.points'))}</span></div>
-              <div><b class="num">${leader.wins}</b><span>${esc(t('rank.wins'))}</span></div>
-              <div><b class="num">${leader.bouts}</b><span>${esc(t('rank.bouts'))}</span></div>
+              ${leader.real
+                ? `<div><b class="num">${leader.worldScore}</b><span>${esc(t('rank.world_u20'))}</span></div><div><b class="num">${leader.weight}</b><span>${esc(t('unit.kg'))}</span></div>`
+                : `<div><b class="num">${leader.wins}</b><span>${esc(t('rank.wins'))}</span></div><div><b class="num">${leader.bouts}</b><span>${esc(t('rank.bouts'))}</span></div>`}
               <div><b class="num">${leader.medals}</b><span>${esc(t('rank.medals'))}</span></div>
             </div>
           </div>

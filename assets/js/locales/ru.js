@@ -182,6 +182,7 @@ export default {
     recording: 'Запись', upcoming: 'Скоро', free: 'Бесплатно', price_from: 'Доступ — {p} TMT',
   },
   rank: {
+    world_u20: 'ЧМ U20', real: 'реальный', future_tag: 'Talent Scout', future_title: 'Будущие <em>чемпионы</em>', future_note: 'Имена и фото детей в публичном рейтинге не показываются — только общий снимок.',
     eyebrow: 'Сезон 2026', title: 'Рейтинг', weight: 'Вес', wins: 'Победы', bouts: 'Схватки', medals: 'Медали', points: 'Очки', all_styles: 'Все стили',
     kids: 'Лучшие среди детей', adults: 'Лучшие среди взрослых', style: 'Стиль', all_regions: 'Все регионы',
     kids_note: 'До 18 лет: только имя, первая буква фамилии и регион, без фото.',

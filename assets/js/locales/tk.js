@@ -183,6 +183,7 @@ export default {
     recording: 'Ýazgy', upcoming: 'Ýakynda', free: 'Mugt', price_from: 'Giriş — {p} TMT',
   },
   rank: {
+    world_u20: 'U20 DÇ', real: 'hakyky', future_tag: 'Talent Scout', future_title: 'Geljegiň <em>çempionlary</em>', future_note: 'Açyk reýtingde çagalaryň atlary we suratlary görkezilmeýär — diňe umumy surat.',
     eyebrow: '2026 möwsümi', title: 'Reýting', weight: 'Agram', wins: 'Ýeňişler', bouts: 'Tutluşyklar', medals: 'Medallar', points: 'Utuklar', all_styles: 'Ähli görnüşler',
     kids: 'Çagalaryň arasynda iň gowular', adults: 'Ulularyň arasynda iň gowular', style: 'Görnüş', all_regions: 'Ähli sebitler',
     kids_note: '18 ýaşa çenli: diňe ady, familiýasynyň ilkinji harpy we sebiti, suratsyz.',

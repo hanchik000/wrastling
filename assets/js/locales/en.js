@@ -182,6 +182,7 @@ export default {
     recording: 'Recording', upcoming: 'Upcoming', free: 'Free', price_from: 'Access — {p} TMT',
   },
   rank: {
+    world_u20: 'U20 Worlds', real: 'real', future_tag: 'Talent Scout', future_title: 'Future <em>champions</em>', future_note: 'Children’s names and photos are not shown in the public rankings — only a group photo.',
     eyebrow: 'Season 2026', title: 'Rankings', weight: 'Weight', wins: 'Wins', bouts: 'Bouts', medals: 'Medals', points: 'Points', all_styles: 'All styles',
     kids: 'Top youth athletes', adults: 'Top adult athletes', style: 'Style', all_regions: 'All regions',
     kids_note: 'Under 18: only first name, surname initial and region, no photos.',

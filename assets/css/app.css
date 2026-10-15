@@ -787,3 +787,16 @@ main:focus { outline: none; }
 .photo.pos-left.has-photo { background-position: left center; }
 .ncard .photo.has-photo + .shade, .ncard .photo.has-photo .shade { opacity: 1; }
 .photo.fill { position: absolute; inset: 0; } .photo.fill > .art { align-items: center; }
+.photo.pos-top.has-photo { background-position: center 20%; }
+.leader .photo.has-photo + .shade, .leader .photo.has-photo .shade { background: linear-gradient(0deg, rgba(11,11,12,.98) 0%, rgba(11,11,12,.7) 34%, rgba(11,11,12,0) 60%); }
+.kids-banner { position: relative; min-height: 260px; border: 1px solid var(--line); overflow: hidden; display: flex; align-items: flex-end; }
+.kids-banner .photo.has-photo { background-position: right 16%; }
+@media (max-width: 720px) { .kids-banner .photo.has-photo { background-position: 78% 30%; } }
+.kids-banner::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(11,11,12,.95) 0%, rgba(11,11,12,.6) 45%, rgba(11,11,12,0) 75%); pointer-events: none; }
+.kids-banner .in { position: relative; z-index: 2; padding: 24px; max-width: 520px; display: grid; gap: 10px; justify-items: start; }
+.kids-banner h3 { font-family: var(--font-display); text-transform: uppercase; font-size: clamp(2rem, 5vw, 3.2rem); line-height: .95; font-weight: 700; }
+.kids-banner h3 em { font-style: normal; color: var(--c-gold); }
+.kids-banner p { font-size: var(--fs-small); color: #c9cbd0; }
+.pod .photo.has-photo { background-position: center 15%; }
+
+@media (max-width: 640px) { .rtable .nm b { white-space: normal; } .rtable .nm .badge { display: none; } }

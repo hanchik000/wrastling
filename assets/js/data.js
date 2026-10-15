@@ -117,7 +117,7 @@ export const DEMO_ATHLETES = [
   A('d10', 'Aýna M.', 10, 'asgabat', 'women', 30, 81.0, 2),
   A('d11', 'Ylýas R.', 9, 'balkan', 'free', 28, 79.5, -1),
   A('d12', 'Begenç D.', 14, 'dasoguz', 'greco', 48, 78.4, 0),
-  A('d21', 'Nurmuhammet A.', 21, 'mary', 'greco', 77, 93.2, 1),
+  A('d21', 'Alp Arslan Begenjov', 20, 'asgabat', 'free', 79, 95.0, 0),
   A('d22', 'Ýusup K.', 20, 'ahal', 'free', 74, 92.0, 0),
   A('d23', 'Gülşat B.', 19, 'lebap', 'women', 62, 90.6, 2),
   A('d24', 'Arslan Ç.', 22, 'balkan', 'goresh', 86, 89.9, -1),
@@ -126,6 +126,13 @@ export const DEMO_ATHLETES = [
   A('d27', 'Şatlyk O.', 21, 'mary', 'free', 86, 85.5, -2),
   A('d28', 'Batyr P.', 19, 'lebap', 'goresh', 97, 84.1, 1),
 ];
+// Реальный спортсмен: только подтверждённые факты (United World Wrestling, 2024).
+// Индекс рейтинга — демо, как у всех; победы/схватки не выдумываем.
+Object.assign(DEMO_ATHLETES.find((a) => a.id === 'd21'), {
+  real: true, photo: 'athlete-alp', bouts: null, wins: null, medals: 3, worldScore: '46:0',
+  titles: { tk: 'U20 dünýä çempiony 2024 · U20 Aziýa çempiony 2024', ru: 'Чемпион мира U20 2024 · чемпион Азии U20 2024', en: 'U20 world champion 2024 · U20 Asian champion 2024' },
+  source: 'https://uww.org/article/begenjov-wins-turkmenistans-historic-world-title-freestyle',
+});
 
 // ---------- ДЕМО: новости ----------
 export const NEWS = [
