@@ -130,6 +130,18 @@ export const DEMO_ATHLETES = [
 // ---------- ДЕМО: новости ----------
 export const NEWS = [
   {
+    // Реальная новость — источник United World Wrestling
+    id: 'n4', demo: false, date: '2024-09-07', source: 'https://uww.org/article/begenjov-wins-turkmenistans-historic-world-title-freestyle', credit: 'wrestling_mojtaba_madadi',
+    tag: { tk: 'Ýygyndy', ru: 'Сборная', en: 'National team' },
+    title: { tk: 'Alp Arslan Begenjow — U20 dünýä çempiony', ru: 'Alp Arslan Begenjov — чемпион мира U20', en: 'Alp Arslan Begenjov — U20 world champion' },
+    body: {
+      tk: 'Pontewedra, Ispaniýa, 2024-nji ýylyň 7-nji sentýabry. Erkin göreş, 79 kg. Finalda Begenjow ABŞ-nyň türgeni Ryder-i 5:0 hasabynda ýeňdi. Bu Türkmenistanyň erkin göreş boýunça taryhda ilkinji dünýä çempionlygy. Ýaryşyň dowamynda ol garşydaşlaryna bir utuk hem bermedi — 46:0.',
+      ru: 'Понтеведра, Испания, 7 сентября 2024 года. Вольная борьба, 79 кг. В финале Begenjov победил Ryder (США) со счётом 5:0. Это первый в истории Туркменистана титул чемпиона мира по вольной борьбе. За весь турнир он не отдал соперникам ни одного очка — 46:0.',
+      en: 'Pontevedra, Spain, 7 September 2024. Freestyle, 79 kg. Begenjov beat Ryder (USA) 5-0 in the final — Turkmenistan’s first-ever world title in freestyle. He did not concede a single point all tournament, outscoring opponents 46-0.',
+    },
+    art: 'trophy',
+  },
+  {
     id: 'n1', demo: true, date: '2026-10-14', tag: { tk: 'Platforma', ru: 'Платформа', en: 'Platform' },
     title: { tk: 'Talent Scout: ýurduň islendik ýerinden synag tabşyryp bolar', ru: 'Talent Scout: пройти отбор можно из любой точки страны', en: 'Talent Scout: try out from anywhere in the country' },
     body: { tk: 'Telefona düşürilen wideo boýunça başlangyç synag. Netijäni tälimçi tassyklaýar.', ru: 'Первичный отбор по видео с телефона. Итог всегда подтверждает тренер.', en: 'An initial screening from a phone video. A coach always confirms the result.' },

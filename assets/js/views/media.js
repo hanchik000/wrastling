@@ -46,10 +46,9 @@ export default function media({ query }) {
     const body = root.querySelector('#tab-body');
     if (tab === 'news') {
       body.innerHTML = `
-        <div class="row between mb-6">${demoBadge()}</div>
         <div class="grid-3">${NEWS.map((n) => `
           <a class="news-card" href="#/news/${n.id}">
-            <div class="ph" style="color:var(--text)">${newsArt[n.art] ? `<div class="ph-art">${newsArt[n.art]}</div>` : ''}<span class="ph-tag badge" style="background:var(--surface)">${esc(tr(n.tag))}</span></div>
+            <div class="ph" style="color:var(--text)"><div class="photo" data-photo="news-${n.id}" style="position:absolute;inset:0"><div class="art" style="align-items:center"><div style="width:50%">${newsArt[n.art] || ''}</div></div></div><span class="ph-tag badge" style="background:var(--surface)">${esc(tr(n.tag))}</span>${n.demo ? `<span class="badge badge-demo" style="position:absolute;right:10px;top:10px">${esc(t('common.demo'))}</span>` : ''}</div>
             <span class="eyebrow">${esc(fmtDate(n.date))}</span>
             <h3>${esc(tr(n.title))}</h3>
             <p class="muted" style="font-size:var(--fs-small)">${esc(tr(n.body))}</p>

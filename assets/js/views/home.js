@@ -33,7 +33,7 @@ function slides() {
       tab: t('home.alp_tab'),
     },
     {
-      key: 'live', photo: 'hero-live', art: wrestlersArt('clinch', { uid: 'h2', tone: 'red' }),
+      key: 'live', photo: 'hero-live', credit: 'United World Wrestling', art: wrestlersArt('clinch', { uid: 'h2', tone: 'red' }),
       tag: `<span class="tag-red">● LIVE</span> <span class="tag-dark">${esc(t('common.demo'))}</span>`,
       title: esc(tr(live.title)), sub: `${tr(live.venue)} · ${t('home.today')} 15:00 · ${tr(styleName(live.style))}`,
       ctas: `<a class="btn btn-red" href="#/live/${live.id}">${icon.play}${esc(t('home.watch_live'))}</a><a class="btn btn-ghost" href="#/media?tab=events">${esc(t('home.calendar'))}</a>`,
@@ -175,9 +175,9 @@ export default function home() {
       <div class="news-grid reveal">
         ${[n1, n2, n3].map((n, i) => `
           <a class="ncard ${i === 0 ? 'big' : ''}" href="#/news/${n.id}">
-            ${photoSlot('news-' + n.id, wrestlersArt(['clinch', 'shot', 'single'][i], { uid: 'news' + i, skeleton: i === 0, tone: i === 1 ? 'red' : 'gold' }))}
+            ${photoSlot('news-' + n.id, wrestlersArt(['clinch', 'shot', 'single'][i], { uid: 'news' + i, skeleton: i === 0, tone: i === 1 ? 'red' : 'gold' }), i === 0 ? 'pos-left' : '')}
             <div class="in">
-              <div class="row" style="gap:8px"><span class="${i === 0 ? 'tag-red' : 'tag-dark'}">${esc(tr(n.tag))}</span><span class="tag-dark">${esc(t('common.demo'))}</span></div>
+              <div class="row" style="gap:8px"><span class="${i === 0 ? 'tag-red' : 'tag-dark'}">${esc(tr(n.tag))}</span>${n.demo ? `<span class="tag-dark">${esc(t('common.demo'))}</span>` : `<span class="tag-gold">${esc(t('news.real'))}</span>`}</div>
               <h3>${esc(tr(n.title))}</h3>
               <span class="date">${esc(fmtDate(n.date, { day: 'numeric', month: 'long' }))}</span>
             </div>

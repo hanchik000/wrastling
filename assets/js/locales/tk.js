@@ -199,7 +199,7 @@ export default {
     pay_not_connected: 'Onlaýn töleg entek birikdirilmedi — bank bilen şertnama gerek. Demo wersiýada girişi tölegsiz açyp bolýar.',
     demo_access: 'Demo girişi açmak', access_granted: 'Demo giriş açyldy',
   },
-  news: { demo_note: 'Bu dizaýny görkezmek üçin demo habar.' },
+  news: { real: 'Habar', source: 'Çeşme', demo_note: 'Bu dizaýny görkezmek üçin demo habar.' },
 
   shop: {
     gear: 'Enjamlar', nutrition: 'Sport iýmiti', gear_title: 'Göreş üçin enjamlar', nutri_title: 'Sport iýmiti',

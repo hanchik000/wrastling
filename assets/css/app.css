@@ -784,3 +784,6 @@ main:focus { outline: none; }
   .slide .photo.has-photo + .big-num { display: none; }
   .slide .shade { background: linear-gradient(0deg, rgba(11,11,12,.98) 0%, rgba(11,11,12,.85) 42%, rgba(11,11,12,.15) 75%, rgba(11,11,12,.3) 100%); }
 }
+.photo.pos-left.has-photo { background-position: left center; }
+.ncard .photo.has-photo + .shade, .ncard .photo.has-photo .shade { opacity: 1; }
+.photo.fill { position: absolute; inset: 0; } .photo.fill > .art { align-items: center; }

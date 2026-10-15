@@ -198,7 +198,7 @@ export default {
     pay_not_connected: 'Online payment is not connected yet — it needs a bank agreement. In the demo you can open access without paying.',
     demo_access: 'Open demo access', access_granted: 'Demo access granted',
   },
-  news: { demo_note: 'This is a demo news item to show the design.' },
+  news: { real: 'News', source: 'Source', demo_note: 'This is a demo news item to show the design.' },
 
   shop: {
     gear: 'Gear', nutrition: 'Nutrition', gear_title: 'Wrestling gear', nutri_title: 'Sports nutrition',
