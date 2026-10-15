@@ -16,6 +16,8 @@ export default {
   role: { athlete: 'Athlete', coach: 'Coach' },
 
   home: {
+    photo: 'Photo', asia_tag: 'U15–U20 Asian Championships', asia_title: 'Turkmenistan<br><em>on the Asian podium</em>', asia_sub: 'Pattaya, 2026. The Turkmen flag over the Asian youth and junior championships.', asia_tab: 'Asian Championships',
+    alp_title: 'Alp Begenjov<br><em>wrestler of the month</em>', alp_sub: 'Freestyle. United World Wrestling named the Turkmen wrestler the best of the month.', alp_tab: 'Wrestler of the month',
     s1_title: 'Finding <em>champions</em> in every district', s1_sub: 'Record a test on your phone — the system measures your movement, a federation coach makes the call.', s1_tab: 'Talent search',
     today: 'today', watch_live: 'Watch LIVE', calendar: 'Calendar', s2_tab: 'LIVE event',
     s3_title: 'The country’s <em>best</em> wrestlers', s3_sub: 'Rankings by style, age and weight. Updated after every event.', open_rank: 'Open rankings', s3_tab: 'Season rankings',

@@ -19,18 +19,25 @@ function slides() {
       tab: t('home.s1_tab'),
     },
     {
-      key: 'live', photo: 'hero-2', art: wrestlersArt('clinch', { uid: 'h2', tone: 'red' }),
+      key: 'asia', photo: 'hero-2', art: wrestlersArt('clinch', { uid: 'ha' }), credit: 'Sportal',
+      tag: `<span class="tag-gold">${esc(t('home.asia_tag'))}</span>`,
+      title: t('home.asia_title'), sub: t('home.asia_sub'),
+      ctas: `<a class="btn btn-primary" href="#/media?tab=events">${esc(t('home.all_events'))} ${icon.arrow}</a>`,
+      tab: t('home.asia_tab'),
+    },
+    {
+      key: 'alp', photo: 'hero-3', art: wrestlersArt('single', { uid: 'hp' }), credit: 'United World Wrestling',
+      tag: `<span class="tag-dark">United World Wrestling</span>`,
+      title: t('home.alp_title'), sub: t('home.alp_sub'),
+      ctas: `<a class="btn btn-gold" href="#/rankings">${esc(t('home.open_rank'))} ${icon.arrow}</a>`,
+      tab: t('home.alp_tab'),
+    },
+    {
+      key: 'live', photo: 'hero-live', art: wrestlersArt('clinch', { uid: 'h2', tone: 'red' }),
       tag: `<span class="tag-red">● LIVE</span> <span class="tag-dark">${esc(t('common.demo'))}</span>`,
       title: esc(tr(live.title)), sub: `${tr(live.venue)} · ${t('home.today')} 15:00 · ${tr(styleName(live.style))}`,
       ctas: `<a class="btn btn-red" href="#/live/${live.id}">${icon.play}${esc(t('home.watch_live'))}</a><a class="btn btn-ghost" href="#/media?tab=events">${esc(t('home.calendar'))}</a>`,
       tab: t('home.s2_tab'),
-    },
-    {
-      key: 'rank', photo: 'hero-3', art: wrestlersArt('single', { uid: 'h3' }),
-      tag: `<span class="tag-dark">${esc(t('nav.rankings'))}</span>`,
-      title: t('home.s3_title'), sub: t('home.s3_sub'),
-      ctas: `<a class="btn btn-primary" href="#/rankings">${esc(t('home.open_rank'))} ${icon.arrow}</a>`,
-      tab: t('home.s3_tab'),
     },
     {
       key: 'shop', photo: 'hero-4', art: `<div style="width:62%;height:70%;margin:auto;color:#3a3b42">${productArt.shoe}</div>`,
@@ -77,6 +84,7 @@ export default function home() {
       <div class="slide ${i === 0 ? 'on' : ''}" role="group" aria-roledescription="slide" aria-label="${i + 1} / ${S.length}" ${i ? 'aria-hidden="true"' : ''}>
         ${photoSlot(s.photo, s.art)}
         <span class="big-num num" aria-hidden="true">0${i + 1}</span>
+        ${s.credit ? `<span class="credit">${esc(t('home.photo'))}: ${esc(s.credit)}</span>` : ''}
         <div class="container content">
           <div class="row row-wrap" style="gap:8px">${s.tag}</div>
           ${i === 0 ? `<h1>${s.title}</h1>` : `<h2 class="h1">${s.title}</h2>`}
@@ -88,7 +96,7 @@ export default function home() {
       <a class="promo red" href="#/live/${live.id}"><span>● LIVE · ${esc(t('home.today'))}</span><b>${esc(tr(live.title))}</b></a>
       <a class="promo" href="#/scout"><span class="gold">Talent Scout</span><b>${esc(t('home.promo_scout'))}</b></a>
     </div>
-    <div class="slide-tabs"><div class="container" role="tablist">
+    <div class="slide-tabs"><div class="container" role="tablist" style="grid-template-columns:repeat(${S.length},1fr)">
       ${S.map((s, i) => `<button role="tab" data-slide="${i}" aria-selected="${i === 0}"><i></i><b class="num">0${i + 1}</b><span>${esc(s.tab)}</span></button>`).join('')}
     </div></div>
   </section>

@@ -17,6 +17,8 @@ export default {
   role: { athlete: 'Türgen', coach: 'Tälimçi' },
 
   home: {
+    photo: 'Surat', asia_tag: 'U15–U20 Aziýa çempionaty', asia_title: 'Türkmenistan<br><em>Aziýanyň münberinde</em>', asia_sub: 'Pattaýa, 2026. Ýetginjekleriň we ýaşlaryň arasynda Aziýa çempionatynda Türkmenistanyň baýdagy.', asia_tab: 'Aziýa çempionaty',
+    alp_title: 'Alp Begenjow<br><em>aýyň göreşijisi</em>', alp_sub: 'Erkin göreş. United World Wrestling türkmen göreşijisini aýyň iň gowusy diýip yglan etdi.', alp_tab: 'Aýyň göreşijisi',
     s1_title: 'Her etrapda <em>çempion</em> tapjak', s1_sub: 'Synagy telefona düşüriň — ulgam hereketi ölçär, federasiýanyň tälimçisi karar berer.', s1_tab: 'Zehin saýlawy',
     today: 'şu gün', watch_live: 'LIVE görmek', calendar: 'Senenama', s2_tab: 'LIVE ýaryş',
     s3_title: 'Ýurduň <em>iň gowy</em> göreşijileri', s3_sub: 'Görnüşler, ýaş we agram boýunça reýting. Her ýaryşdan soň täzelenýär.', open_rank: 'Reýtingi açmak', s3_tab: 'Möwsümiň reýtingi',
