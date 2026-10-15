@@ -1,3 +1,4 @@
+import { initFx } from '../fx.js';
 import { t, tr, fmtMoney } from '../i18n.js';
 import { esc, icon, demoBadge } from '../ui.js';
 import { PRODUCTS, GEAR_CATS, NUTRI_CATS } from '../data.js';
@@ -77,7 +78,7 @@ export default function shop({ params, user }) {
         <span class="grow"></span>${demoBadge()}
       </div>
       ${store === 'nutrition' ? `<div class="notice info mb-8">${icon.shield}<div>${esc(t('shop.nutri_note'))}</div></div>` : ''}
-      ${list.length ? `<div class="products">${list.map(productCard).join('')}</div>` : `<div class="empty">${icon.filter}<h3>${esc(t('shop.empty'))}</h3></div>`}
+      ${list.length ? `<div class="products" data-stagger>${list.map(productCard).join('')}</div>` : `<div class="empty">${icon.filter}<h3>${esc(t('shop.empty'))}</h3></div>`}
       <div class="grid-3 mt-12">
         <div class="row" style="align-items:flex-start">${icon.truck.replace('<svg', '<svg width="22" height="22" style="flex:none"')}<span><b>${esc(t('shop.f_delivery'))}</b><br><span class="muted" style="font-size:var(--fs-small)">${esc(t('shop.f_delivery_d'))}</span></span></div>
         <div class="row" style="align-items:flex-start">${icon.check.replace('<svg', '<svg width="22" height="22" style="flex:none"')}<span><b>${esc(t('shop.f_pay'))}</b><br><span class="muted" style="font-size:var(--fs-small)">${esc(t('shop.f_pay_d'))}</span></span></div>
@@ -87,6 +88,7 @@ export default function shop({ params, user }) {
     const qi = host.querySelector('[data-q]');
     qi.addEventListener('input', () => { q = qi.value; clearTimeout(qi._t); qi._t = setTimeout(() => { render(root); const n = root.querySelector('[data-q]'); n.focus(); n.setSelectionRange(q.length, q.length); }, 250); });
     host.querySelector('[data-sort]').addEventListener('change', (e) => { sort = e.target.value; render(root); });
+    initFx(host);
   }
 
   return { html, theme: 'light', title: t('nav.shop'), mount: render };

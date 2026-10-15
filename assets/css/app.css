@@ -800,3 +800,111 @@ main:focus { outline: none; }
 .pod .photo.has-photo { background-position: center 15%; }
 
 @media (max-width: 640px) { .rtable .nm b { white-space: normal; } .rtable .nm .badge { display: none; } }
+
+/* =====================================================================
+   АНИМАЦИИ
+   ===================================================================== */
+
+/* Полоса прогресса прокрутки и линия перехода между страницами */
+.scroll-progress { position: fixed; left: 0; right: 0; top: 0; height: 2px; z-index: 60; pointer-events: none; }
+.scroll-progress i { display: block; height: 100%; background: linear-gradient(90deg, var(--c-gold), #f0d898); transform-origin: left; transform: scaleX(0); }
+.route-sweep { position: fixed; left: 0; top: 0; height: 3px; width: 100%; z-index: 61; pointer-events: none; background: linear-gradient(90deg, transparent, var(--c-gold) 40%, #fff 50%, var(--c-gold) 60%, transparent); transform: translateX(-100%); opacity: 0; }
+.route-sweep.go { animation: sweep 650ms var(--ease-out); }
+@keyframes sweep { 0% { transform: translateX(-100%); opacity: 1; } 100% { transform: translateX(100%); opacity: .6; } }
+
+/* Заголовки по словам из-под маски */
+.split .w { display: inline-block; overflow: hidden; vertical-align: top; padding-bottom: .06em; margin-bottom: -.06em; }
+.split .w > i { display: inline-block; font-style: inherit; transform: translateY(108%) rotate(4deg); transform-origin: left bottom; transition: transform 900ms var(--ease-out) var(--d, 0ms); }
+.split.in .w > i, .slide.on .split .w > i { transform: none; }
+.slide.on .content > h1.split, .slide.on .content > h2.split { animation: none; }
+
+/* Кен Бёрнс: фото баннера медленно приближается */
+.slide .photo { transform: scale(1.12); transform-origin: 72% 45%; transition: transform 9s linear; will-change: transform; }
+.slide.on .photo { transform: scale(1); }
+/* Золотая линия под заголовком слайда */
+.slide .gold-line { display: block; width: 0; height: 3px; background: var(--c-gold); margin-top: 18px; transition: width 1.2s var(--ease-out) .55s; }
+.slide.on .gold-line { width: 120px; }
+
+/* Каскадное появление элементов */
+[data-stagger] > * { opacity: 0; transform: translateY(28px) scale(.98); transition: opacity 700ms var(--ease-out), transform 700ms var(--ease-out); transition-delay: calc(var(--i, 0) * 80ms); }
+[data-stagger].in > * { opacity: 1; transform: none; }
+.rise-in { opacity: 0; transform: translateY(40px); transition: opacity 900ms var(--ease-out), transform 900ms var(--ease-out); }
+.rise-in.in { opacity: 1; transform: none; }
+
+/* Блик при наведении */
+.shine { position: relative; overflow: hidden; }
+.shine::before { content: ""; position: absolute; top: 0; bottom: 0; left: -75%; width: 50%; z-index: 4; pointer-events: none; background: linear-gradient(100deg, transparent, rgba(255,255,255,.22), transparent); transform: skewX(-18deg); transition: left 800ms var(--ease-out); }
+.shine:hover::before { left: 135%; }
+
+/* Наклон за курсором + свечение в точке курсора */
+[data-tilt] { transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); transition: transform 300ms var(--ease-out); transform-style: preserve-3d; }
+[data-tilt]::after { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 3; background: radial-gradient(400px circle at var(--mx, 50%) var(--my, 50%), rgba(200,164,90,.14), transparent 45%); opacity: 0; transition: opacity 300ms; }
+[data-tilt]:hover::after { opacity: 1; }
+
+/* Пьедестал вырастает: 2-е, потом 1-е, потом 3-е место */
+.pod { animation: podrise 900ms var(--ease-out) both; }
+.pod.p2 { animation-delay: 120ms; } .pod.p1 { animation-delay: 0ms; } .pod.p3 { animation-delay: 240ms; }
+@keyframes podrise { from { opacity: 0; transform: translateY(60px); } }
+.pod.p1 .base { position: relative; overflow: hidden; }
+.pod.p1 .base::after { content: ""; position: absolute; inset: 0; background: linear-gradient(100deg, transparent 30%, rgba(255,255,255,.5) 50%, transparent 70%); transform: translateX(-100%); animation: gleam 3.6s ease-in-out 1s 2; }
+@keyframes gleam { 60%, 100% { transform: translateX(100%); } }
+
+/* Строки рейтинга въезжают слева */
+@keyframes flash { from { opacity: 0; transform: translateX(-18px); background: var(--c-gold-soft); } 60% { opacity: 1; transform: none; } }
+.rtable tr.flash { animation: flash 700ms var(--ease-out) both; }
+
+/* Бегущая строка */
+.marquee { overflow: hidden; border-block: 1px solid var(--line); background: #0b0b0c; padding-block: 18px; user-select: none; }
+.marquee .track { display: flex; width: max-content; animation: marq 38s linear infinite; }
+.marquee:hover .track { animation-play-state: paused; }
+.marquee span { font-family: var(--font-display); font-weight: 700; text-transform: uppercase; font-size: clamp(2.4rem, 7vw, 5rem); line-height: 1; padding-inline: 28px; white-space: nowrap; color: transparent; -webkit-text-stroke: 1.2px rgba(244,242,238,.28); display: inline-flex; align-items: center; gap: 56px; }
+.marquee span b { color: var(--c-gold); -webkit-text-stroke: 0; font-weight: 700; }
+.marquee span::after { content: ""; width: 22px; height: 22px; background: var(--c-gold); clip-path: polygon(30% 0, 70% 0, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0 70%, 0 30%); flex: none; }
+.marquee.red { background: var(--c-red); border-color: var(--c-red); }
+.marquee.red span { -webkit-text-stroke: 1.2px rgba(255,255,255,.45); }
+.marquee.red span b { color: #fff; }
+.marquee.red span::after { background: #fff; }
+.marquee.reverse .track { animation-direction: reverse; animation-duration: 46s; }
+@keyframes marq { to { transform: translateX(-50%); } }
+
+/* Телефон в баннере парит, внутри — живая разметка */
+.phone-mock { animation: float 6s ease-in-out infinite; }
+@keyframes float { 50% { transform: translateY(-10px) rotate(-1deg); } }
+.phone-mock .vid .loop { position: absolute; inset: 0; }
+.phone-mock .vid .loop svg { width: 100%; height: 100%; }
+.phone-mock .res b { transition: color 200ms; }
+.phone-mock .res b.bump { color: var(--c-gold); animation: bump 400ms var(--ease-out); }
+@keyframes bump { 40% { transform: scale(1.18); } }
+.phone-mock .scanline { position: absolute; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, #2fbf71, transparent); animation: scan 2.6s var(--ease-in-out) infinite; opacity: .8; }
+
+/* LIVE: мягкое красное свечение */
+.fixture.live { animation: liveglow 2.4s ease-in-out infinite; }
+@keyframes liveglow { 50% { box-shadow: 0 0 0 1px rgba(215,38,47,.6), 0 0 28px rgba(215,38,47,.35); } }
+
+/* Иконки разделов: подпрыгивают при наведении */
+.pillar .ic svg { transition: transform 400ms var(--ease-out); }
+.pillar:hover .ic svg { transform: translateY(-3px) scale(1.12); }
+.pillar .ic { transition: background 300ms, color 300ms; }
+.pillar:hover .ic { background: var(--c-gold); color: #0b0b0c; }
+
+/* Стрелки в кнопках сдвигаются */
+.btn svg:last-child, .link-more svg { transition: transform 250ms var(--ease-out); }
+.btn:hover svg:last-child, .link-more:hover svg { transform: translateX(4px); }
+.link-more { background: linear-gradient(var(--c-gold), var(--c-gold)) left bottom / 0 2px no-repeat; border-bottom-color: rgba(200,164,90,.35); transition: background-size 350ms var(--ease-out); }
+.link-more:hover { background-size: 100% 2px; }
+
+/* Карточки товаров: подъём */
+.product .ph svg, .store-banner .item .ph svg { transition: transform 500ms var(--ease-out); }
+.product:hover .ph svg, .store-banner .item:hover .ph svg { transform: scale(1.08) rotate(-3deg); }
+
+/* Большая цифра на баннере движется медленнее фона */
+.slide .big-num { will-change: transform; }
+
+@media (prefers-reduced-motion: reduce) {
+  .split .w > i { transform: none !important; transition: none; }
+  .slide .photo { transform: none !important; transition: none; }
+  [data-stagger] > *, .rise-in { opacity: 1 !important; transform: none !important; transition: none; }
+  .pod, .pod.p1 .base::after, .rtable tr.flash, .fixture.live, .phone-mock, .phone-mock .scanline, .marquee .track { animation: none !important; }
+  [data-tilt] { transform: none !important; }
+  .route-sweep { display: none; }
+}

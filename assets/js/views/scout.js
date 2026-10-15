@@ -36,7 +36,7 @@ export default function scout({ user }) {
   const html = `
   <section class="container scout-hero">
     <p class="eyebrow">Talent Scout</p>
-    <h1 class="display mt-2">${esc(t('scout.title'))}</h1>
+    <h1 class="display mt-2" data-split>${esc(t('scout.title'))}</h1>
     <p class="muted mt-4 max-prose">${esc(t('scout.lead'))}</p>
     <div class="row row-wrap mt-6">
       <span class="badge badge-free">${esc(t('scout.free'))}</span>
@@ -60,7 +60,7 @@ export default function scout({ user }) {
         <span class="muted num" style="font-size:var(--fs-small)">${done} / ${available}</span>
       </div>
       <div class="progress ok mb-6"><i style="width:${available ? (done / available) * 100 : 0}%"></i></div>`}
-    <div class="test-list">${items}</div>
+    <div class="test-list" data-stagger>${items}</div>
 
     ${results.length ? `
       <h2 class="eyebrow mt-12 mb-4">${esc(t('scout.history'))}</h2>

@@ -1,3 +1,4 @@
+import { initFx } from '../fx.js';
 import { t, tr } from '../i18n.js';
 import { esc, icon, demoBadge, photoSlot, hydratePhotos } from '../ui.js';
 import { DEMO_ATHLETES, REGIONS, STYLES, regionName, styleName } from '../data.js';
@@ -56,7 +57,7 @@ export default function rankings({ query }) {
   <section class="rank-hero gol-bg">
     <div class="container">
       <div class="row row-wrap between">
-        <div class="sec-title" style="margin-bottom:0"><h2><small>${esc(t('rank.eyebrow'))}</small>${esc(t('rank.title'))}</h2></div>
+        <div class="sec-title" style="margin-bottom:0"><h2 data-split><small>${esc(t('rank.eyebrow'))}</small>${esc(t('rank.title'))}</h2></div>
         ${demoBadge()}
       </div>
       <div class="row row-wrap mt-6">
@@ -93,11 +94,12 @@ export default function rankings({ query }) {
     root.querySelector('#podium').innerHTML = (group === 'kids' ? `
       <div class="kids-banner mt-6">
         ${photoSlot('hero-1', wrestlersArt('clinch', { uid: 'kidsb' }), 'fill')}
-        <div class="in"><span class="tag-gold">${esc(t('rank.future_tag'))}</span><h3>${t('rank.future_title')}</h3><p>${esc(t('rank.future_note'))}</p></div>
+        <div class="in"><span class="tag-gold">${esc(t('rank.future_tag'))}</span><h3 data-split>${t('rank.future_title')}</h3><p>${esc(t('rank.future_note'))}</p></div>
       </div>` : '') + podium(list);
     root.querySelector('#rk-table').innerHTML = rankTable(list, { full: true });
     root.querySelector('#rk-note').textContent = t(group === 'kids' ? 'rank.kids_note' : 'rank.adults_note');
     hydratePhotos(root);
+    initFx(root.querySelector('#podium'));
   }
 
   return {

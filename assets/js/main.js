@@ -2,6 +2,7 @@
 import { t, LANGS, getLang, setLang, onLang } from './i18n.js';
 import { icon, golMark, esc, observeReveals, hydratePhotos } from './ui.js';
 import { cartCount, onChange, getUser } from './store.js';
+import { initFx, initGlobalFx, routeSweep } from './fx.js';
 
 import home from './views/home.js';
 import scout from './views/scout.js';
@@ -130,6 +131,7 @@ function shell() {
 
   document.querySelectorAll('[data-lang]').forEach((b) => b.addEventListener('click', () => setLang(b.dataset.lang)));
   updateCart();
+  initGlobalFx();
 }
 
 function updateCart() {
@@ -152,6 +154,7 @@ let renderId = 0;
 
 async function render() {
   const myId = ++renderId;
+  if (current) routeSweep();
   const { path, query } = parseHash();
   const { view, params, nav } = match(path);
   try { current?.unmount?.(); } catch {}
@@ -178,6 +181,7 @@ async function render() {
   try { out.mount?.(main); } catch (e) { console.error(e); }
   observeReveals(main);
   hydratePhotos(main);
+  initFx(main);
   setTimeout(() => main.classList.remove('view-enter'), 450);
   if (out.focus !== false && document.activeElement === document.body) main.focus({ preventScroll: true });
 }

@@ -1,3 +1,4 @@
+import { initFx } from '../fx.js';
 import { t, tr, fmtDate } from '../i18n.js';
 import { esc, icon, demoBadge } from '../ui.js';
 import { DEMO_ATHLETES, EVENTS, NEWS, REGIONS, STYLES, regionName, styleName } from '../data.js';
@@ -35,7 +36,7 @@ export default function media({ query }) {
   const html = `
   <section class="container scout-hero">
     <p class="eyebrow">${esc(t('nav.media'))}</p>
-    <h1 class="display mt-2">${esc(t('media.title'))}</h1>
+    <h1 class="display mt-2" data-split>${esc(t('media.title'))}</h1>
     <div class="tabs mt-6" role="tablist">
       ${TABS.map((x) => `<button role="tab" data-tab="${x}" aria-selected="${x === tab}">${esc(t('media.' + x))}</button>`).join('')}
     </div>
@@ -44,9 +45,10 @@ export default function media({ query }) {
 
   function renderBody(root) {
     const body = root.querySelector('#tab-body');
+    queueMicrotask(() => initFx(body));
     if (tab === 'news') {
       body.innerHTML = `
-        <div class="grid-3">${NEWS.map((n) => `
+        <div class="grid-3" data-stagger>${NEWS.map((n) => `
           <a class="news-card" href="#/news/${n.id}">
             <div class="ph" style="color:var(--text)"><div class="photo" data-photo="news-${n.id}" style="position:absolute;inset:0"><div class="art" style="align-items:center"><div style="width:50%">${newsArt[n.art] || ''}</div></div></div><span class="ph-tag badge" style="background:var(--surface)">${esc(tr(n.tag))}</span>${n.demo ? `<span class="badge badge-demo" style="position:absolute;right:10px;top:10px">${esc(t('common.demo'))}</span>` : ''}</div>
             <span class="eyebrow">${esc(fmtDate(n.date))}</span>
@@ -56,7 +58,7 @@ export default function media({ query }) {
     } else if (tab === 'events') {
       body.innerHTML = `
         <div class="row between mb-6"><p class="muted">${esc(t('media.events_note'))}</p>${demoBadge()}</div>
-        <div class="grid-3">${EVENTS.map((ev) => `
+        <div class="grid-3" data-stagger>${EVENTS.map((ev) => `
           <a class="event-card" href="#/live/${ev.id}">
             <div class="row between">${eventStatusBadge(ev)}<span class="muted" style="font-size:var(--fs-small)">${esc(tr(styleName(ev.style)))}</span></div>
             <span class="date num">${esc(fmtDate(ev.date, { day: 'numeric', month: 'short' }))}</span>

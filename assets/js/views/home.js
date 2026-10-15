@@ -4,9 +4,13 @@ import { t, tr, fmtDate, fmtMoney } from '../i18n.js';
 import { esc, icon, demoBadge, photoSlot, sheet, reduceMotion, hydratePhotos } from '../ui.js';
 import { DEMO_ATHLETES, EVENTS, NEWS, PRODUCTS, TESTS, regionName, styleName } from '../data.js';
 import { newsArt, productArt, wrestlersArt } from '../art.js';
+import { mountExerciseLoop } from '../motion.js';
 import { rankTable } from './rankings.js';
 
 const SLIDE_MS = 7000;
+
+// Бегущая строка: набор слов повторяется дважды для бесшовной прокрутки
+const marquee = (words) => { const one = words.map((w) => `<span>${w}</span>`).join(''); return one + one + one + one; };
 
 function slides() {
   const live = EVENTS.find((e) => e.status === 'live');
@@ -83,11 +87,12 @@ export default function home() {
     ${S.map((s, i) => `
       <div class="slide ${i === 0 ? 'on' : ''}" role="group" aria-roledescription="slide" aria-label="${i + 1} / ${S.length}" ${i ? 'aria-hidden="true"' : ''}>
         ${photoSlot(s.photo, s.art)}
-        <span class="big-num num" aria-hidden="true">0${i + 1}</span>
+        <span class="big-num num" aria-hidden="true" data-parallax="0.12">0${i + 1}</span>
         ${s.credit ? `<span class="credit">${esc(t('home.photo'))}: ${esc(s.credit)}</span>` : ''}
         <div class="container content">
           <div class="row row-wrap" style="gap:8px">${s.tag}</div>
-          ${i === 0 ? `<h1>${s.title}</h1>` : `<h2 class="h1">${s.title}</h2>`}
+          ${i === 0 ? `<h1 data-split>${s.title}</h1>` : `<h2 class="h1" data-split>${s.title}</h2>`}
+          <span class="gold-line" aria-hidden="true"></span>
           <p class="sub">${esc(s.sub)}</p>
           <div class="ctas">${s.ctas}</div>
         </div>
@@ -101,36 +106,38 @@ export default function home() {
     </div></div>
   </section>
 
-  <nav class="pillars" aria-label="${esc(t('home.sections'))}">
-    <a class="pillar" href="#/rankings"><span class="ic">${icon.trophy}</span><b>${esc(t('nav.rankings'))}</b><span>${DEMO_ATHLETES.length} ${esc(t('home.p_athletes'))}</span></a>
-    <a class="pillar" href="#/media?tab=events"><span class="ic">${icon.clock}</span><b>${esc(t('nav.events'))}</b><span>${EVENTS.length} ${esc(t('home.p_events'))}</span></a>
-    <a class="pillar" href="#/scout"><span class="ic">${icon.scout}</span><b>${esc(t('home.p_scout'))}</b><span>${TESTS.length} ${esc(t('home.p_tests'))}</span></a>
-    <a class="pillar" href="#/shop"><span class="ic">${icon.bag}</span><b>${esc(t('nav.shop'))}</b><span>${PRODUCTS.length} ${esc(t('home.p_products'))}</span></a>
+  <nav class="pillars" data-stagger aria-label="${esc(t('home.sections'))}">
+    <a class="pillar" href="#/rankings"><span class="ic">${icon.trophy}</span><b>${esc(t('nav.rankings'))}</b><span><span data-to="${DEMO_ATHLETES.length}">${DEMO_ATHLETES.length}</span> ${esc(t('home.p_athletes'))}</span></a>
+    <a class="pillar" href="#/media?tab=events"><span class="ic">${icon.clock}</span><b>${esc(t('nav.events'))}</b><span><span data-to="${EVENTS.length}">${EVENTS.length}</span> ${esc(t('home.p_events'))}</span></a>
+    <a class="pillar" href="#/scout"><span class="ic">${icon.scout}</span><b>${esc(t('home.p_scout'))}</b><span><span data-to="${TESTS.length}">${TESTS.length}</span> ${esc(t('home.p_tests'))}</span></a>
+    <a class="pillar" href="#/shop"><span class="ic">${icon.bag}</span><b>${esc(t('nav.shop'))}</b><span><span data-to="${PRODUCTS.length}">${PRODUCTS.length}</span> ${esc(t('home.p_products'))}</span></a>
   </nav>
+
+  <div class="marquee" aria-hidden="true"><div class="track">${marquee(['GÖREŞ', '<b>БОРЬБА</b>', 'WRESTLING', '<b>TÜRKMENISTAN</b>'])}</div></div>
 
   <section class="section">
     <div class="container">
-      <div class="sec-title reveal"><h2><small>${esc(t('home.cal_eyebrow'))}</small>${esc(t('home.calendar'))}</h2><a class="link-more" href="#/media?tab=events">${esc(t('home.all_events'))} ${icon.arrow}</a></div>
-      <div class="fixtures reveal">${EVENTS.slice().sort((a, b) => (a.status === 'live' ? -1 : b.status === 'live' ? 1 : new Date(a.date) - new Date(b.date))).map(fixtureCard).join('')}</div>
+      <div class="sec-title"><h2 data-split><small>${esc(t('home.cal_eyebrow'))}</small>${esc(t('home.calendar'))}</h2><a class="link-more" href="#/media?tab=events">${esc(t('home.all_events'))} ${icon.arrow}</a></div>
+      <div class="fixtures" data-stagger>${EVENTS.slice().sort((a, b) => (a.status === 'live' ? -1 : b.status === 'live' ? 1 : new Date(a.date) - new Date(b.date))).map(fixtureCard).join('')}</div>
     </div>
   </section>
 
   <section class="section" style="padding-top:0">
     <div class="container">
-      <div class="sec-title reveal"><h2><small>${esc(t('rank.eyebrow'))}</small>${esc(t('rank.title'))}</h2><div class="row">${demoBadge()}<a class="link-more" href="#/rankings">${esc(t('home.all_rankings'))} ${icon.arrow}</a></div></div>
+      <div class="sec-title"><h2 data-split><small>${esc(t('rank.eyebrow'))}</small>${esc(t('rank.title'))}</h2><div class="row">${demoBadge()}<a class="link-more" href="#/rankings">${esc(t('home.all_rankings'))} ${icon.arrow}</a></div></div>
       <div class="rank-wrap reveal">
-        <a class="leader" href="#/rankings">
+        <a class="leader shine" href="#/rankings" data-tilt="4">
           ${photoSlot(leader.photo, wrestlersArt('single', { uid: 'leader' }), 'pos-top')}
           <div class="info">
             <span class="tag-gold">${esc(t('home.leader'))} · ${esc(t('rank.adults'))}</span>
-            <div class="row" style="align-items:flex-end;gap:16px;margin-top:14px"><span class="no num">01</span><div><h3>${esc(leader.name)}</h3><span class="muted">${esc(tr(regionName(leader.region)))} · ${esc(tr(styleName(leader.style)))} · ${leader.weight} ${esc(t('unit.kg'))}</span></div></div>
+            <div class="row" style="align-items:flex-end;gap:16px;margin-top:14px"><span class="no num">01</span><div><h3 data-split>${esc(leader.name)}</h3><span class="muted">${esc(tr(regionName(leader.region)))} · ${esc(tr(styleName(leader.style)))} · ${leader.weight} ${esc(t('unit.kg'))}</span></div></div>
             ${leader.real ? `<p class="mt-3" style="color:var(--c-gold);font-weight:600;font-size:var(--fs-small)">${esc(tr(leader.titles))}</p>` : ''}
             <div class="stats4">
-              <div><b class="num">${leader.score.toFixed(1)}</b><span>${esc(t('rank.points'))}</span></div>
+              <div><b class="num" data-to="${leader.score}" data-digits="1">${leader.score.toFixed(1)}</b><span>${esc(t('rank.points'))}</span></div>
               ${leader.real
-                ? `<div><b class="num">${leader.worldScore}</b><span>${esc(t('rank.world_u20'))}</span></div><div><b class="num">${leader.weight}</b><span>${esc(t('unit.kg'))}</span></div>`
+                ? `<div><b class="num">${leader.worldScore}</b><span>${esc(t('rank.world_u20'))}</span></div><div><b class="num" data-to="${leader.weight}">${leader.weight}</b><span>${esc(t('unit.kg'))}</span></div>`
                 : `<div><b class="num">${leader.wins}</b><span>${esc(t('rank.wins'))}</span></div><div><b class="num">${leader.bouts}</b><span>${esc(t('rank.bouts'))}</span></div>`}
-              <div><b class="num">${leader.medals}</b><span>${esc(t('rank.medals'))}</span></div>
+              <div><b class="num" data-to="${leader.medals}">${leader.medals}</b><span>${esc(t('rank.medals'))}</span></div>
             </div>
           </div>
         </a>
@@ -149,8 +156,8 @@ export default function home() {
     <div class="container">
       <div class="reveal">
         <span class="tag-dark">Talent Scout · ${esc(t('scout.free'))}</span>
-        <h2 class="mt-4">${t('home.banner_title')}</h2>
-        <ul>
+        <h2 class="mt-4" data-split>${t('home.banner_title')}</h2>
+        <ul data-stagger>
           <li>${icon.phone}<span>${esc(t('home.banner_1'))}</span></li>
           <li>${icon.scout}<span>${esc(t('home.banner_2'))}</span></li>
           <li>${icon.coach}<span>${esc(t('home.banner_3'))}</span></li>
@@ -159,11 +166,11 @@ export default function home() {
       </div>
       <div class="phone-mock reveal" aria-hidden="true">
         <div class="screen">
-          <div class="bar"><span>${esc(t('metric.reps'))}</span><span style="color:#2fbf71">● ${esc(t('home.mi_tracking'))}</span></div>
-          <div class="vid">${wrestlersArt('shot', { uid: 'phone' })}</div>
+          <div class="bar"><span>${esc(t('home.mi_example'))}</span><span style="color:#2fbf71">● ${esc(t('home.mi_tracking'))}</span></div>
+          <div class="vid"><div class="loop" id="phone-loop"></div><div class="scanline"></div></div>
           <div class="res">
-            <div><b class="num">18</b><span>${esc(t('metric.reps'))}</span></div>
-            <div><b class="num">92°</b><span>${esc(t('home.mi_knee'))}</span></div>
+            <div><b class="num" id="phone-reps">0</b><span>${esc(t('metric.reps'))}</span></div>
+            <div><b class="num" id="phone-knee">92°</b><span>${esc(t('home.mi_knee'))}</span></div>
             <div><b class="num">36</b><span>${esc(t('unit.per_min'))}</span></div>
           </div>
         </div>
@@ -171,12 +178,14 @@ export default function home() {
     </div>
   </section>
 
+  <div class="marquee red reverse" aria-hidden="true"><div class="track">${marquee(['TALENT SCOUT', '<b>7–22</b>', esc(t('home.p_scout')), '<b>0 TMT</b>'])}</div></div>
+
   <section class="section">
     <div class="container">
-      <div class="sec-title reveal"><h2><small>${esc(t('home.news_eyebrow'))}</small>${esc(t('home.news_title'))}</h2><a class="link-more" href="#/media?tab=news">${esc(t('home.all_news'))} ${icon.arrow}</a></div>
-      <div class="news-grid reveal">
+      <div class="sec-title"><h2 data-split><small>${esc(t('home.news_eyebrow'))}</small>${esc(t('home.news_title'))}</h2><a class="link-more" href="#/media?tab=news">${esc(t('home.all_news'))} ${icon.arrow}</a></div>
+      <div class="news-grid" data-stagger>
         ${[n1, n2, n3].map((n, i) => `
-          <a class="ncard ${i === 0 ? 'big' : ''}" href="#/news/${n.id}">
+          <a class="ncard shine ${i === 0 ? 'big' : ''}" href="#/news/${n.id}">
             ${photoSlot('news-' + n.id, wrestlersArt(['clinch', 'shot', 'single'][i], { uid: 'news' + i, skeleton: i === 0, tone: i === 1 ? 'red' : 'gold' }), i === 0 ? 'pos-left' : '')}
             <div class="in">
               <div class="row" style="gap:8px"><span class="${i === 0 ? 'tag-red' : 'tag-dark'}">${esc(tr(n.tag))}</span>${n.demo ? `<span class="tag-dark">${esc(t('common.demo'))}</span>` : `<span class="tag-gold">${esc(t('news.real'))}</span>`}</div>
@@ -192,12 +201,12 @@ export default function home() {
     <div class="container">
       <div class="store-banner reveal">
         <div class="left">
-          <div><span class="eyebrow" style="color:#0b0b0c">${esc(t('nav.shop'))}</span><h2 class="mt-3">${esc(t('home.store_title'))}</h2></div>
+          <div><span class="eyebrow" style="color:#0b0b0c">${esc(t('nav.shop'))}</span><h2 class="mt-3" data-split>${esc(t('home.store_title'))}</h2></div>
           <div class="from num"><small>${esc(t('home.price_from'))}</small>${esc(fmtMoney(minPrice))}</div>
           <div class="row row-wrap"><a class="btn" style="background:#0b0b0c;color:#f4f2ee" href="#/shop">${esc(t('shop.gear'))} ${icon.arrow}</a><a class="btn" style="border:1px solid #0b0b0c;color:#0b0b0c" href="#/shop/nutrition">${esc(t('shop.nutrition'))} 18+</a></div>
         </div>
-        <div class="right">${gear.map((p) => `
-          <a class="item" href="#/product/${p.id}"><div class="ph">${productArt[p.art]}</div><b>${esc(tr(p.name))}</b><span class="num">${esc(fmtMoney(p.price))}</span></a>`).join('')}
+        <div class="right" data-stagger>${gear.map((p) => `
+          <a class="item shine" href="#/product/${p.id}"><div class="ph">${productArt[p.art]}</div><b>${esc(tr(p.name))}</b><span class="num">${esc(fmtMoney(p.price))}</span></a>`).join('')}
         </div>
       </div>
     </div>
@@ -205,15 +214,15 @@ export default function home() {
 
   <section class="section-tight" style="padding-bottom:var(--s-16)">
     <div class="container">
-      <div class="sec-title reveal"><h2><small>${esc(t('home.partners_eyebrow'))}</small>${esc(t('home.partners'))}</h2></div>
-      <div class="partners reveal">
+      <div class="sec-title"><h2 data-split><small>${esc(t('home.partners_eyebrow'))}</small>${esc(t('home.partners'))}</h2></div>
+      <div class="partners" data-stagger>
         ${[1, 2, 3, 4, 5].map(() => `<div><span class="slot" style="display:grid;place-items:center;width:calc(100% - 28px)">${esc(t('home.partner_slot'))}</span></div>`).join('')}
         <button class="become" data-partner>${esc(t('home.become_partner'))} →</button>
       </div>
     </div>
   </section>`;
 
-  let timer = 0, idx = 0, paused = false;
+  let timer = 0, idx = 0, paused = false, loop = null, repTimer = 0;
   return {
     html,
     title: t('nav.home'),
@@ -230,6 +239,7 @@ export default function home() {
           const bar = b.querySelector('i'); bar.replaceWith(bar.cloneNode());
         });
         schedule();
+
       };
       const schedule = () => {
         clearTimeout(timer);
@@ -253,6 +263,25 @@ export default function home() {
       });
       schedule();
 
+      // Телефон в красном баннере: живая разметка приседаний, счётчик повторений
+      const loopHost = root.querySelector('#phone-loop');
+      if (loopHost) {
+        loop = mountExerciseLoop(loopHost, 'squat');
+        const reps = root.querySelector('#phone-reps');
+        const knee = root.querySelector('#phone-knee');
+        let n = 0, down = false;
+        if (!reduceMotion()) repTimer = setInterval(() => {
+          down = !down;
+          knee.textContent = (down ? 88 + Math.round(Math.random() * 8) : 168 + Math.round(Math.random() * 6)) + '°';
+          if (!down) { n = n >= 24 ? 1 : n + 1; reps.textContent = n; reps.classList.remove('bump'); void reps.offsetWidth; reps.classList.add('bump'); }
+        }, 800);
+        else reps.textContent = '18';
+      }
+
+      // Первый баннер: включаем после разбиения заголовка на слова, чтобы слова выехали
+      slideEls[0].classList.remove('on');
+      setTimeout(() => slideEls[idx].classList.add('on'), 80);
+
       root.querySelectorAll('[data-rg]').forEach((b) => b.addEventListener('click', () => {
         root.querySelectorAll('[data-rg]').forEach((z) => z.setAttribute('aria-selected', z === b));
         root.querySelector('#home-rank').innerHTML = rankTable((b.dataset.rg === 'kids' ? kids : adults).slice(0, 7));
@@ -266,6 +295,6 @@ export default function home() {
         <p class="muted mt-6" style="font-size:var(--fs-small)">${esc(t('home.partner_contact'))}</p>
         <button class="btn btn-primary btn-block mt-6" data-close>${esc(t('common.ok'))}</button>`));
     },
-    unmount() { clearTimeout(timer); },
+    unmount() { clearTimeout(timer); clearInterval(repTimer); loop?.stop(); },
   };
 }
