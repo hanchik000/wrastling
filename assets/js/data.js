@@ -128,6 +128,8 @@ export const DEMO_ATHLETES = [
 ];
 // Реальный спортсмен: только подтверждённые факты (United World Wrestling, 2024).
 // Индекс рейтинга — демо, как у всех; победы/схватки не выдумываем.
+// Демо-презентация: у лидера детского рейтинга — фото для примера (подпись на карточке)
+Object.assign(DEMO_ATHLETES.find((a) => a.id === 'd1'), { photo: 'athlete-kid', photoSample: true });
 Object.assign(DEMO_ATHLETES.find((a) => a.id === 'd21'), {
   real: true, photo: 'athlete-alp', bouts: null, wins: null, medals: 3, worldScore: '46:0',
   titles: { tk: 'U20 dünýä çempiony 2024 · U20 Aziýa çempiony 2024', ru: 'Чемпион мира U20 2024 · чемпион Азии U20 2024', en: 'U20 world champion 2024 · U20 Asian champion 2024' },

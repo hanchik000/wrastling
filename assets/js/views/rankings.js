@@ -25,7 +25,7 @@ export function rankTable(list, { full = false } = {}) {
     <tbody>${list.map((a, i) => `
       <tr class="flash" style="animation-delay:${i * 25}ms">
         <td class="pos num">${i + 1}</td>
-        <td><div class="nm"><span class="ava" ${a.age >= 18 ? `data-photo="${esc(a.photo)}"` : ''}>${esc(initials(a.name))}</span><span><b>${esc(a.name)}${a.real ? ` <span class="badge badge-gold" style="padding:2px 6px;font-size:.58rem">${esc(t('rank.real'))}</span>` : ''}</b><small>${esc(tr(regionName(a.region)))} · ${a.age} ${esc(t('unit.years'))}</small></span></div></td>
+        <td><div class="nm"><span class="ava" ${a.age >= 18 || a.photoSample ? `data-photo="${esc(a.photo)}"` : ''}>${esc(initials(a.name))}</span><span><b>${esc(a.name)}${a.real ? ` <span class="badge badge-gold" style="padding:2px 6px;font-size:.58rem">${esc(t('rank.real'))}</span>` : ''}</b><small>${esc(tr(regionName(a.region)))} · ${a.age} ${esc(t('unit.years'))}</small></span></div></td>
         <td class="hide-sm muted" style="font-size:var(--fs-small)">${esc(tr(styleName(a.style)))}</td>
         <td class="hide-sm num">${a.weight} ${esc(t('unit.kg'))}</td>
         ${full ? `<td class="hide-sm num">${a.wins != null ? a.wins + ' / ' + a.bouts : (a.worldScore ? esc(t('rank.world_u20')) : '—')}</td>` : ''}
@@ -43,8 +43,8 @@ function podium(list) {
   return `<div class="podium">${order.map((a, i) => `
     <div class="pod ${cls[i]}">
       <span class="place num">${place[i]}</span>
-      ${photoSlot(a.age >= 18 ? a.photo : null, wrestlersArt('single', { uid: 'pod' + a.id, skeleton: i === 1 }))}
-      <div class="base"><b>${esc(a.name)}</b><span>${esc(tr(regionName(a.region)))} · ${a.weight} ${esc(t('unit.kg'))}</span><span class="s num">${a.score.toFixed(1)}</span></div>
+      ${photoSlot(a.age >= 18 || a.photoSample ? a.photo : null, wrestlersArt('single', { uid: 'pod' + a.id, skeleton: i === 1 }))}
+      <div class="base"><b>${esc(a.name)}</b>${a.photoSample ? `<span style="font-size:.6rem;letter-spacing:.08em;text-transform:uppercase">${esc(t('rank.sample_photo'))}</span>` : ''}<span>${esc(tr(regionName(a.region)))} · ${a.weight} ${esc(t('unit.kg'))}</span><span class="s num">${a.score.toFixed(1)}</span></div>
     </div>`).join('')}</div>`;
 }
 

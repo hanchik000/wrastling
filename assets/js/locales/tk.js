@@ -183,10 +183,11 @@ export default {
     recording: 'Ýazgy', upcoming: 'Ýakynda', free: 'Mugt', price_from: 'Giriş — {p} TMT',
   },
   rank: {
-    world_u20: 'U20 DÇ', real: 'hakyky', future_tag: 'Talent Scout', future_title: 'Geljegiň <em>çempionlary</em>', future_note: 'Açyk reýtingde çagalaryň atlary we suratlary görkezilmeýär — diňe umumy surat.',
+    sample_photo: 'mysal surat',
+    world_u20: 'U20 DÇ', real: 'hakyky', future_tag: 'Talent Scout', future_title: 'Geljegiň <em>çempionlary</em>', future_note: 'Mysal suratlar. Iş wersiýasynda çagalaryň suratlary diňe ene-atanyň razylygy bilen çap edilýär.',
     eyebrow: '2026 möwsümi', title: 'Reýting', weight: 'Agram', wins: 'Ýeňişler', bouts: 'Tutluşyklar', medals: 'Medallar', points: 'Utuklar', all_styles: 'Ähli görnüşler',
     kids: 'Çagalaryň arasynda iň gowular', adults: 'Ulularyň arasynda iň gowular', style: 'Görnüş', all_regions: 'Ähli sebitler',
-    kids_note: '18 ýaşa çenli: diňe ady, familiýasynyň ilkinji harpy we sebiti, suratsyz.',
+    kids_note: '18 ýaşa çenli: ady, familiýasynyň ilkinji harpy we sebiti. Surat diňe ene-atanyň razylygy bilen.',
     adults_note: '18–22 ýaş.',
     index_note: 'Görkeziji topar içinde hasaplanýar: görnüş, ýaş, agram we jyns. Häzir demo maglumatlar görkezilýär.',
     empty: 'Hiç kim tapylmady', empty_hint: 'Süzgüçleri üýtgediň',

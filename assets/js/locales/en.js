@@ -182,10 +182,11 @@ export default {
     recording: 'Recording', upcoming: 'Upcoming', free: 'Free', price_from: 'Access — {p} TMT',
   },
   rank: {
-    world_u20: 'U20 Worlds', real: 'real', future_tag: 'Talent Scout', future_title: 'Future <em>champions</em>', future_note: 'Children’s names and photos are not shown in the public rankings — only a group photo.',
+    sample_photo: 'sample photo',
+    world_u20: 'U20 Worlds', real: 'real', future_tag: 'Talent Scout', future_title: 'Future <em>champions</em>', future_note: 'Sample photos. In the live version children’s photos are published only with parental consent.',
     eyebrow: 'Season 2026', title: 'Rankings', weight: 'Weight', wins: 'Wins', bouts: 'Bouts', medals: 'Medals', points: 'Points', all_styles: 'All styles',
     kids: 'Top youth athletes', adults: 'Top adult athletes', style: 'Style', all_regions: 'All regions',
-    kids_note: 'Under 18: only first name, surname initial and region, no photos.',
+    kids_note: 'Under 18: first name, surname initial and region. Photos only with parental consent.',
     adults_note: 'Ages 18–22.',
     index_note: 'The index is calculated within a group: style, age, weight and sex. Demo data shown.',
     empty: 'No one found', empty_hint: 'Change the filters',
