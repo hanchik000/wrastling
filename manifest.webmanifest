@@ -1,0 +1,9 @@
+{
+  "name": "Wrestling Talent AI",
+  "short_name": "Talent AI",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#0b0b0c",
+  "theme_color": "#0b0b0c",
+  "icons": [{ "src": "assets/img/icon.svg", "sizes": "any", "type": "image/svg+xml" }]
+}

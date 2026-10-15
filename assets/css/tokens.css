@@ -1,0 +1,105 @@
+/* WRESTLING TALENT AI — design tokens
+   Цвета, шрифты, отступы, радиусы, движение. Меняются только здесь. */
+
+/* Шрифты лежат в проекте (без Google Fonts — он может быть недоступен).
+   Набор: латиница с туркменскими буквами + кириллица. Лицензия OFL. */
+@font-face {
+  font-family: "Oswald";
+  src: url("../fonts/Oswald.woff") format("woff");
+  font-weight: 200 700;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Inter";
+  src: url("../fonts/Inter.woff") format("woff");
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+:root {
+  /* Цвет */
+  --c-black: #0b0b0c;
+  --c-graphite: #18191c;
+  --c-charcoal: #26272b;
+  --c-steel: #34363b;
+  --c-offwhite: #f4f2ee;
+  --c-paper: #ebe8e2;
+  --c-gray: #8c8f96;
+  --c-gray-2: #b9bbc0;
+  --c-gold: #c8a45a;
+  --c-gold-soft: rgba(200, 164, 90, 0.14);
+  --c-live: #e23b3b;
+  --c-signal: #2fbf71;
+  --c-signal-soft: rgba(47, 191, 113, 0.14);
+  --c-model: #7fa7ff;
+  --c-model-soft: rgba(127, 167, 255, 0.14);
+
+  /* Семантика — тёмная тема по умолчанию */
+  --bg: var(--c-black);
+  --surface: var(--c-graphite);
+  --surface-2: var(--c-charcoal);
+  --text: var(--c-offwhite);
+  --text-2: #a3a6ad;
+  --line: rgba(244, 242, 238, 0.09);
+  --line-strong: rgba(244, 242, 238, 0.18);
+  --focus: var(--c-gold);
+
+  /* Шрифты */
+  --font-display: "Oswald", "Arial Narrow", "Roboto Condensed", system-ui, sans-serif;
+  --font-ui: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+
+  /* Шкала текста */
+  --fs-hero: clamp(2.9rem, 9vw, 6.6rem);
+  --fs-h1: clamp(2.1rem, 5.4vw, 3.8rem);
+  --fs-h2: clamp(1.6rem, 3.6vw, 2.5rem);
+  --fs-h3: 1.25rem;
+  --fs-body: 1rem;
+  --fs-small: 0.875rem;
+  --fs-micro: 0.75rem;
+  --fs-stat: clamp(2.4rem, 6vw, 3.6rem);
+
+  /* Отступы: шаг 4px */
+  --s-1: 4px;  --s-2: 8px;  --s-3: 12px; --s-4: 16px; --s-5: 20px;
+  --s-6: 24px; --s-8: 32px; --s-10: 40px; --s-12: 48px; --s-16: 64px; --s-24: 96px;
+
+  /* Радиусы */
+  --r-sm: 8px;
+  --r-md: 12px;
+  --r-lg: 20px;
+  --r-pill: 999px;
+
+  /* Сетка */
+  --container: 1240px;
+  --gutter: 16px;
+  --nav-h: 64px;
+  --bottom-h: 68px;
+
+  /* Движение */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --t-press: 120ms;
+  --t-sheet: 280ms;
+  --t-reveal: 400ms;
+}
+
+@media (min-width: 768px) {
+  :root { --gutter: 32px; }
+}
+
+/* Светлые зоны: магазин, статьи, кабинет федерации */
+.theme-light {
+  --bg: var(--c-offwhite);
+  --surface: #ffffff;
+  --surface-2: var(--c-paper);
+  --text: #121315;
+  --text-2: #5f626a;
+  --line: rgba(18, 19, 21, 0.1);
+  --line-strong: rgba(18, 19, 21, 0.2);
+  --focus: #8a6a26;
+  color: var(--text);
+  background: var(--bg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --t-press: 0ms; --t-sheet: 0ms; --t-reveal: 0ms; }
+}
