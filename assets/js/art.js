@@ -1,7 +1,7 @@
 // Линейные иллюстрации-заглушки вместо фото. Помечаются «фото скоро» и заменяются настоящими снимками.
 const S = (body, vb = '0 0 120 120') =>
   `<svg viewBox="${vb}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${body}</svg>`;
-const G = '#c8a45a';
+const G = '#27b663';
 
 export const productArt = {
   shoe: S(`<path d="M18 74c0-14 6-30 10-36l14 2c2 8 10 14 22 18l26 8c8 3 12 8 12 14v6H18z"/><path d="M18 86h84"/><path d="M42 48l6 8m2-12 6 8m2-10 6 8" stroke="${G}"/><path d="M18 80h84" stroke-dasharray="3 5"/>`),
@@ -55,13 +55,13 @@ function figure(P, uid, { width = 30, skeleton = true, rim = true } = {}) {
     out += `<g opacity=".9">${SKEL.map(([a, b]) => line(a, b, 1.6, 'rgba(244,242,238,.85)')).join('')}</g>`;
     out += Object.entries(P).map(([k, [x, y]]) => {
       const key = ['hipF', 'knF', 'shF', 'elF'].includes(k);
-      return `<path d="${golD(x, y, key ? 6 : 4)}" fill="${key ? '#c8a45a' : '#0b0b0c'}" stroke="${key ? '#c8a45a' : '#f4f2ee'}" stroke-width="1.3"/>`;
+      return `<path d="${golD(x, y, key ? 6 : 4)}" fill="${key ? '#27b663' : '#0b0b0c'}" stroke="${key ? '#27b663' : '#f4f2ee'}" stroke-width="1.3"/>`;
     }).join('');
   }
   return out;
 }
 function defs(uid, tone = 'gold') {
-  const rimColor = tone === 'red' ? '#e23b3b' : '#c8a45a';
+  const rimColor = tone === 'red' ? '#e23b3b' : '#27b663';
   return `<defs>
     <linearGradient id="body-${uid}" x1="0" y1="60" x2="0" y2="490" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#3a3b42"/><stop offset=".55" stop-color="#1f2024"/><stop offset="1" stop-color="#0f1012"/></linearGradient>
     <linearGradient id="rim-${uid}" x1="80" y1="60" x2="420" y2="480" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="${rimColor}" stop-opacity=".9"/><stop offset=".6" stop-color="${rimColor}" stop-opacity=".15"/><stop offset="1" stop-color="${rimColor}" stop-opacity="0"/></linearGradient>
@@ -88,19 +88,19 @@ export function wrestlersArt(kind = 'clinch', { tone = 'gold', uid = kind, skele
   if (kind === 'single') {
     return `<svg viewBox="0 0 400 500" preserveAspectRatio="xMidYMax meet" aria-hidden="true">${defs(uid, tone)}
       <ellipse cx="200" cy="300" rx="190" ry="220" fill="url(#glow-${uid})"/>
-      <path d="${golD(200, 260, 170)}" fill="none" stroke="rgba(200,164,90,.12)"/>
+      <path d="${golD(200, 260, 170)}" fill="none" stroke="rgba(39,182,99,.12)"/>
       ${figure(STANCE_FRONT, uid, { width: 34, skeleton })}</svg>`;
   }
   if (kind === 'shot') {
     return `<svg viewBox="0 0 500 500" preserveAspectRatio="xMidYMax meet" aria-hidden="true">${defs(uid, tone)}
       <ellipse cx="260" cy="320" rx="240" ry="200" fill="url(#glow-${uid})"/>
-      <path d="M90 470 Q 220 250 420 300" fill="none" stroke="rgba(200,164,90,.55)" stroke-width="1.6" stroke-dasharray="4 7"/>
+      <path d="M90 470 Q 220 250 420 300" fill="none" stroke="rgba(39,182,99,.55)" stroke-width="1.6" stroke-dasharray="4 7"/>
       ${figure(SHOT, uid, { width: 30, skeleton })}</svg>`;
   }
   const B = mirror(CLINCH_A, 300);
   return `<svg viewBox="0 0 600 500" preserveAspectRatio="xMidYMax meet" aria-hidden="true">${defs(uid, tone)}${defs(uid + 'b', tone)}
     <ellipse cx="300" cy="300" rx="280" ry="220" fill="url(#glow-${uid})"/>
-    <path d="${golD(300, 280, 200)}" fill="none" stroke="rgba(200,164,90,.1)"/>
+    <path d="${golD(300, 280, 200)}" fill="none" stroke="rgba(39,182,99,.1)"/>
     <ellipse cx="300" cy="480" rx="220" ry="14" fill="rgba(0,0,0,.45)"/>
     ${figure(B, uid + 'b', { width: 32, skeleton: false })}
     ${figure(CLINCH_A, uid, { width: 32, skeleton })}</svg>`;

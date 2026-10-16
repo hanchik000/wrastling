@@ -36,8 +36,8 @@ function lineChart(points) {
   const d = points.map((p, i) => `${i ? 'L' : 'M'}${X(i)} ${Y(p.v)}`).join('');
   return `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(t('result.progress'))}">
     <line x1="${pad}" x2="${W - pad}" y1="${H - pad}" y2="${H - pad}" stroke="var(--line-strong)"/>
-    <path d="${d}" fill="none" stroke="#c8a45a" stroke-width="2"/>
-    ${points.map((p, i) => `<circle cx="${X(i)}" cy="${Y(p.v)}" r="${i === points.length - 1 ? 5 : 3.5}" fill="${i === points.length - 1 ? '#c8a45a' : 'var(--bg)'}" stroke="#c8a45a" stroke-width="1.5"/>
+    <path d="${d}" fill="none" stroke="#27b663" stroke-width="2"/>
+    ${points.map((p, i) => `<circle cx="${X(i)}" cy="${Y(p.v)}" r="${i === points.length - 1 ? 5 : 3.5}" fill="${i === points.length - 1 ? '#27b663' : 'var(--bg)'}" stroke="#27b663" stroke-width="1.5"/>
       <text x="${X(i)}" y="${Y(p.v) - 10}" text-anchor="middle">${p.v}</text>
       <text x="${X(i)}" y="${H - 6}" text-anchor="middle">${esc(p.label)}</text>`).join('')}
   </svg>`;
@@ -139,7 +139,7 @@ export default function result({ params, go }) {
         ${chartPts.length >= 2 ? `<div class="panel"><h2 class="eyebrow mb-3">${esc(t('result.progress'))}</h2>${lineChart(chartPts.slice(-8))}</div>` : ''}
 
         ${r.coach?.status === 'reviewed' ? `
-        <div class="panel" style="border-color:rgba(200,164,90,.4)">
+        <div class="panel" style="border-color:rgba(39,182,99,.4)">
           <div class="row between mb-3"><h2 class="eyebrow">${esc(t('result.coach_title'))}</h2><span class="badge badge-coach">${esc(t('label.coach'))}</span></div>
           <div class="row" style="align-items:baseline"><b class="display num" style="font-size:2.6rem">${r.coach.score}</b><span class="muted">/ 10 · ${esc(t('review.technique'))}</span></div>
           ${r.coach.repsConfirmed != null ? `<p class="mt-2 muted">${esc(t('review.reps_confirm'))}: <b class="num" style="color:var(--text)">${r.coach.repsConfirmed}</b></p>` : ''}

@@ -46,7 +46,7 @@ export default function review({ params, user, go }) {
         ${r.testId === 'jump' ? `<div class="field"><label for="dist">${esc(t('review.distance'))}</label><input id="dist" class="input num" inputmode="numeric" placeholder="180" value="${esc(c.distance ?? '')}"></div>` : ''}
         <div class="field">
           <label for="score">${esc(t('review.technique'))}: <b data-score-out class="num">${c.score ?? 7}</b> / 10</label>
-          <input id="score" type="range" min="1" max="10" step="1" value="${c.score ?? 7}" style="accent-color:#c8a45a;width:100%">
+          <input id="score" type="range" min="1" max="10" step="1" value="${c.score ?? 7}" style="accent-color:#27b663;width:100%">
         </div>
         <div class="field"><label for="cmt">${esc(t('review.comment'))}</label><textarea id="cmt" class="input" placeholder="${esc(t('review.comment_ph'))}">${esc(c.comment || '')}</textarea></div>
         <fieldset class="stack" style="border:0;padding:0;margin:0">

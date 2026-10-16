@@ -59,7 +59,7 @@ export default function profile({ user, go }) {
     } else if (tab === 'invites') {
       const invited = getResults().filter((r) => r.coach?.recommendation === 'invite');
       host.innerHTML = invited.length ? `<div class="stack">${invited.map((r) => `
-        <div class="panel" style="border-color:rgba(200,164,90,.45)">
+        <div class="panel" style="border-color:rgba(39,182,99,.45)">
           <div class="row between"><span class="badge badge-gold">${esc(t('review.rec_invite'))}</span>${'<span class="badge badge-demo">' + esc(t('common.demo')) + '</span>'}</div>
           <h3 class="mt-3">${esc(t('profile.invite_title'))}</h3>
           <p class="muted mt-2">${esc(t('profile.invite_body'))}</p>

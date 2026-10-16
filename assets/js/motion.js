@@ -51,14 +51,14 @@ const KEY_JOINTS = ['hipF', 'knF', 'shF', 'wrF'];
 export function mountMotionIntelligence(stage, { onDone } = {}) {
   const svg = el('svg', { class: 'mi', viewBox: matchMedia('(max-width: 640px)').matches ? '36 -34 400 500' : '36 10 400 500', role: 'img', 'aria-label': t('home.mi_aria') });
   const defs = el('defs');
-  defs.innerHTML = `<radialGradient id="mi-glow" cx="50%" cy="40%" r="60%"><stop offset="0" stop-color="#c8a45a" stop-opacity=".16"/><stop offset="1" stop-color="#c8a45a" stop-opacity="0"/></radialGradient>`;
+  defs.innerHTML = `<radialGradient id="mi-glow" cx="50%" cy="40%" r="60%"><stop offset="0" stop-color="#27b663" stop-opacity=".16"/><stop offset="1" stop-color="#27b663" stop-opacity="0"/></radialGradient>`;
   svg.appendChild(defs);
 
   // Сетка гёль и пол
   const grid = el('g', { opacity: 0.5 });
   for (let x = 40; x < 400; x += 80) grid.appendChild(el('line', { x1: x, y1: 0, x2: x, y2: 500, stroke: 'rgba(244,242,238,.04)' }));
   for (let y = 60; y < 500; y += 80) grid.appendChild(el('line', { x1: 0, y1: y, x2: 400, y2: y, stroke: 'rgba(244,242,238,.04)' }));
-  grid.appendChild(el('path', { d: golPath(200, 260, 150), stroke: 'rgba(200,164,90,.08)', fill: 'url(#mi-glow)' }));
+  grid.appendChild(el('path', { d: golPath(200, 260, 150), stroke: 'rgba(39,182,99,.08)', fill: 'url(#mi-glow)' }));
   grid.appendChild(el('path', { d: 'M200 120 340 260 200 400 60 260z', stroke: 'rgba(244,242,238,.05)', fill: 'none' }));
   svg.appendChild(grid);
   svg.appendChild(el('line', { x1: 30, y1: 414, x2: 370, y2: 414, stroke: 'rgba(244,242,238,.22)', 'stroke-width': 1 }));
@@ -71,7 +71,7 @@ export function mountMotionIntelligence(stage, { onDone } = {}) {
   svg.appendChild(sil);
 
   // Траектории
-  const trailHip = el('path', { fill: 'none', stroke: 'rgba(200,164,90,.75)', 'stroke-width': 1.6, 'stroke-dasharray': '3 5' });
+  const trailHip = el('path', { fill: 'none', stroke: 'rgba(39,182,99,.75)', 'stroke-width': 1.6, 'stroke-dasharray': '3 5' });
   const trailWr = el('path', { fill: 'none', stroke: 'rgba(244,242,238,.55)', 'stroke-width': 1.4, 'stroke-dasharray': '2 5' });
   svg.append(trailHip, trailWr);
 
@@ -88,7 +88,7 @@ export function mountMotionIntelligence(stage, { onDone } = {}) {
   const joints = el('g');
   const jointEls = Object.keys(STANCE).map((name) => {
     const key = KEY_JOINTS.includes(name);
-    const p = el('path', { fill: key ? '#c8a45a' : '#0b0b0c', stroke: key ? '#c8a45a' : '#f4f2ee', 'stroke-width': 1.4, opacity: 0 });
+    const p = el('path', { fill: key ? '#27b663' : '#0b0b0c', stroke: key ? '#27b663' : '#f4f2ee', 'stroke-width': 1.4, opacity: 0 });
     p.dataset.name = name;
     joints.appendChild(p);
     return p;
@@ -96,8 +96,8 @@ export function mountMotionIntelligence(stage, { onDone } = {}) {
   svg.appendChild(joints);
 
   // Дуга угла колена
-  const arc = el('path', { fill: 'none', stroke: '#c8a45a', 'stroke-width': 1.6, opacity: 0 });
-  const arcLabel = el('text', { fill: '#c8a45a', 'font-size': 12, 'font-family': 'Inter, sans-serif', 'font-weight': 600, opacity: 0 });
+  const arc = el('path', { fill: 'none', stroke: '#27b663', 'stroke-width': 1.6, opacity: 0 });
+  const arcLabel = el('text', { fill: '#27b663', 'font-size': 12, 'font-family': 'Inter, sans-serif', 'font-weight': 600, opacity: 0 });
   svg.append(arc, arcLabel);
 
   stage.prepend(svg);
@@ -270,7 +270,7 @@ const EX_BONES = [['head', 'sh'], ['sh', 'el'], ['el', 'wr'], ['sh', 'hip'], ['h
 export function mountExerciseLoop(host, testId) {
   const frames = EX[testId] || EX.squat;
   const svg = el('svg', { viewBox: '0 0 300 300', role: 'img', 'aria-label': t('scout.demo_aria') });
-  svg.appendChild(el('path', { d: golPath(150, 150, 120), stroke: 'rgba(200,164,90,.1)', fill: 'none' }));
+  svg.appendChild(el('path', { d: golPath(150, 150, 120), stroke: 'rgba(39,182,99,.1)', fill: 'none' }));
   svg.appendChild(el('line', { x1: 20, y1: 260, x2: 280, y2: 260, stroke: 'rgba(244,242,238,.25)' }));
   const sil = el('g', { stroke: '#2b2c31', 'stroke-width': 22, 'stroke-linecap': 'round' });
   const g = el('g', { stroke: '#f4f2ee', 'stroke-width': 2, 'stroke-linecap': 'round' });
@@ -278,7 +278,7 @@ export function mountExerciseLoop(host, testId) {
   const lines = EX_BONES.map(() => g.appendChild(el('line')));
   const headSil = el('circle', { r: 15, fill: '#2b2c31' });
   const dots = Object.keys(frames[0]).map((n) => {
-    const p = el('path', { fill: ['hip', 'kn', 'el'].includes(n) ? '#c8a45a' : '#0b0b0c', stroke: ['hip', 'kn', 'el'].includes(n) ? '#c8a45a' : '#f4f2ee', 'stroke-width': 1.3 });
+    const p = el('path', { fill: ['hip', 'kn', 'el'].includes(n) ? '#27b663' : '#0b0b0c', stroke: ['hip', 'kn', 'el'].includes(n) ? '#27b663' : '#f4f2ee', 'stroke-width': 1.3 });
     p.dataset.n = n;
     return p;
   });

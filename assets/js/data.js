@@ -211,7 +211,7 @@ export const EVENTS = [
 // ---------- ДЕМО: товары ----------
 const prod = (o) => ({ demo: true, stock: 10, colors: [], sizes: [], ...o });
 export const PRODUCTS = [
-  prod({ id: 'p1', store: 'gear', cat: 'shoes', art: 'shoe', price: 650, colors: ['#121315', '#c8a45a'],
+  prod({ id: 'p1', store: 'gear', cat: 'shoes', art: 'shoe', price: 650, colors: ['#121315', '#27b663'],
     sizes: ['36', '37', '38', '39', '40', '41', '42', '43', '44', '45'], soldOut: ['36', '45'],
     name: { tk: 'Göreş aýakgaby Pro', ru: 'Борцовки Pro', en: 'Wrestling shoes Pro' },
     desc: { tk: 'Ýeňil, ýapyşýan ady, topugy berkidýär.', ru: 'Лёгкие, цепкая подошва, фиксация голеностопа.', en: 'Light, grippy sole, ankle support.' } }),
@@ -231,7 +231,7 @@ export const PRODUCTS = [
   prod({ id: 'p6', store: 'gear', cat: 'bags', art: 'bag', price: 340, colors: ['#121315'], sizes: [],
     name: { tk: 'Sport sumkasy 40 l', ru: 'Спортивная сумка 40 л', en: 'Gym bag 40 L' },
     desc: { tk: 'Aýakgap üçin aýratyn bölüm.', ru: 'Отдельный отсек для обуви.', en: 'Separate shoe compartment.' } }),
-  prod({ id: 'p7', store: 'gear', cat: 'accessories', art: 'bottle', price: 70, colors: ['#121315', '#c8a45a'], sizes: [],
+  prod({ id: 'p7', store: 'gear', cat: 'accessories', art: 'bottle', price: 70, colors: ['#121315', '#27b663'], sizes: [],
     name: { tk: 'Suw çüýşesi 750 ml', ru: 'Бутылка для воды 750 мл', en: 'Water bottle 750 ml' },
     desc: { tk: 'Metal, sowuklygy saklaýar.', ru: 'Металлическая, держит холод.', en: 'Metal, keeps drinks cold.' } }),
   prod({ id: 'p8', store: 'gear', cat: 'merch', art: 'tee', price: 0, stock: 0, merchSoon: true, colors: [], sizes: [],

@@ -34,7 +34,7 @@ export default function record({ params, query, user, go }) {
         <video data-preview playsinline muted autoplay></video>
         <div class="frame-guide" aria-hidden="true">
           <svg viewBox="0 0 100 160" preserveAspectRatio="xMidYMid meet" fill="none" stroke="rgba(255,255,255,.55)" stroke-width=".5">
-            <path d="M14 14h10M14 14v10M86 14H76M86 14v10M14 146h10M14 146v-10M86 146H76M86 146v-10" stroke="#c8a45a" stroke-width=".9"/>
+            <path d="M14 14h10M14 14v10M86 14H76M86 14v10M14 146h10M14 146v-10M86 146H76M86 146v-10" stroke="#27b663" stroke-width=".9"/>
             <g stroke-dasharray="1.5 2" opacity=".6"><circle cx="50" cy="38" r="6"/><path d="M50 44v34M38 54h24M50 78l-8 40M50 78l8 40"/></g>
           </svg>
         </div>

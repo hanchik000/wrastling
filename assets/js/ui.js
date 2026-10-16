@@ -45,9 +45,9 @@ export const icon = {
 // Знак гёль — восьмиугольник с ромбом. Используется как логотип и маркер суставов.
 export function golMark(cls = '') {
   return `<svg class="${cls}" viewBox="0 0 40 40" fill="none" aria-hidden="true">
-    <path d="M14 3h12l11 11v12L26 37H14L3 26V14z" stroke="#c8a45a" stroke-width="1.6"/>
+    <path d="M14 3h12l11 11v12L26 37H14L3 26V14z" stroke="#27b663" stroke-width="1.6"/>
     <path d="M20 9l11 11-11 11L9 20z" stroke="#f4f2ee" stroke-width="1.6"/>
-    <circle cx="20" cy="20" r="2.6" fill="#c8a45a"/>
+    <circle cx="20" cy="20" r="2.6" fill="#27b663"/>
   </svg>`;
 }
 

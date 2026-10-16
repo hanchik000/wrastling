@@ -253,7 +253,7 @@ export function drawFrame(ctx, frame, video, { trail = [] } = {}) {
   const X = (p) => ox + p[0] * w, Y = (p) => oy + p[1] * h;
 
   if (trail.length > 1) {
-    ctx.strokeStyle = 'rgba(200,164,90,.8)'; ctx.lineWidth = 1.5; ctx.setLineDash([3, 5]);
+    ctx.strokeStyle = 'rgba(39,182,99,.8)'; ctx.lineWidth = 1.5; ctx.setLineDash([3, 5]);
     ctx.beginPath(); trail.forEach((p, i) => (i ? ctx.lineTo(X(p), Y(p)) : ctx.moveTo(X(p), Y(p)))); ctx.stroke();
     ctx.setLineDash([]);
   }
@@ -273,8 +273,8 @@ export function drawFrame(ctx, frame, video, { trail = [] } = {}) {
     ctx.beginPath();
     ctx.moveTo(x - a, y - r); ctx.lineTo(x + a, y - r); ctx.lineTo(x + r, y - a); ctx.lineTo(x + r, y + a);
     ctx.lineTo(x + a, y + r); ctx.lineTo(x - a, y + r); ctx.lineTo(x - r, y + a); ctx.lineTo(x - r, y - a); ctx.closePath();
-    ctx.fillStyle = key ? '#c8a45a' : '#0b0b0c'; ctx.fill();
-    ctx.strokeStyle = key ? '#c8a45a' : '#f4f2ee'; ctx.lineWidth = 1.4; ctx.stroke();
+    ctx.fillStyle = key ? '#27b663' : '#0b0b0c'; ctx.fill();
+    ctx.strokeStyle = key ? '#27b663' : '#f4f2ee'; ctx.lineWidth = 1.4; ctx.stroke();
   });
 }
 
