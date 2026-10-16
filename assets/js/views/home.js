@@ -5,7 +5,7 @@ import { esc, icon, demoBadge, photoSlot, sheet, reduceMotion, hydratePhotos } f
 import { DEMO_ATHLETES, EVENTS, NEWS, PRODUCTS, TESTS, regionName, styleName } from '../data.js';
 import { newsArt, productArt, wrestlersArt } from '../art.js';
 import { mountExerciseLoop } from '../motion.js';
-import { rankTable } from './rankings.js';
+import { rankTable, bindRating } from './rankings.js';
 
 const SLIDE_MS = 7000;
 
@@ -234,6 +234,7 @@ export default function home() {
     html,
     title: t('nav.home'),
     mount(root) {
+      bindRating(root.querySelector('#home-rank'));
       const slider = root.querySelector('#slider');
       const slideEls = [...slider.querySelectorAll('.slide')];
       const tabs = [...slider.querySelectorAll('[data-slide]')];

@@ -95,6 +95,8 @@ export const TESTS = [
 
 export const testById = (id) => TESTS.find((x) => x.id === id);
 
+import { rate, demoResults } from './rating.js';
+
 // ---------- ДЕМО: спортсмены для рейтинга ----------
 const A = (id, name, age, region, style, weight, score, delta) => {
   // Демо-статистика выводится из индекса, чтобы цифры были согласованы между собой
@@ -118,7 +120,7 @@ export const DEMO_ATHLETES = [
   A('d10', 'Aýna M.', 10, 'asgabat', 'women', 30, 81.0, 2),
   A('d11', 'Ylýas R.', 9, 'balkan', 'free', 28, 79.5, -1),
   A('d12', 'Begenç D.', 14, 'dasoguz', 'greco', 48, 78.4, 0),
-  A('d21', 'Alp Arslan Begenjov', 20, 'asgabat', 'free', 79, 95.0, 0),
+  A('d21', 'Alp Arslan Begenjov', 20, 'asgabat', 'free', 86, 95.0, 0),
   A('d22', 'Ýusup K.', 20, 'ahal', 'free', 74, 92.0, 0),
   A('d23', 'Gülşat B.', 19, 'lebap', 'women', 62, 90.6, 2),
   A('d24', 'Arslan Ç.', 22, 'balkan', 'goresh', 86, 89.9, -1),
@@ -132,10 +134,32 @@ export const DEMO_ATHLETES = [
 // Демо-презентация: у лидера детского рейтинга — фото для примера (подпись на карточке)
 Object.assign(DEMO_ATHLETES.find((a) => a.id === 'd1'), { photo: 'athlete-kid', photoSample: true });
 Object.assign(DEMO_ATHLETES.find((a) => a.id === 'd21'), {
-  real: true, photo: 'athlete-alp', bouts: null, wins: null, medals: 3, worldScore: '46:0',
-  titles: { tk: 'U20 dünýä çempiony 2024 · U20 Aziýa çempiony 2024', ru: 'Чемпион мира U20 2024 · чемпион Азии U20 2024', en: 'U20 world champion 2024 · U20 Asian champion 2024' },
+  real: true, photo: 'athlete-alp', bouts: null, wins: null, medals: 5, worldScore: '46:0',
+  titles: { tk: 'U23 Aziýa çempiony 2026 · Aziýa çempionatynyň bürünç medaly 2026 · U20 dünýä çempiony 2024', ru: 'Чемпион Азии U23 2026 · бронза чемпионата Азии 2026 · чемпион мира U20 2024', en: 'U23 Asian champion 2026 · Asian Championships bronze 2026 · U20 world champion 2024' },
   source: 'https://uww.org/article/begenjov-wins-turkmenistans-historic-world-title-freestyle',
 });
+
+// Очки рейтинга считаются из результатов турниров (rating.js). Исходное число в A() — только «сила»
+// для генерации демо-результатов: чем она выше, тем лучше места.
+Object.assign(DEMO_ATHLETES.find((a) => a.id === 'd21'), {
+  realResults: [
+    { name: { tk: 'U23 Aziýa çempionaty, Danang', ru: 'Чемпионат Азии U23, Дананг', en: 'U23 Asian Championships, Da Nang' }, level: 'major', date: '2026-05-27', monthOnly: true, place: 1, early: 2, real: true, source: 'https://turkmenistan.gov.tm/en/post/106765/alp-arslan-begenjov-wins-gold-first-time-u23-asian-freestyle-wrestling-championships' },
+    { name: { tk: 'Aziýa çempionaty, Bişkek', ru: 'Чемпионат Азии, Бишкек', en: 'Asian Championships, Bishkek' }, level: 'major', date: '2026-04-12', monthOnly: true, place: 3, early: 1, real: true, source: 'https://uww.org/article/iran-caps-asian-championships-three-golds-team-title' },
+    { name: { tk: 'Türkmenistanyň çempionaty, Türkmenbaşy', ru: 'Чемпионат Туркменистана, Туркменбашы', en: 'Turkmenistan championship, Turkmenbashy' }, level: 'national', date: '2025-01-09', monthOnly: true, place: 1, early: 0, real: true, source: 'https://aoc.gov.tm/en/single-news/609' },
+    { name: { tk: 'U20 dünýä çempionaty, Pontewedra', ru: 'Чемпионат мира U20, Понтеведра', en: 'U20 World Championships, Pontevedra' }, level: 'major', date: '2024-09-07', monthOnly: true, place: 1, early: 0, real: true, source: 'https://uww.org/article/begenjov-wins-turkmenistans-historic-world-title-freestyle' },
+  ],
+});
+export function ratingOf(a, today = new Date()) {
+  // У реального спортсмена — только подтверждённые результаты, ничего не придумываем
+  const results = a.realResults || demoResults(a.id, Math.max(0, Math.min(1, (a.strength - 78) / 20)), today);
+  return rate(results, today);
+}
+for (const a of DEMO_ATHLETES) {
+  a.strength = a.score;
+  const r = ratingOf(a);
+  a.score = r.total;
+  if (!a.real) a.medals = r.rows.filter((x) => x.fresh && x.place && x.place <= 3).length;
+}
 
 // ---------- ДЕМО: новости ----------
 export const NEWS = [

@@ -1132,3 +1132,38 @@ select.input { appearance: none; -webkit-appearance: none; padding-right: 34px;
 .cam-table { font-size: var(--fs-small); }
 @media (max-width: 819px) { .cam-tiles .ttile:last-child { grid-column: auto; } }
 .cam-tiles .ttile b { font-size: clamp(1.8rem, 7vw, 2.6rem); }
+
+/* ---------- Рейтинг: расшифровка очков ---------- */
+.rtable tr[data-ath], .pod[data-ath] { cursor: pointer; }
+.rtable tr[data-ath]:focus-visible td { outline: none; background: var(--c-gold-soft); }
+.pts-link { border-bottom: 1px dashed currentColor; padding-bottom: 1px; }
+.rb-total { text-align: right; display: grid; line-height: 1; }
+.rb-total b { font-family: var(--font-display); font-size: 2.6rem; color: var(--c-gold); }
+.rb-total span { font-size: var(--fs-micro); letter-spacing: .1em; text-transform: uppercase; color: var(--text-2); margin-top: 4px; }
+.rb-formula { font-size: var(--fs-small); padding: 10px 12px; border-radius: var(--r-md); background: var(--c-gold-soft); border: 1px solid rgba(39,182,99,.3); }
+.rb-list { display: grid; gap: 8px; }
+.rres { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 12px; border-radius: var(--r-md); background: rgba(255,255,255,.04); border: 1px solid var(--line); }
+.rres-h { display: grid; gap: 3px; min-width: 0; }
+.rres-h > span { font-size: var(--fs-micro); color: var(--text-2); }
+.rres-h a { color: var(--c-gold); }
+.rres-c { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+.rres-c i { font-style: normal; font-size: .72rem; font-weight: 600; padding: 3px 8px; border-radius: 999px; background: rgba(255,255,255,.08); white-space: nowrap; }
+.rres-c i.medal.m1 { background: rgba(212,175,55,.22); color: #f3d77a; }
+.rres-c i.medal.m2 { background: rgba(200,205,215,.18); color: #dfe3ea; }
+.rres-c i.medal.m3 { background: rgba(205,127,50,.22); color: #f0b37a; }
+.rres-c i.plus { background: var(--c-gold-soft); color: #9ff0c2; }
+.rres-c i.half { background: rgba(60,198,207,.16); color: #bdf1f4; }
+.rres-t { font-family: var(--font-display); font-size: 1.5rem; }
+.rres.out { opacity: .5; }
+.rres.out .rres-t { color: var(--text-2); }
+.rb-sum { display: flex; justify-content: space-between; align-items: baseline; padding: 14px 12px 0; margin-top: 10px; border-top: 1px solid var(--line-strong); }
+.rb-sum span { font-weight: 700; text-transform: uppercase; letter-spacing: .1em; font-size: var(--fs-small); }
+.rb-sum b { font-family: var(--font-display); font-size: 2rem; color: var(--c-gold); }
+.rb-rules .rb-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s-6); }
+.rb-rules h3 { font-size: .8rem; letter-spacing: .1em; text-transform: uppercase; color: var(--text-2); margin-bottom: 8px; }
+.rb-rules ul { list-style: none; padding: 0; margin: 0; display: grid; }
+.rb-rules li { display: flex; justify-content: space-between; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--line); font-size: var(--fs-small); }
+.rb-rules li b { color: var(--c-gold); font-family: var(--font-display); font-size: 1.05rem; }
+@media (max-width: 819px) { .rb-rules .rb-grid { grid-template-columns: 1fr; } }
+.theme-light .rres-c i.medal.m1 { color: #8a6a00; } .theme-light .rres-c i.medal.m2 { color: #555; } .theme-light .rres-c i.medal.m3 { color: #8a4a12; }
+.theme-light .rres-c i.plus { color: #0b6b35; } .theme-light .rres-c i.half { color: #126b72; }

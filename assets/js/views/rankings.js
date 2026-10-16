@@ -1,7 +1,8 @@
 import { initFx } from '../fx.js';
-import { t, tr } from '../i18n.js';
-import { esc, icon, demoBadge, photoSlot, hydratePhotos } from '../ui.js';
-import { DEMO_ATHLETES, REGIONS, STYLES, regionName, styleName } from '../data.js';
+import { t, tr, fmtNum, fmtDate } from '../i18n.js';
+import { esc, icon, demoBadge, photoSlot, hydratePhotos, sheet } from '../ui.js';
+import { DEMO_ATHLETES, REGIONS, STYLES, regionName, styleName, ratingOf } from '../data.js';
+import { LEVELS, PLACE_PTS, PARTICIPATION, BONUS, levelById } from '../rating.js';
 import { wrestlersArt } from '../art.js';
 
 const initials = (n) => n.split(' ').map((s) => s[0]).join('').slice(0, 2);
@@ -24,15 +25,78 @@ export function rankTable(list, { full = false } = {}) {
       <th style="text-align:right">${esc(t('rank.points'))}</th><th></th>
     </tr></thead>
     <tbody>${list.map((a, i) => `
-      <tr class="flash" style="animation-delay:${i * 25}ms">
+      <tr class="flash" style="animation-delay:${i * 25}ms" data-ath="${a.id}" tabindex="0" aria-label="${esc(t('rank.breakdown') + ': ' + a.name)}">
         <td class="pos num">${i + 1}</td>
         <td><div class="nm"><span class="ava" ${a.age >= 18 || a.photoSample ? `data-photo="${esc(a.photo)}"` : ''}>${esc(initials(a.name))}</span><span><b>${esc(a.name)}${a.real ? ` <span class="badge badge-gold" style="padding:2px 6px;font-size:.58rem">${esc(t('rank.real'))}</span>` : ''}</b><small>${esc(tr(regionName(a.region)))} · ${a.age} ${esc(t('unit.years'))}</small></span></div></td>
         <td class="hide-sm muted" style="font-size:var(--fs-small)">${esc(tr(styleName(a.style)))}</td>
         <td class="hide-sm num">${a.weight} ${esc(t('unit.kg'))}</td>
         ${full ? `<td class="hide-sm num">${a.wins != null ? a.wins + ' / ' + a.bouts : (a.worldScore ? esc(t('rank.world_u20')) : '—')}</td>` : ''}
-        <td class="pts num">${a.score.toFixed(1)}</td>
+        <td class="pts num"><span class="pts-link">${a.score.toFixed(1)}</span></td>
         <td class="chg num">${changeCell(a.delta)}</td>
       </tr>`).join('')}</tbody></table></div>`;
+}
+
+// ---------- Расшифровка очков ----------
+const placeLabel = (p) => (p ? t('rank.place_n', { n: p }) : t('rank.particip'));
+
+export function openBreakdown(id) {
+  const a = DEMO_ATHLETES.find((x) => x.id === id);
+  if (!a) return;
+  const { total, rows } = ratingOf(a);
+  const k = (v) => fmtNum(v, Number.isInteger(v) ? 0 : 1);
+  sheet(`
+    <button class="sr-only" data-close>${esc(t('common.close'))}</button>
+    <div class="row between" style="align-items:flex-start;gap:12px">
+      <div><p class="eyebrow">${esc(t('rank.breakdown'))}</p><h3 class="mt-2" style="margin-bottom:2px">${esc(a.name)}</h3>
+        <span class="muted" style="font-size:var(--fs-small)">${esc(tr(regionName(a.region)))} · ${esc(tr(styleName(a.style)))} · ${a.weight} ${esc(t('unit.kg'))}</span></div>
+      <div class="rb-total"><b class="num">${k(total)}</b><span>${esc(t('rank.points'))}</span></div>
+    </div>
+    <p class="rb-formula mt-4">${esc(t('rank.formula'))}</p>
+    <div class="rb-list mt-4">${rows.map((r) => `
+      <div class="rres ${r.fresh ? '' : 'out'}">
+        <div class="rres-h">
+          <b>${esc(tr(r.name))}</b>
+          <span>${esc(fmtDate(r.date, r.monthOnly ? { month: 'long', year: 'numeric' } : { day: 'numeric', month: 'long', year: 'numeric' }))} · ${esc(tr(levelById(r.level).name))}${r.real ? ` · <a href="${esc(r.source)}" target="_blank" rel="noopener">${esc(t('rank.source'))} ↗</a>` : ''}</span>
+          <div class="rres-c">
+            <i class="${r.place && r.place <= 3 ? 'medal m' + r.place : ''}">${esc(placeLabel(r.place))} = ${r.pts}</i>
+            <i>× ${r.k}</i>
+            ${r.bonus ? `<i class="plus">+${r.bonus} ${esc(t('rank.early_short'))}</i>` : ''}
+            ${r.fresh === 0.5 ? `<i class="half">× ½ ${esc(t('rank.older6'))}</i>` : ''}
+            ${r.fresh === 0 ? `<i class="half">${esc(t('rank.older12'))}</i>` : ''}
+          </div>
+        </div>
+        <b class="rres-t num">${r.fresh ? k(r.total) : '—'}</b>
+      </div>`).join('')}
+    </div>
+    <div class="rb-sum"><span>${esc(t('rank.total'))}</span><b class="num">${k(total)}</b></div>
+    <p class="muted mt-4" style="font-size:var(--fs-small)">${esc(t(a.real ? 'rank.real_only' : 'rank.demo_results'))}</p>
+    <button class="btn btn-ghost btn-block mt-4" data-close>${esc(t('common.close'))}</button>`);
+}
+
+// Клик или Enter по строке/пьедесталу открывает расшифровку
+// Один общий обработчик на документ — страницы могут вызывать сколько угодно раз
+let ratingBound = false;
+export function bindRating() {
+  if (ratingBound) return;
+  ratingBound = true;
+  const open = (e) => { const el = e.target.closest?.('[data-ath]'); if (el && !e.target.closest('a')) openBreakdown(el.dataset.ath); };
+  document.addEventListener('click', open);
+  document.addEventListener('keydown', (e) => { if (e.key === 'Enter' && e.target.matches?.('[data-ath]')) open(e); });
+}
+
+export function ratingRules() {
+  return `<div class="panel rb-rules mt-8">
+    <h2 class="eyebrow">${esc(t('rank.how_t'))}</h2>
+    <p class="mt-3">${esc(t('rank.how_lead'))}</p>
+    <p class="rb-formula mt-3">${esc(t('rank.formula'))}</p>
+    <div class="rb-grid mt-6">
+      <div><h3>${esc(t('rank.place_t'))}</h3><ul>${Object.entries(PLACE_PTS).map(([p, v]) => `<li><span>${esc(placeLabel(+p))}</span><b class="num">${v}</b></li>`).join('')}<li><span>${esc(t('rank.particip'))}</span><b class="num">${PARTICIPATION}</b></li></ul></div>
+      <div><h3>${esc(t('rank.level_t'))}</h3><ul>${LEVELS.map((l) => `<li><span>${esc(tr(l.name))}</span><b class="num">× ${l.k}</b></li>`).join('')}</ul></div>
+      <div><h3>${esc(t('rank.fresh_t'))}</h3><ul><li><span>${esc(t('rank.fresh_full'))}</span><b class="num">× 1</b></li><li><span>${esc(t('rank.fresh_half'))}</span><b class="num">× ½</b></li><li><span>${esc(t('rank.fresh_out'))}</span><b class="num">0</b></li></ul>
+        <h3 class="mt-4">${esc(t('rank.bonus_t'))}</h3><ul><li><span>${esc(t('rank.bonus'))}</span><b class="num">+${BONUS}</b></li></ul></div>
+    </div>
+    <p class="muted mt-6" style="font-size:var(--fs-small)">${esc(t('rank.example'))}</p>
+  </div>`;
 }
 
 function podium(list) {
@@ -42,7 +106,7 @@ function podium(list) {
   const cls = ['p2', 'p1', 'p3'];
   const place = [2, 1, 3];
   return `<div class="podium">${order.map((a, i) => `
-    <div class="pod ${cls[i]}">
+    <div class="pod ${cls[i]}" data-ath="${a.id}" tabindex="0" role="button" aria-label="${esc(t('rank.breakdown') + ': ' + a.name)}">
       <span class="place num">${place[i]}</span>
       ${photoSlot(a.age >= 18 || a.photoSample ? a.photo : null, wrestlersArt('single', { uid: 'pod' + a.id, skeleton: i === 1 }))}
       <div class="base"><b>${esc(a.name)}</b>${a.photoSample ? `<span style="font-size:.6rem;letter-spacing:.08em;text-transform:uppercase">${esc(t('rank.sample_photo'))}</span>` : ''}<span>${esc(tr(regionName(a.region)))} · ${a.weight} ${esc(t('unit.kg'))}</span><span class="s num">${a.score.toFixed(1)}</span></div>
@@ -82,9 +146,10 @@ export default function rankings({ query }) {
         ${REGIONS.map((r) => `<option value="${r.id}">${esc(tr(r.name))}</option>`).join('')}
       </select>
     </div>
-    <p class="muted mb-4" id="rk-note" style="font-size:var(--fs-small)"></p>
+    <p class="muted mb-4" style="font-size:var(--fs-small)"><span id="rk-note"></span> ${esc(t('rank.tap_hint'))}</p>
     <div id="rk-table"></div>
-    <div class="notice info mt-8">${icon.info}<div>${esc(t('rank.index_note'))}</div></div>
+    ${ratingRules()}
+    <div class="notice info mt-6">${icon.info}<div>${esc(t('rank.index_note'))}</div></div>
   </section>`;
 
   function render(root) {
@@ -109,6 +174,7 @@ export default function rankings({ query }) {
     title: t('nav.rankings'),
     mount(root) {
       render(root);
+      bindRating(root);
       root.querySelectorAll('[data-group]').forEach((b) => b.addEventListener('click', () => {
         group = b.dataset.group;
         root.querySelectorAll('[data-group]').forEach((z) => z.setAttribute('aria-selected', z === b));
