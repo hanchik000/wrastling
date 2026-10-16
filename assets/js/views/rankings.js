@@ -79,7 +79,8 @@ let ratingBound = false;
 export function bindRating() {
   if (ratingBound) return;
   ratingBound = true;
-  const open = (e) => { const el = e.target.closest?.('[data-ath]'); if (el && !e.target.closest('a')) openBreakdown(el.dataset.ath); };
+  // Клик по очкам — расшифровка; по строке или пьедесталу — страница спортсмена
+  const open = (e) => { const el = e.target.closest?.('[data-ath]'); if (!el || e.target.closest('a')) return; if (e.target.closest('.pts-link')) openBreakdown(el.dataset.ath); else location.hash = '#/athlete/' + el.dataset.ath; };
   document.addEventListener('click', open);
   document.addEventListener('keydown', (e) => { if (e.key === 'Enter' && e.target.matches?.('[data-ath]')) open(e); });
 }

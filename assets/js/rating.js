@@ -27,12 +27,12 @@ export function scoreResult(r, today = new Date()) {
   const lvl = levelById(r.level);
   const base = placePts(r.place) * lvl.k;
   const bonus = (r.early || 0) * BONUS;
-  const fresh = age > WINDOW_DAYS ? 0 : age > FRESH_DAYS ? 0.5 : 1;
+  const fresh = age < 0 || age > WINDOW_DAYS ? 0 : age > FRESH_DAYS ? 0.5 : 1; // будущие (на дату расчёта) не считаются
   return { ...r, age, k: lvl.k, pts: placePts(r.place), base, bonus, fresh, total: (base + bonus) * fresh };
 }
 
 export function rate(results, today = new Date()) {
-  const rows = results.map((r) => scoreResult(r, today)).sort((a, b) => (a.date < b.date ? 1 : -1));
+  const rows = results.map((r) => scoreResult(r, today)).filter((r) => r.age >= 0).sort((a, b) => (a.date < b.date ? 1 : -1));
   const total = rows.reduce((a, r) => a + r.total, 0);
   return { total: Math.round(total * 10) / 10, rows };
 }

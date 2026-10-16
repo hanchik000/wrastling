@@ -85,8 +85,11 @@ export function series(list, metric) {
 }
 
 // ---------- Демо: 8 недель тренировок с постепенным прогрессом ----------
-export function demoTrainings(today = new Date()) {
-  let seed = 7;
+export function demoTrainings(today = new Date(), seed0 = 7, opts = {}) {
+  let seed = seed0;
+  const lv = opts.level ?? 1; // сила ученика: масштаб показателей
+  const w0 = opts.weight ?? 66;
+  const spike = opts.spike; // последняя неделя с резким скачком нагрузки
   const rnd = () => { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; };
   const out = [];
   const plan = [[0, 'mat'], [1, 'strength'], [2, 'sparring'], [3, 'cardio'], [4, 'mat'], [5, 'stretch']];
@@ -107,8 +110,16 @@ export function demoTrainings(today = new Date()) {
         rpe: Math.max(3, Math.min(9, Math.round(({ mat: 6, sparring: 8, strength: 7, cardio: 6, stretch: 3, recovery: 2 }[type]) + (rnd() - 0.5) * 2 - (deload ? 1 : 0)))),
         mood: Math.max(2, Math.min(5, Math.round(3.6 + rnd() * 1.4 - (type === 'sparring' ? 0.5 : 0)))),
       };
-      if (k === 0) { s.weight = +(66.4 - prog * 0.6 + (rnd() - 0.5) * 0.4).toFixed(1); s.pulse = Math.round(64 - prog * 6 + (rnd() - 0.5) * 2); }
-      if (type === 'strength') s.pullups = Math.round(8 + prog * 5 + (rnd() - 0.5) * 1.2);
+      if (k === 0) { s.weight = +(w0 + 0.4 - prog * 0.6 + (rnd() - 0.5) * 0.4).toFixed(1); s.pulse = Math.round(64 - prog * 6 + (rnd() - 0.5) * 2); }
+      if (type === 'strength') s.pullups = Math.round((8 + prog * 5 + (rnd() - 0.5) * 1.2) * lv);
+      if (spike && w === weeks - 1) { s.minutes = Math.round(s.minutes * 1.5 / 5) * 5; s.rpe = Math.min(10, s.rpe + 2); }
+      // тренировки с камерой: силовые за последние 3 недели
+      if (opts.camera && type === 'strength' && w >= weeks - 3) {
+        const pu = s.pullups, sq = Math.round((22 + prog * 8) * lv), ps = Math.round((20 + prog * 6) * lv);
+        s.camera = true;
+        s.sets = [{ ex: 'pullup', reps: pu, sec: 32 }, { ex: 'pullup', reps: Math.max(1, pu - 2), sec: 30 }, { ex: 'squat', reps: sq, sec: 45 }, { ex: 'pushup', reps: ps, sec: 40 }, { ex: 'bridge', hold: +(8 + prog * 6 * lv).toFixed(1), sec: 15 }];
+        s.squats = sq; s.pushups = ps;
+      }
       if (type === 'mat' && k === 4) s.sprawls = Math.round(14 + prog * 5 + (rnd() - 0.5) * 1.5);
       if (type === 'cardio') s.shuttle = +(9.5 - prog * 0.7 + (rnd() - 0.5) * 0.15).toFixed(1);
       out.push(s);

@@ -129,7 +129,7 @@ export default function home() {
     <div class="container">
       <div class="sec-title"><h2 data-split><small>${esc(t('rank.eyebrow'))}</small>${esc(t('rank.title'))}</h2><div class="row">${demoBadge()}<a class="link-more" href="#/rankings">${esc(t('home.all_rankings'))} ${icon.arrow}</a></div></div>
       <div class="rank-wrap reveal">
-        <a class="leader shine" href="#/rankings" data-tilt="4">
+        <a class="leader shine" href="#/athlete/${leader.id}" data-tilt="4">
           ${photoSlot(leader.photo, wrestlersArt('single', { uid: 'leader' }), 'pos-top')}
           <div class="info">
             <span class="tag-gold">${esc(t('home.leader'))} · ${esc(t('rank.adults'))}</span>

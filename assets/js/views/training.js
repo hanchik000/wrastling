@@ -5,7 +5,7 @@ import { getTrainings, saveTrainings, deleteTraining, getResults } from '../stor
 import { TYPES, METRICS, typeIcon, weekly, summary, heatmap, series, demoTrainings, load, parse } from '../training-lib.js';
 
 // ---------- Графики (одна серия, тонкие метки, подсказка при наведении) ----------
-function barsChart(weeks, W = 640) {
+export function barsChart(weeks, W = 640) {
   const H = 220, L = 40, R = 8, T = 16, B = 28;
   const max = Math.max(1, ...weeks.map((w) => w.load));
   const step = niceStep(max);
@@ -35,7 +35,7 @@ function niceStep(max) {
   return [1, 2, 2.5, 5, 10].map((m) => m * p).find((s) => s >= raw) || raw;
 }
 
-function lineChart(pts, metric, W = 640) {
+export function lineChart(pts, metric, W = 640) {
   if (pts.length < 2) return `<div class="empty" style="padding:var(--s-8) 0"><p>${esc(t('train.need_two'))}</p></div>`;
   const H = 220, L = 44, R = 16, T = 18, B = 28;
   const vals = pts.map((p) => p.v);
@@ -46,7 +46,7 @@ function lineChart(pts, metric, W = 640) {
   const y = (v) => T + (H - T - B) * (1 - (v - lo) / (hi - lo));
   const ticks = [lo + (hi - lo) * 0.15, (lo + hi) / 2, hi - (hi - lo) * 0.15];
   const d = pts.map((p, i) => `${i ? 'L' : 'M'}${x(p.date).toFixed(1)} ${y(p.v).toFixed(1)}`).join('');
-  const m = METRICS.find((q) => q.id === metric);
+  const m = METRICS.find((q) => q.id === metric) || { unit: '', digits: 1 };
   const unit = m.unit ? ' ' + t(m.unit) : '';
   return `<svg class="tchart line" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(t('train.m_' + metric))}" data-line>
     ${ticks.map((v) => `<line x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}" class="grid"/><text x="${L - 6}" y="${y(v) + 4}" text-anchor="end">${fmtNum(v, m.digits)}</text>`).join('')}
@@ -60,7 +60,7 @@ function lineChart(pts, metric, W = 640) {
   </svg>`;
 }
 
-function heatGrid(cells) {
+export function heatGrid(cells) {
   const max = Math.max(1, ...cells.map((c) => c.value));
   const level = (v) => (v <= 0 ? 0 : v < max * 0.25 ? 1 : v < max * 0.5 ? 2 : v < max * 0.75 ? 3 : 4);
   const weeks = Math.max(...cells.map((c) => c.w)) + 1;
@@ -87,14 +87,14 @@ function typeBars(list) {
 }
 
 // «Приседания 12 · 10 · 9 · Мост 7,9 с» — подходы, записанные камерой
-function setsLine(sets) {
+export function setsLine(sets) {
   const g = [];
   sets.forEach((x) => { const last = g.at(-1); const v = x.hold != null ? fmtNum(x.hold, 1) + ' ' + t('unit.sec') : x.reps; if (last && last.ex === x.ex) last.v.push(v); else g.push({ ex: x.ex, v: [v] }); });
   return g.map((x) => `${t('cam.ex_' + x.ex)} ${x.v.join(' · ')}`).join('  /  ');
 }
 
 const pct = (a, b) => (b ? Math.round(((a - b) / b) * 100) : null);
-const moodFace = (v) => ['', '😣', '😕', '😐', '🙂', '😄'][Math.round(v)] || '—';
+export const moodFace = (v) => ['', '😣', '😕', '😐', '🙂', '😄'][Math.round(v)] || '—';
 
 export default function training({ user, go }) {
   if (!user?.profile) return { redirect: '/login?next=/training' };
@@ -205,39 +205,39 @@ export default function training({ user, go }) {
     root.querySelector('[data-clear]')?.addEventListener('click', () => { saveTrainings(getTrainings().filter((s) => !s.demo)); render(root); });
   }
 
-  // Подсказка при наведении/касании
-  function bindTips(host) {
-    let tip = document.querySelector('.ttip');
-    if (!tip) { tip = document.createElement('div'); tip.className = 'ttip'; tip.setAttribute('role', 'status'); document.body.appendChild(tip); }
-    const show = (el, e) => {
-      tip.textContent = el.dataset.tip;
-      tip.classList.add('on');
-      const r = el.getBoundingClientRect();
-      const x = e?.clientX ?? r.left + r.width / 2, y = (e?.clientY ?? r.top) - 12;
-      tip.style.left = Math.min(innerWidth - tip.offsetWidth - 8, Math.max(8, x - tip.offsetWidth / 2)) + 'px';
-      tip.style.top = Math.max(8, y - tip.offsetHeight) + 'px';
-      const svg = el.closest('[data-line]');
-      if (svg && el.dataset.x) { const c = svg.querySelector('.cross'); c.setAttribute('x1', el.dataset.x); c.setAttribute('x2', el.dataset.x); }
-    };
-    const hide = () => tip.classList.remove('on');
-    host.querySelectorAll('[data-tip]').forEach((el) => {
-      el.addEventListener('pointerenter', (e) => show(el, e));
-      el.addEventListener('pointermove', (e) => show(el, e));
-      el.addEventListener('pointerleave', hide);
-      el.addEventListener('click', (e) => show(el, e));
-    });
-    // Для линии: ближайшая точка по X на всей ширине
-    host.querySelectorAll('[data-line]').forEach((svg) => {
-      const dots = [...svg.querySelectorAll('.dot')];
-      svg.addEventListener('pointermove', (e) => {
-        const r = svg.getBoundingClientRect();
-        const vx = ((e.clientX - r.left) / r.width) * svg.viewBox.baseVal.width;
-        const near = dots.reduce((a, d) => (Math.abs(+d.dataset.x - vx) < Math.abs(+a.dataset.x - vx) ? d : a), dots[0]);
-        if (near) show(near, e);
-      });
-      svg.addEventListener('pointerleave', () => { hide(); const c = svg.querySelector('.cross'); c.setAttribute('x1', -10); c.setAttribute('x2', -10); });
-    });
-  }
-
   return { html, title: t('train.title'), mount: render, unmount() { document.querySelector('.ttip')?.classList.remove('on'); } };
+}
+
+// Подсказка при наведении/касании
+export function bindTips(host) {
+  let tip = document.querySelector('.ttip');
+  if (!tip) { tip = document.createElement('div'); tip.className = 'ttip'; tip.setAttribute('role', 'status'); document.body.appendChild(tip); }
+  const show = (el, e) => {
+    tip.textContent = el.dataset.tip;
+    tip.classList.add('on');
+    const r = el.getBoundingClientRect();
+    const x = e?.clientX ?? r.left + r.width / 2, y = (e?.clientY ?? r.top) - 12;
+    tip.style.left = Math.min(innerWidth - tip.offsetWidth - 8, Math.max(8, x - tip.offsetWidth / 2)) + 'px';
+    tip.style.top = Math.max(8, y - tip.offsetHeight) + 'px';
+    const svg = el.closest('[data-line]');
+    if (svg && el.dataset.x) { const c = svg.querySelector('.cross'); c.setAttribute('x1', el.dataset.x); c.setAttribute('x2', el.dataset.x); }
+  };
+  const hide = () => tip.classList.remove('on');
+  host.querySelectorAll('[data-tip]').forEach((el) => {
+    el.addEventListener('pointerenter', (e) => show(el, e));
+    el.addEventListener('pointermove', (e) => show(el, e));
+    el.addEventListener('pointerleave', hide);
+    el.addEventListener('click', (e) => show(el, e));
+  });
+  // Для линии: ближайшая точка по X на всей ширине
+  host.querySelectorAll('[data-line]').forEach((svg) => {
+    const dots = [...svg.querySelectorAll('.dot')];
+    svg.addEventListener('pointermove', (e) => {
+      const r = svg.getBoundingClientRect();
+      const vx = ((e.clientX - r.left) / r.width) * svg.viewBox.baseVal.width;
+      const near = dots.reduce((a, d) => (Math.abs(+d.dataset.x - vx) < Math.abs(+a.dataset.x - vx) ? d : a), dots[0]);
+      if (near) show(near, e);
+    });
+    svg.addEventListener('pointerleave', () => { hide(); const c = svg.querySelector('.cross'); c.setAttribute('x1', -10); c.setAttribute('x2', -10); });
+  });
 }

@@ -1341,3 +1341,44 @@ html.intro-on .dost-fab { opacity: 0; }
 .pain-grid, .dost-grid { grid-template-columns: minmax(0, 1fr); }
 @media (min-width: 900px) { .pain-grid { grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); } .dost-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
 .pain-grid .chips, [data-dform] .chips { flex-wrap: wrap; overflow: visible; }
+
+/* ---------- Кабинет тренера: ученики ---------- */
+.badge-warn { color: #f3c260; border-color: rgba(232,162,29,.5); background: rgba(232,162,29,.12); }
+.badge-red { color: #ffb3b3; border-color: rgba(226,59,59,.6); background: rgba(226,59,59,.16); }
+.kpi-alert { border-color: rgba(226,59,59,.5) !important; background: rgba(226,59,59,.08) !important; }
+.kpis { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+.slist { display: grid; gap: var(--s-4); grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr)); }
+.scard { display: grid; gap: 14px; padding: 16px; border-radius: var(--r-lg); border: 1px solid var(--line); background: var(--surface); text-decoration: none; color: inherit; transition: border-color var(--t-press), transform var(--t-press); position: relative; overflow: hidden; }
+.scard:hover { border-color: var(--line-strong); transform: translateY(-2px); }
+.scard::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--c-gold); }
+.scard.att2::before { background: #e8a21d; } .scard.att3::before { background: var(--c-live); } .scard.att1::before { background: var(--c-signal); }
+.scard-h { display: flex; gap: 12px; align-items: center; }
+.scard-h b { font-size: 1rem; }
+.scard-h small { display: block; color: var(--text-2); font-size: var(--fs-micro); margin-top: 2px; }
+.sstat { font-size: .7rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; padding: 5px 9px; border-radius: 999px; white-space: nowrap; }
+.sstat.ok { background: var(--c-gold-soft); color: #9ff0c2; } .sstat.warn { background: rgba(232,162,29,.15); color: #f3c260; } .sstat.info { background: var(--c-signal-soft); color: #bdf1f4; } .sstat.bad { background: rgba(226,59,59,.18); color: #ffb3b3; }
+.scard-m { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.scard-m div { display: grid; gap: 2px; }
+.scard-m span { font-size: .66rem; color: var(--text-2); text-transform: uppercase; letter-spacing: .06em; }
+.scard-m b { font-family: var(--font-display); font-size: 1.35rem; line-height: 1.1; }
+.scard-m i { font-style: normal; font-size: .68rem; }
+.scard-f { display: flex; flex-wrap: wrap; gap: 6px; min-height: 22px; align-items: center; }
+.ca-head { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+.ticon svg { width: 20px; height: 20px; }
+
+/* ---------- Страница спортсмена ---------- */
+.ath-hero { position: relative; min-height: min(78vh, 640px); display: grid; align-items: end; overflow: hidden; background: var(--c-ink, #0b0b0c); }
+.ath-photo { position: absolute; inset: 0; }
+.ath-photo .photo { position: absolute; inset: 0; }
+.ath-photo .photo img { object-position: 70% 20%; }
+.ath-photo::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(8,9,10,.92) 0%, rgba(8,9,10,.6) 45%, rgba(8,9,10,.15) 100%), linear-gradient(0deg, rgba(8,9,10,.95), transparent 55%); }
+.ath-in { position: relative; z-index: 1; padding-block: var(--s-8) var(--s-10); }
+.ath-in h1 { font-size: clamp(2.4rem, 8vw, 5.5rem); line-height: .95; max-width: 14ch; }
+.ath-meta { color: var(--text-2); }
+.ath-titles { color: var(--c-gold); font-weight: 600; max-width: 60ch; }
+.ath-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1px; max-width: 640px; background: var(--line); border: 1px solid var(--line); border-radius: var(--r-md); overflow: hidden; backdrop-filter: blur(6px); }
+.ath-stats > div { background: rgba(12,14,15,.75); padding: 14px; display: grid; gap: 4px; }
+.ath-stats b { font-family: var(--font-display); font-size: clamp(1.5rem, 5vw, 2.4rem); line-height: 1; }
+.ath-stats > div:first-child b { color: var(--c-gold); }
+.ath-stats span { font-size: .66rem; letter-spacing: .08em; text-transform: uppercase; color: var(--text-2); }
+@media (max-width: 560px) { .ath-stats { grid-template-columns: repeat(2, 1fr); } }
