@@ -260,6 +260,7 @@ export default {
   },
   order: { status_demo: 'Demo sargyt' },
 
+  intro: { kicker: 'Türkmenistan · 2026', tag: 'Türkmen göreşiniň geljegi', skip: 'Geçmek' },
   cam: {
     open: 'Kamera bilen türgenleşik',
     eyebrow: 'Kamera yzarlaýar',

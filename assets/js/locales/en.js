@@ -259,6 +259,7 @@ export default {
   },
   order: { status_demo: 'Demo order' },
 
+  intro: { kicker: 'Turkmenistan · 2026', tag: 'The future of Turkmen wrestling', skip: 'Skip' },
   cam: {
     open: 'Camera workout',
     eyebrow: 'Camera tracking',

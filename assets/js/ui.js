@@ -49,15 +49,17 @@ export const icon = {
   mail: P('<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>'),
 };
 
-// Логотип: два борца в захвате внутри восьмиугольника-гёля
+// Логотип: восьмиугольник-гёль, буква W из двух половин (белая и зелёная — два борца), ромб-гёль сверху
+let lmN = 0;
 export function logoMark(cls = '') {
+  const id = 'lmc' + (++lmN);
   return `<svg class="logo-mark ${cls}" viewBox="0 0 48 48" fill="none" aria-hidden="true">
-    <rect x="1" y="1" width="46" height="46" rx="13" fill="#0e1311"/>
-    <path class="lm-ring" d="M15.5 4h17L44 15.5v17L32.5 44h-17L4 32.5v-17z" stroke="#27b663" stroke-width="1.6"/>
-    <g stroke-linecap="round" stroke-linejoin="round">
-      <g class="lm-a"><path d="M14 29.5 21 20" stroke="#f4f2ee" stroke-width="5"/><path d="M14 29.5l-3 8.5M14 29.5l3.6 8.2" stroke="#f4f2ee" stroke-width="3.4"/><path d="M21 21 29.5 25.5" stroke="#f4f2ee" stroke-width="2.6"/><circle cx="20.3" cy="14.2" r="3.3" fill="#f4f2ee"/></g>
-      <g class="lm-b"><path d="M34 29.5 27 20" stroke="#27b663" stroke-width="5"/><path d="M34 29.5l3 8.5M34 29.5l-3.6 8.2" stroke="#27b663" stroke-width="3.4"/><path d="M27 21 18.5 25.5" stroke="#27b663" stroke-width="2.6"/><circle cx="27.7" cy="14.2" r="3.3" fill="#27b663"/></g>
-    </g>
+    <defs><clipPath id="${id}"><rect x="24" y="0" width="24" height="48"/></clipPath></defs>
+    <path class="lm-bg" d="M15.6 1.5h16.8l14.1 14.1v16.8L32.4 46.5H15.6L1.5 32.4V15.6z" fill="#0d1210"/>
+    <path class="lm-ring" d="M16.4 4h15.2L44 16.4v15.2L31.6 44H16.4L4 31.6V16.4z" stroke="#27b663" stroke-width="1.3"/>
+    <g class="lm-a"><path d="M9.6 15.6h5.8l4.8 13.6 3.8-10.4 3.8 10.4 4.8-13.6h5.8l-8.4 20.2h-4L24 31l-2 4.8h-4z" fill="#f4f2ee"/></g>
+    <g class="lm-b" clip-path="url(#${id})"><path d="M9.6 15.6h5.8l4.8 13.6 3.8-10.4 3.8 10.4 4.8-13.6h5.8l-8.4 20.2h-4L24 31l-2 4.8h-4z" fill="#27b663"/></g>
+    <path class="lm-d" d="M24 8.4l2.8 2.8L24 14l-2.8-2.8z" fill="#27b663"/>
   </svg>`;
 }
 
