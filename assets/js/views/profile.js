@@ -23,7 +23,7 @@ export default function profile({ user, go }) {
         <p class="muted mt-2">+993 ${esc(user.phone)}</p>
       </div>
       <div class="row row-wrap">
-        ${isCoach ? `<a class="btn btn-primary" href="#/coach">${icon.coach}${esc(t('coach.open'))}</a>` : `<a class="btn btn-primary" href="#/scout">${esc(t('profile.go_test'))} ${icon.arrow}</a>`}
+        ${isCoach ? `<a class="btn btn-primary" href="#/coach">${icon.coach}${esc(t('coach.open'))}</a>` : `<a class="btn btn-primary" href="#/scout">${esc(t('profile.go_test'))} ${icon.arrow}</a><a class="btn btn-ghost" href="#/training">${icon.diary}${esc(t('nav.training'))}</a>`}
       </div>
     </div>
     ${isCoach

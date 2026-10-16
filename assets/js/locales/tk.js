@@ -2,7 +2,7 @@
 export default {
   brand: { name: 'Wrestling Talent AI', country: 'Türkmenistan' },
   a11y: { skip: 'Mazmuna geçmek', main_nav: 'Esasy menýu', language: 'Dil' },
-  nav: {
+  nav: { training: 'Gündelik',
     rankings: 'Reýting', events: 'Ýaryşlar', home: 'Baş sahypa', media: 'Media', scout: 'Synag', shop: 'Dükan', profile: 'Profil', cart: 'Sebet' },
   footer: {
     about_text: 'Türkmenistanyň göreşiniň zehin saýlawy, reýtingleri, ýaryşlary we dükany bir ýerde.', c_platform: 'Platforma', c_events: 'Ýaryşlar', c_info: 'Maglumat', note: 'demo wersiýa, maglumatlar mysal hökmünde', about: 'Demo wersiýa barada' },
@@ -12,7 +12,7 @@ export default {
     not_found: 'Beýle sahypa ýok',
   },
   form: { required: 'Bu meýdany dolduryň', optional: 'hökman däl' },
-  unit: { kg: 'kg', years: 'ýaş', sec: 's', m: 'm', cm: 'sm', per_min: 'minutda' },
+  unit: { min: 'min', bpm: 'urgy/min', kg: 'kg', years: 'ýaş', sec: 's', m: 'm', cm: 'sm', per_min: 'minutda' },
   label: { measured: 'Ölçenildi', model: 'Modeliň çaklamasy', coach: 'Tälimçiniň bahasy' },
   role: { athlete: 'Türgen', coach: 'Tälimçi' },
 
@@ -237,6 +237,26 @@ export default {
   },
   order: { status_demo: 'Demo sargyt' },
 
+  train: {
+    show_more: 'Ýene {n} görkez', show_less: 'Ýygnamak',
+    eyebrow: 'Türgenler üçin', title: 'Türgenleşik gündeligi', lead: 'Her türgenleşigi ýazyň — ulgam ýüklemäni hasaplar we görkezijileriňiziň nähili ösýändigini görkezer.',
+    add: 'Türgenleşigi ýazmak', fill_demo: 'Mysal bilen doldurmak', clear_demo: 'Mysaly aýyrmak', demo_added: '8 hepdelik mysal goşuldy',
+    demo_note: 'Bu ösüşiň nähili görünýändigini görkezmek üçin 8 hepdelik mysal gündelik. Siziň ýazgylaryňyz ýanynda peýda bolar.',
+    empty: 'Entek ýazgy ýok', empty_hint: 'Ilkinji türgenleşigi ýazyň ýa-da gündeligiň nähili işleýändigini görmek üçin «Mysal bilen doldurmak» basyň.',
+    k_sessions: 'Türgenleşik', k_minutes: 'Minut', k_load: 'Ýükleme', k_rpe: 'Güýçlülik', k_mood: 'Özüňi duýuş', last7: 'soňky 7 günde', vs_prev: 'geçen hepdä görä', rpe_hint: 'ortaça',
+    chart_load: 'Hepdeler boýunça ýükleme', load_formula: 'minut × güýçlülik', load: 'Ýükleme', sessions_short: 'türg.',
+    calendar: '12 hepdelik senenama', by_type: 'Soňky 4 hepdäniň türgenleşik görnüşleri', less: 'az', more: 'köp', rest_day: 'dynç', days_short: ['Db', 'Sb', 'Çb', 'Pb', 'An', 'Şb', 'Ýb'],
+    progress: 'Görkezijileriň ösüşi', need_two: 'Grafik gurmak üçin bu görkezijiniň azyndan iki ýazgysy gerek.', tests_link: 'Talent Scout synaglarynyň netijeleri ({n}) — profilde.',
+    history: 'Soňky türgenleşikler', delete: 'Pozmak', delete_t: 'Ýazgy pozulsynmy?', deleted: 'Ýazgy pozuldy',
+    spike_t: 'Ýükleme birden ýokarlandy', spike: 'Hepdäniň ýüklemesi aýlyk ortaçadan {r} esse ýokary. Şikes howpy artýar — meýilnamany tälimçi bilen ara alyp maslahatlaşyň we dikelmegi unutmaň.',
+    weight_t: 'Agram ep-esli azaldy', weight_drop: 'Bir hepdede agram {p}% azaldy. Agramy birden peseltmek howply, esasan hem ýetginjekler üçin — muny tälimçi we lukman bilen maslahatlaşyň.',
+    type_mat: 'Düşek / tehnika', type_sparring: 'Tutluşyklar', type_strength: 'Güýç / UFT', type_cardio: 'Ylgaw / kardio', type_stretch: 'Süýndürmek', type_recovery: 'Dikelme',
+    m_weight: 'Agram', m_pullups: 'Dartynmak', m_sprawls: '30 s sprawl', m_shuttle: '3×10 ylgaw', m_pulse: 'Arkaýyn pulsy',
+    ph_weight: '66.5', ph_pullups: '12', ph_sprawls: '18', ph_shuttle: '9.2', ph_pulse: '60',
+    date: 'Sene', type: 'Türgenleşigiň görnüşi', duration: 'Dowamlylyk', rpe: 'Güýçlülik', rpe_help: 'Näçe agyr boldy: 1 — gaty ýeňil, 10 — çägine çenli.',
+    rpe_easy: 'ýeňil', rpe_mid: 'orta', rpe_hard: 'agyr', rpe_max: 'çägine çenli', mood: 'Soňky özüňi duýuş', metrics: 'Görkezijiler',
+    notes: 'Bellikler', notes_ph: 'Näme işlediňiz, näme başardy, näme agyrýar', save: 'Saklamak', saved: 'Türgenleşik ýazyldy', err_minutes: 'Dowamlylygy 5-den 300 minuda çenli görkeziň',
+  },
   about: {
     title: 'Demo wersiýada näme işleýär', lead: 'Bu federasiýa görkezmek üçin platformanyň ilkinji tapgyry. Aşakda näme eýýäm işleýändigi we nämäniň entek demo maglumatlar bilen çalşyrylandygy dogruçyl beýan edilýär.',
     works_t: 'Hakykatdan işleýär',

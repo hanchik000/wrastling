@@ -22,6 +22,8 @@ import cart from './views/cart.js';
 import checkout from './views/checkout.js';
 import about from './views/about.js';
 import rankings from './views/rankings.js';
+import training from './views/training.js';
+import trainingNew from './views/training-new.js';
 import notFound from './views/notfound.js';
 
 const ROUTES = [
@@ -35,6 +37,8 @@ const ROUTES = [
   ['/coach', coach, 'profile'],
   ['/coach/review/:id', review, 'profile'],
   ['/rankings', rankings, 'rankings'],
+  ['/training', training, 'training'],
+  ['/training/new', trainingNew, 'training'],
   ['/media', media, 'media'],
   ['/live/:id', live, 'media'],
   ['/news/:id', news, 'media'],
@@ -76,9 +80,12 @@ const NAV = [
   { id: 'home', href: '/', icon: icon.home, key: 'nav.home' },
   { id: 'rankings', href: '/rankings', icon: icon.trophy, key: 'nav.rankings' },
   { id: 'scout', href: '/scout', icon: icon.scout, key: 'nav.scout' },
+  { id: 'training', href: '/training', icon: icon.diary, key: 'nav.training' },
   { id: 'media', href: '/media', icon: icon.media, key: 'nav.events' },
   { id: 'shop', href: '/shop', icon: icon.bag, key: 'nav.shop' },
 ];
+// На телефоне 5 пунктов: турниры доступны с главной
+const BOTTOM_NAV = NAV.filter((n) => n.id !== 'media');
 
 function shell() {
   document.body.innerHTML = `
@@ -113,7 +120,7 @@ function shell() {
             <p class="mt-4"><a href="https://www.instagram.com/turkmenistanwrestling" target="_blank" rel="noopener">Instagram ↗</a></p>
           </div>
           <div><h4>${esc(t('footer.c_platform'))}</h4><ul>
-            <li><a href="#/scout">Talent Scout</a></li><li><a href="#/rankings">${esc(t('nav.rankings'))}</a></li><li><a href="#/coach">${esc(t('coach.open'))}</a></li></ul></div>
+            <li><a href="#/scout">Talent Scout</a></li><li><a href="#/training">${esc(t('nav.training'))}</a></li><li><a href="#/rankings">${esc(t('nav.rankings'))}</a></li><li><a href="#/coach">${esc(t('coach.open'))}</a></li></ul></div>
           <div><h4>${esc(t('footer.c_events'))}</h4><ul>
             <li><a href="#/media?tab=events">${esc(t('media.events'))}</a></li><li><a href="#/media?tab=news">${esc(t('media.news'))}</a></li><li><a href="#/live/e1">LIVE</a></li></ul></div>
           <div><h4>${esc(t('nav.shop'))}</h4><ul>
@@ -125,7 +132,7 @@ function shell() {
       </div>
     </footer>
     <nav class="bottomnav" aria-label="${esc(t('a11y.main_nav'))}">
-      ${NAV.map((n) => n.id === 'scout'
+      ${BOTTOM_NAV.map((n) => n.id === 'scout'
         ? `<a href="#${n.href}" data-nav="${n.id}" class="scout"><span class="ring">${n.icon}</span>${esc(t(n.key))}</a>`
         : `<a href="#${n.href}" data-nav="${n.id}">${n.icon}<span>${esc(t(n.key))}</span></a>`).join('')}
     </nav>`;

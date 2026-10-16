@@ -1,7 +1,7 @@
 export default {
   brand: { name: 'Wrestling Talent AI', country: 'Turkmenistan' },
   a11y: { skip: 'Skip to content', main_nav: 'Main menu', language: 'Language' },
-  nav: {
+  nav: { training: 'Diary',
     rankings: 'Rankings', events: 'Events', home: 'Home', media: 'Media', scout: 'Test', shop: 'Shop', profile: 'Profile', cart: 'Cart' },
   footer: {
     about_text: 'Talent search, rankings, events and a wrestling shop for Turkmenistan in one place.', c_platform: 'Platform', c_events: 'Events', c_info: 'Information', note: 'demo version, sample data', about: 'About the demo' },
@@ -11,7 +11,7 @@ export default {
     not_found: 'This page does not exist',
   },
   form: { required: 'Please fill in this field', optional: 'optional' },
-  unit: { kg: 'kg', years: 'y/o', sec: 's', m: 'm', cm: 'cm', per_min: 'per min' },
+  unit: { min: 'min', bpm: 'bpm', kg: 'kg', years: 'y/o', sec: 's', m: 'm', cm: 'cm', per_min: 'per min' },
   label: { measured: 'Measured', model: 'Model estimate', coach: 'Coach assessment' },
   role: { athlete: 'Athlete', coach: 'Coach' },
 
@@ -236,6 +236,26 @@ export default {
   },
   order: { status_demo: 'Demo order' },
 
+  train: {
+    show_more: 'Show {n} more', show_less: 'Show less',
+    eyebrow: 'For athletes', title: 'Training diary', lead: 'Log every session — the system calculates your load and shows how your numbers improve.',
+    add: 'Log a session', fill_demo: 'Fill with an example', clear_demo: 'Remove example', demo_added: 'Added an 8-week example',
+    demo_note: 'This is an example 8-week diary to show what progress looks like. Your own entries appear alongside.',
+    empty: 'No entries yet', empty_hint: 'Log your first session, or tap “Fill with an example” to see how the diary works.',
+    k_sessions: 'Sessions', k_minutes: 'Minutes', k_load: 'Load', k_rpe: 'Intensity', k_mood: 'Wellbeing', last7: 'last 7 days', vs_prev: 'vs last week', rpe_hint: 'average',
+    chart_load: 'Weekly load', load_formula: 'minutes × intensity', load: 'Load', sessions_short: 'sess.',
+    calendar: '12-week calendar', by_type: 'Session types, last 4 weeks', less: 'less', more: 'more', rest_day: 'rest', days_short: ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'],
+    progress: 'Progress', need_two: 'At least two entries of this measure are needed to draw a chart.', tests_link: 'Talent Scout test results ({n}) are in your profile.',
+    history: 'Recent sessions', delete: 'Delete', delete_t: 'Delete this entry?', deleted: 'Entry deleted',
+    spike_t: 'Load jumped sharply', spike: 'This week’s load is {r}× your monthly average. Injury risk goes up — talk to your coach and don’t skip recovery.',
+    weight_t: 'Weight dropped noticeably', weight_drop: 'Your weight dropped {p}% in a week. Rapid weight cutting is dangerous, especially for teenagers — discuss it with your coach and doctor.',
+    type_mat: 'Mat / technique', type_sparring: 'Live wrestling', type_strength: 'Strength', type_cardio: 'Running / cardio', type_stretch: 'Stretching', type_recovery: 'Recovery',
+    m_weight: 'Weight', m_pullups: 'Pull-ups', m_sprawls: 'Sprawls in 30 s', m_shuttle: 'Shuttle 3×10', m_pulse: 'Resting pulse',
+    ph_weight: '66.5', ph_pullups: '12', ph_sprawls: '18', ph_shuttle: '9.2', ph_pulse: '60',
+    date: 'Date', type: 'Session type', duration: 'Duration', rpe: 'Intensity', rpe_help: 'How hard it felt: 1 — very easy, 10 — all-out.',
+    rpe_easy: 'easy', rpe_mid: 'moderate', rpe_hard: 'hard', rpe_max: 'all-out', mood: 'Wellbeing afterwards', metrics: 'Measures',
+    notes: 'Notes', notes_ph: 'What you drilled, what worked, what hurts', save: 'Save', saved: 'Session logged', err_minutes: 'Enter a duration from 5 to 300 minutes',
+  },
   about: {
     title: 'What works in the demo', lead: 'This is the first stage of the platform, built to show the federation. Here is an honest list of what already works and what is still sample data.',
     works_t: 'Really works',

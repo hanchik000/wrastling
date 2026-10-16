@@ -75,6 +75,12 @@ export function addToCart(line) {
   if (same) same.qty += line.qty; else cart.push(line);
   setCart(cart);
 }
+// ---------- Дневник тренировок ----------
+export function getTrainings() { return load('trainings', []); }
+export function saveTrainings(list) { save('trainings', list); emit('trainings'); }
+export function addTraining(tr) { const l = getTrainings(); l.push(tr); l.sort((a, b) => (a.date < b.date ? 1 : -1)); saveTrainings(l); }
+export function deleteTraining(id) { saveTrainings(getTrainings().filter((x) => x.id !== id)); }
+
 export function getOrders() { return load('orders', []); }
 export function addOrder(o) { const l = getOrders(); l.unshift(o); save('orders', l); emit('orders'); }
 
