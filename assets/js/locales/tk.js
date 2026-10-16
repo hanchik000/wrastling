@@ -260,7 +260,7 @@ export default {
   },
   order: { status_demo: 'Demo sargyt' },
 
-  intro: { kicker: 'Türkmenistan · 2026', tag: 'Türkmen göreşiniň geljegi', skip: 'Geçmek' },
+  intro: { score: 'Uly amplitudaly zyňdyrma', l_knee: 'Dyz', l_grip: 'Tutuş', l_rot: 'Aýlanma', kicker: 'Türkmenistan · 2026', tag: 'Türkmen göreşiniň geljegi', skip: 'Geçmek' },
   cam: {
     open: 'Kamera bilen türgenleşik',
     eyebrow: 'Kamera yzarlaýar',
