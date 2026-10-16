@@ -86,6 +86,13 @@ function typeBars(list) {
     </div>`).join('')}</div>`;
 }
 
+// «Приседания 12 · 10 · 9 · Мост 7,9 с» — подходы, записанные камерой
+function setsLine(sets) {
+  const g = [];
+  sets.forEach((x) => { const last = g.at(-1); const v = x.hold != null ? fmtNum(x.hold, 1) + ' ' + t('unit.sec') : x.reps; if (last && last.ex === x.ex) last.v.push(v); else g.push({ ex: x.ex, v: [v] }); });
+  return g.map((x) => `${t('cam.ex_' + x.ex)} ${x.v.join(' · ')}`).join('  /  ');
+}
+
 const pct = (a, b) => (b ? Math.round(((a - b) / b) * 100) : null);
 const moodFace = (v) => ['', '😣', '😕', '😐', '🙂', '😄'][Math.round(v)] || '—';
 
@@ -102,7 +109,8 @@ export default function training({ user, go }) {
     <h1 class="display mt-2" data-split>${esc(t('train.title'))}</h1>
     <p class="muted mt-4 max-prose">${esc(t('train.lead'))}</p>
     <div class="row row-wrap mt-6">
-      <a class="btn btn-gold" href="#/training/new">${icon.plus}${esc(t('train.add'))}</a>
+      <a class="btn btn-gold" href="#/training/live">${icon.live}${esc(t('cam.open'))}</a>
+      <a class="btn btn-ghost" href="#/training/new">${icon.plus}${esc(t('train.add'))}</a>
       <span id="demo-ctl"></span>
     </div>
   </section>
@@ -167,7 +175,8 @@ export default function training({ user, go }) {
           <span class="ticon">${typeIcon(s.type)}</span>
           <span class="grow"><b>${esc(t('train.type_' + s.type))}</b>${s.demo ? ` <span class="badge badge-demo" style="padding:2px 6px;font-size:.58rem">${esc(t('common.demo'))}</span>` : ''}
             <span class="muted" style="display:block;font-size:var(--fs-small)">${esc(fmtDate(s.date, { weekday: 'short', day: 'numeric', month: 'long' }))} · ${s.minutes} ${esc(t('unit.min'))} · RPE ${s.rpe}${s.mood ? ' · ' + moodFace(s.mood) : ''}</span>
-            ${[s.weight != null ? `${t('train.m_weight')}: ${s.weight} ${t('unit.kg')}` : '', s.pullups != null ? `${t('train.m_pullups')}: ${s.pullups}` : '', s.sprawls != null ? `${t('train.m_sprawls')}: ${s.sprawls}` : '', s.shuttle != null ? `${t('train.m_shuttle')}: ${s.shuttle} ${t('unit.sec')}` : '', s.pulse != null ? `${t('train.m_pulse')}: ${s.pulse}` : ''].filter(Boolean).map((x) => `<span class="badge" style="margin:4px 4px 0 0">${esc(x)}</span>`).join('')}
+            ${s.camera ? `<span class="badge badge-gold" style="margin:4px 4px 0 0">${icon.live.replace('<svg', '<svg width="12" height="12"')} ${esc(t('cam.camera_badge'))}</span>` : ''}${METRICS.filter((m) => s[m.id] != null && !(s.sets?.length && ['pullups', 'pushups', 'squats', 'sprawls'].includes(m.id))).map((m) => `<span class="badge" style="margin:4px 4px 0 0">${esc(`${t('train.m_' + m.id)}: ${s[m.id]}${m.unit ? ' ' + t(m.unit) : ''}`)}</span>`).join('')}
+            ${s.sets?.length ? `<span class="tsets">${esc(setsLine(s.sets))}</span>` : ''}
             ${s.notes ? `<span style="display:block;font-size:var(--fs-small);margin-top:4px">${esc(s.notes)}</span>` : ''}
           </span>
           <b class="num tload" title="${esc(t('train.load'))}">${load(s)}</b>

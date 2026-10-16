@@ -24,6 +24,7 @@ import about from './views/about.js';
 import rankings from './views/rankings.js';
 import training from './views/training.js';
 import trainingNew from './views/training-new.js';
+import trainingLive from './views/training-live.js';
 import notFound from './views/notfound.js';
 
 const ROUTES = [
@@ -39,6 +40,7 @@ const ROUTES = [
   ['/rankings', rankings, 'rankings'],
   ['/training', training, 'training'],
   ['/training/new', trainingNew, 'training'],
+  ['/training/live', trainingLive, 'training'],
   ['/media', media, 'media'],
   ['/live/:id', live, 'media'],
   ['/news/:id', news, 'media'],

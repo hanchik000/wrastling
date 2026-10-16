@@ -16,6 +16,8 @@ export const typeIcon = (id) => `<svg viewBox="0 0 24 24" fill="none" stroke="cu
 export const METRICS = [
   { id: 'weight', unit: 'unit.kg', digits: 1, better: 0 },
   { id: 'pullups', unit: '', digits: 0, better: 1 },
+  { id: 'pushups', unit: '', digits: 0, better: 1 },
+  { id: 'squats', unit: '', digits: 0, better: 1 },
   { id: 'sprawls', unit: '', digits: 0, better: 1 },
   { id: 'shuttle', unit: 'unit.sec', digits: 1, better: -1 },
   { id: 'pulse', unit: 'unit.bpm', digits: 0, better: -1 },

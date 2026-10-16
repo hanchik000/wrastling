@@ -15,6 +15,9 @@ const R = { sh: 2, el: 4, wr: 6, hip: 8, kn: 10, an: 12 };
 const withTimeout = (p, ms, code) => Promise.race([p, new Promise((_, rej) => setTimeout(() => rej(new Error(code)), ms))]);
 
 let landmarker = null;
+// MediaPipe требует растущие метки времени для всех вызовов одной модели (и анализ видео, и живой режим)
+let lastTs = 0;
+export const nextTs = () => (lastTs = Math.max(lastTs + 1, Math.round(performance.now())));
 export async function loadLandmarker() {
   if (landmarker) return landmarker;
   const vision = await withTimeout(import(/* @vite-ignore */ `${CDN}/vision_bundle.mjs`), 45000, 'model_timeout');
@@ -257,7 +260,7 @@ export async function analyzeVideo(blob, testId, onStep) {
     const t = i * step;
     try { await seek(v, t); } catch { continue; }
     let res;
-    try { res = lm.detectForVideo(v, i * 100 + 1); } catch { res = null; }
+    try { res = lm.detectForVideo(v, nextTs()); } catch { res = null; }
     const pts = res?.landmarks?.[0];
     const f = { t: +t.toFixed(3), p: null };
     if (pts) {
@@ -285,7 +288,7 @@ export async function analyzeVideo(blob, testId, onStep) {
 }
 
 // ---------- Отрисовка разметки поверх видео ----------
-export function drawFrame(ctx, frame, video, { trail = [] } = {}) {
+export function drawFrame(ctx, frame, video, { trail = [], fit = 'contain', hot = null, body = false, prop = null } = {}) {
   const c = ctx.canvas;
   const dpr = window.devicePixelRatio || 1;
   const cw = c.clientWidth, ch = c.clientHeight;
@@ -293,7 +296,7 @@ export function drawFrame(ctx, frame, video, { trail = [] } = {}) {
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   ctx.clearRect(0, 0, cw, ch);
   if (!frame?.p || !video.videoWidth) return;
-  const s = Math.min(cw / video.videoWidth, ch / video.videoHeight);
+  const s = (fit === 'cover' ? Math.max : Math.min)(cw / video.videoWidth, ch / video.videoHeight);
   const w = video.videoWidth * s, h = video.videoHeight * s;
   const ox = (cw - w) / 2, oy = (ch - h) / 2;
   const X = (p) => ox + p[0] * w, Y = (p) => oy + p[1] * h;
@@ -304,6 +307,27 @@ export function drawFrame(ctx, frame, video, { trail = [] } = {}) {
     ctx.setLineDash([]);
   }
   ctx.lineCap = 'round';
+  // Демо: опора (ковёр или перекладина) и объёмный силуэт под скелетом
+  if (prop) {
+    ctx.strokeStyle = 'rgba(39,182,99,.85)'; ctx.lineWidth = prop.w || 3;
+    ctx.beginPath(); ctx.moveTo(ox + prop.x0 * w, oy + prop.y * h); ctx.lineTo(ox + prop.x1 * w, oy + prop.y * h); ctx.stroke();
+  }
+  if (body) {
+    const u = Math.min(w, h) * 0.05;
+    const grad = ctx.createLinearGradient(0, oy, 0, oy + h);
+    grad.addColorStop(0, 'rgba(66,68,76,.95)'); grad.addColorStop(1, 'rgba(24,26,28,.95)');
+    ctx.strokeStyle = grad; ctx.fillStyle = grad; ctx.lineJoin = 'round';
+    const line = (A, B, k) => { ctx.lineWidth = u * k; ctx.beginPath(); ctx.moveTo(X(A), Y(A)); ctx.lineTo(X(B), Y(B)); ctx.stroke(); };
+    const P = frame.p;
+    ctx.lineWidth = u * 1.1;
+    ctx.beginPath(); [1, 2, 8, 7].forEach((k, i) => (i ? ctx.lineTo(X(P[k]), Y(P[k])) : ctx.moveTo(X(P[k]), Y(P[k])))); ctx.closePath(); ctx.fill(); ctx.stroke();
+    for (const s0 of [1, 0]) { // сначала дальняя сторона, потом ближняя
+      const o = s0;
+      line(P[1 + o], P[3 + o], 0.8); line(P[3 + o], P[5 + o], 0.62); line(P[7 + o], P[9 + o], 1.05); line(P[9 + o], P[11 + o], 0.75);
+    }
+    ctx.beginPath(); ctx.arc(X(P[0]), Y(P[0]), u * 0.8, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = 'rgba(39,182,99,.35)'; ctx.lineWidth = 1.5; ctx.stroke();
+  }
   for (const [a, b] of BONES) {
     const A = frame.p[a], B = frame.p[b];
     if (A[2] < 0.4 || B[2] < 0.4) continue;
@@ -314,7 +338,7 @@ export function drawFrame(ctx, frame, video, { trail = [] } = {}) {
   }
   frame.p.forEach((p, i) => {
     if (p[2] < 0.4) return;
-    const key = [7, 8, 9, 10].includes(i);
+    const key = (hot || [7, 8, 9, 10]).includes(i);
     const r = key ? 6 : 4.5, a = r * 0.414, x = X(p), y = Y(p);
     ctx.beginPath();
     ctx.moveTo(x - a, y - r); ctx.lineTo(x + a, y - r); ctx.lineTo(x + r, y - a); ctx.lineTo(x + r, y + a);
