@@ -26,6 +26,7 @@ import rankings from './views/rankings.js';
 import training from './views/training.js';
 import trainingNew from './views/training-new.js';
 import trainingLive from './views/training-live.js';
+import assistantView from './views/assistant.js';
 import notFound from './views/notfound.js';
 
 const ROUTES = [
@@ -42,6 +43,7 @@ const ROUTES = [
   ['/training', training, 'training'],
   ['/training/new', trainingNew, 'training'],
   ['/training/live', trainingLive, 'training'],
+  ['/assistant', assistantView, 'assistant'],
   ['/media', media, 'media'],
   ['/live/:id', live, 'media'],
   ['/news/:id', news, 'media'],
@@ -84,11 +86,12 @@ const NAV = [
   { id: 'rankings', href: '/rankings', icon: icon.trophy, key: 'nav.rankings' },
   { id: 'scout', href: '/scout', icon: icon.scout, key: 'nav.scout' },
   { id: 'training', href: '/training', icon: icon.diary, key: 'nav.training' },
+  { id: 'assistant', href: '/assistant', icon: icon.chat, key: 'nav.assistant' },
   { id: 'media', href: '/media', icon: icon.media, key: 'nav.events' },
   { id: 'shop', href: '/shop', icon: icon.bag, key: 'nav.shop' },
 ];
 // На телефоне 5 пунктов: турниры доступны с главной
-const BOTTOM_NAV = NAV.filter((n) => n.id !== 'media');
+const BOTTOM_NAV = NAV.filter((n) => n.id !== 'media' && n.id !== 'assistant');
 
 function shell() {
   document.body.innerHTML = `
@@ -146,6 +149,21 @@ function shell() {
   initGlobalFx();
 }
 
+// Плавающая кнопка помощника: на всех страницах, кроме самого помощника и камеры
+function updateFab(path) {
+  let fab = document.querySelector('.dost-fab');
+  const show = !['/assistant', '/training/live', '/login'].includes(path) && !path.startsWith('/scout/record');
+  if (!fab) {
+    fab = document.createElement('a');
+    fab.className = 'dost-fab';
+    fab.href = '#/assistant?tab=chat';
+    document.body.appendChild(fab);
+  }
+  fab.innerHTML = `<span class="ico">${icon.chat}</span><span class="lbl">${esc(t('dost.fab'))}</span>`;
+  fab.setAttribute('aria-label', t('dost.fab'));
+  fab.hidden = !show;
+}
+
 function updateCart() {
   const dot = document.querySelector('[data-cart]');
   if (!dot) return;
@@ -188,6 +206,7 @@ async function render() {
   main.innerHTML = out.html;
   document.title = (out.title ? out.title + ' · ' : '') + 'Wrestling Talent AI';
   setActiveNav(nav);
+  updateFab(path);
   if (!out.keepScroll) window.scrollTo(0, 0);
   current = out;
   try { out.mount?.(main); } catch (e) { console.error(e); }

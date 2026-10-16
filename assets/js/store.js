@@ -133,3 +133,14 @@ export async function getVideo(id) {
     return null;
   }
 }
+
+// ---------- Помощник Dost: боли, вода, чат, ключ ИИ ----------
+export function getPains() { return load('pains', []); }
+export function savePains(list) { save('pains', list); emit('pains'); }
+export function addPain(p) { savePains([p, ...getPains()].slice(0, 60)); }
+export function getWater(date) { return load('water', {})[date] || 0; }
+export function addWater(date, ml) { const w = load('water', {}); w[date] = Math.max(0, (w[date] || 0) + ml); save('water', w); emit('water'); return w[date]; }
+export function getChat() { return load('chat', []); }
+export function saveChat(list) { save('chat', list.slice(-80)); }
+export function getAiKey() { return load('aikey', ''); }
+export function setAiKey(k) { save('aikey', k || ''); }

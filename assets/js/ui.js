@@ -36,6 +36,7 @@ export const icon = {
   replay: P('<path d="M4 12a8 8 0 1 0 2.4-5.7M4 4v4h4"/>'),
   coach: P('<path d="M4 20V9l8-5 8 5v11"/><path d="M9 20v-6h6v6"/>'),
   phone: P('<rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/>'),
+  chat: P('<path d="M4 5h16v11H9l-5 4z"/><path d="M8 10h8M8 13h5"/>'),
   sound: P('<path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/>'),
   mute: P('<path d="M4 9h4l5-4v14l-5-4H4z"/><path d="m17 9 5 6m0-6-5 6"/>'),
   live: P('<rect x="3" y="6" width="13" height="12" rx="2"/><path d="m16 10 5-3v10l-5-3"/><circle cx="9.5" cy="12" r="2.2" fill="currentColor" stroke="none"/>'),
