@@ -97,6 +97,7 @@ export default function home() {
           <div class="ctas">${s.ctas}</div>
         </div>
       </div>`).join('')}
+    <div class="flag-stripe" aria-hidden="true"></div>
     <div class="slider-promos">
       <a class="promo red" href="#/live/${live.id}"><span>● LIVE · ${esc(t('home.today'))}</span><b>${esc(tr(live.title))}</b></a>
       <a class="promo" href="#/scout"><span class="gold">Talent Scout</span><b>${esc(t('home.promo_scout'))}</b></a>
@@ -105,6 +106,8 @@ export default function home() {
       ${S.map((s, i) => `<button role="tab" data-slide="${i}" aria-selected="${i === 0}"><i></i><b class="num">0${i + 1}</b><span>${esc(s.tab)}</span></button>`).join('')}
     </div></div>
   </section>
+
+  <div class="band-wrap" aria-hidden="true"><div class="carpet-band"></div></div>
 
   <nav class="pillars" data-stagger aria-label="${esc(t('home.sections'))}">
     <a class="pillar" href="#/rankings"><span class="ic">${icon.trophy}</span><b>${esc(t('nav.rankings'))}</b><span><span data-to="${DEMO_ATHLETES.length}">${DEMO_ATHLETES.length}</span> ${esc(t('home.p_athletes'))}</span></a>
@@ -153,6 +156,8 @@ export default function home() {
   </section>
 
   <section class="banner-red">
+    <div class="carpet-band white thin top" aria-hidden="true"></div>
+    <span class="medallion" aria-hidden="true" style="color:#fff;--o:.1;opacity:.1;width:min(760px,120vw);aspect-ratio:1.4;right:-120px;top:50%;margin-top:-270px"></span>
     <div class="container">
       <div class="reveal">
         <span class="tag-dark">Talent Scout · ${esc(t('scout.free'))}</span>
@@ -176,6 +181,7 @@ export default function home() {
         </div>
       </div>
     </div>
+    <div class="carpet-band white thin bottom rev" aria-hidden="true"></div>
   </section>
 
   <div class="marquee red reverse" aria-hidden="true"><div class="track">${marquee(['TALENT SCOUT', '<b>7–22</b>', esc(t('home.p_scout')), '<b>0 TMT</b>'])}</div></div>
@@ -202,6 +208,7 @@ export default function home() {
       <div class="store-banner reveal">
         <div class="left">
           <div><span class="eyebrow" style="color:#0b0b0c">${esc(t('nav.shop'))}</span><h2 class="mt-3" data-split>${esc(t('home.store_title'))}</h2></div>
+          <div class="carpet-band dark thin" aria-hidden="true"></div>
           <div class="from num"><small>${esc(t('home.price_from'))}</small>${esc(fmtMoney(minPrice))}</div>
           <div class="row row-wrap"><a class="btn" style="background:#0b0b0c;color:#f4f2ee" href="#/shop">${esc(t('shop.gear'))} ${icon.arrow}</a><a class="btn" style="border:1px solid #0b0b0c;color:#0b0b0c" href="#/shop/nutrition">${esc(t('shop.nutrition'))} 18+</a></div>
         </div>

@@ -38,6 +38,7 @@ export default function shop({ params, user }) {
 
   const html = `
   <section class="container shop-hero">
+    <span class="medallion" aria-hidden="true" style="color:#8a6a26;--o:.1;opacity:.1;width:300px;aspect-ratio:1.4;right:var(--gutter);top:24px"></span>
     <p class="eyebrow">${esc(t('nav.shop'))}</p>
     <h1 class="display mt-2">${esc(t(store === 'gear' ? 'shop.gear_title' : 'shop.nutri_title'))}</h1>
     <div class="store-switch mt-6">

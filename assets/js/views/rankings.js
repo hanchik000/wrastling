@@ -55,6 +55,7 @@ export default function rankings({ query }) {
 
   const html = `
   <section class="rank-hero gol-bg">
+    <span class="medallion" aria-hidden="true" style="color:var(--c-gold);--o:.08;opacity:.08;width:min(900px,140vw);aspect-ratio:1.4;left:50%;margin-left:max(-450px,-70vw);top:120px"></span>
     <div class="container">
       <div class="row row-wrap between">
         <div class="sec-title" style="margin-bottom:0"><h2 data-split><small>${esc(t('rank.eyebrow'))}</small>${esc(t('rank.title'))}</h2></div>
@@ -69,6 +70,7 @@ export default function rankings({ query }) {
       <div id="podium"></div>
     </div>
   </section>
+  <div class="band-wrap" aria-hidden="true"><div class="carpet-band thin"></div></div>
   <section class="container section-tight" style="padding-bottom:var(--s-16)">
     <div class="chips mb-4">
       <button class="chip" data-style="all" aria-pressed="true">${esc(t('rank.all_styles'))}</button>

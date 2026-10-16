@@ -104,6 +104,7 @@ function shell() {
     </header>
     <main id="main-content" tabindex="-1"></main>
     <footer class="footer-big">
+      <div class="carpet-band thin muted" aria-hidden="true"></div>
       <div class="container">
         <div class="cols">
           <div>

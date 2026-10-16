@@ -35,6 +35,7 @@ export default function media({ query }) {
 
   const html = `
   <section class="container scout-hero">
+    <span class="medallion" aria-hidden="true" style="color:var(--c-gold);--o:.09;opacity:.09;width:300px;aspect-ratio:1.4;right:var(--gutter);top:24px"></span>
     <p class="eyebrow">${esc(t('nav.media'))}</p>
     <h1 class="display mt-2" data-split>${esc(t('media.title'))}</h1>
     <div class="tabs mt-6" role="tablist">

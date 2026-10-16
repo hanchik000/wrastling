@@ -40,16 +40,20 @@ ul, ol { margin: 0; padding: 0; }
 .grow { flex: 1; }
 .hr { height: 1px; background: var(--line); border: 0; margin: var(--s-6) 0; }
 
-/* Фоновый орнамент гёль */
+/* Фоновый орнамент: текинские гёли (assets/img/orn) — цвет задаётся через маску */
 .gol-bg { position: relative; isolation: isolate; }
 .gol-bg::before {
   content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120' fill='none' stroke='%23f4f2ee' stroke-width='1'%3E%3Cpath d='M42 18h36l24 24v36l-24 24H42L18 78V42z'/%3E%3Cpath d='M60 36l24 24-24 24-24-24z'/%3E%3Cpath d='M60 0v18M60 102v18M0 60h18M102 60h18'/%3E%3C/svg%3E");
-  background-size: 120px 120px;
-  opacity: 0.035;
-  mask-image: linear-gradient(180deg, transparent, #000 25%, #000 75%, transparent);
+  background: var(--c-gold);
+  -webkit-mask-image: url("../img/orn/gol-pattern.svg"), linear-gradient(180deg, transparent, #000 20%, #000 80%, transparent);
+  -webkit-mask-composite: source-in;
+  mask-image: url("../img/orn/gol-pattern.svg"), linear-gradient(180deg, transparent, #000 20%, #000 80%, transparent);
+  mask-composite: intersect;
+  -webkit-mask-repeat: repeat, no-repeat; mask-repeat: repeat, no-repeat;
+  -webkit-mask-size: 180px 140px, 100% 100%; mask-size: 180px 140px, 100% 100%;
+  opacity: 0.1;
 }
-.theme-light .gol-bg::before, .gol-bg.light::before { filter: invert(1); opacity: 0.05; }
+.theme-light .gol-bg::before, .gol-bg.light::before { background: #8a6a26; opacity: 0.09; }
 
 /* ============ Каркас ============ */
 .skip { position: absolute; left: -999px; top: 8px; z-index: 100; background: var(--c-offwhite); color: #000; padding: 8px 12px; border-radius: 8px; }
@@ -908,3 +912,86 @@ main:focus { outline: none; }
   [data-tilt] { transform: none !important; }
   .route-sweep { display: none; }
 }
+
+/* =====================================================================
+   ТУРКМЕНСКИЕ ОРНАМЕНТЫ
+   ===================================================================== */
+:root { --c-maroon: #6e1a1e; }
+
+/* Узор гёлей на фоне всего сайта (тёмные страницы) */
+body::before {
+  content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+  background: var(--c-gold); opacity: .045;
+  -webkit-mask: url("../img/orn/gol-pattern.svg") repeat 0 0 / 180px 140px;
+  mask: url("../img/orn/gol-pattern.svg") repeat 0 0 / 180px 140px;
+}
+/* Светлые страницы (магазин, статьи): тот же узор тёмно-золотым */
+main { position: relative; }
+main.theme-light { isolation: isolate; }
+main.theme-light::before {
+  content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: #8a6a26; opacity: .07;
+  -webkit-mask: url("../img/orn/gol-pattern.svg") repeat 0 0 / 180px 140px;
+  mask: url("../img/orn/gol-pattern.svg") repeat 0 0 / 180px 140px;
+}
+
+/* Ковровый бордюр — разделитель разделов, медленно «плывёт» */
+.carpet-band { height: 28px; background: var(--c-gold); position: relative;
+  -webkit-mask: url("../img/orn/border.svg") repeat-x 0 0 / auto 100%;
+  mask: url("../img/orn/border.svg") repeat-x 0 0 / auto 100%;
+  animation: band-drift 60s linear infinite; }
+.carpet-band.thin { height: 20px; }
+.carpet-band.white { background: #fff; opacity: .55; }
+.carpet-band.dark { background: #0b0b0c; opacity: .7; }
+.carpet-band.muted { opacity: .5; }
+.carpet-band.rev { animation-direction: reverse; }
+@keyframes band-drift { to { -webkit-mask-position: 560px 0; mask-position: 560px 0; } }
+.band-wrap { background: #0b0b0c; padding-block: 10px; border-block: 1px solid var(--line); }
+
+/* Большой гёль-медальон за блоками */
+.medallion { position: absolute; pointer-events: none; z-index: 0; background: currentColor;
+  -webkit-mask: url("../img/orn/gol.svg") center / contain no-repeat;
+  mask: url("../img/orn/gol.svg") center / contain no-repeat;
+  animation: breathe 8s ease-in-out infinite; }
+@keyframes breathe { 50% { transform: scale(1.04); opacity: calc(var(--o, .1) * 1.6); } }
+
+/* Вертикальная ковровая полоса, как на флаге Туркменистана */
+.flag-stripe { position: absolute; left: 0; top: 0; bottom: 0; width: 56px; z-index: 4; pointer-events: none; display: none;
+  background: var(--c-maroon); box-shadow: 6px 0 24px rgba(0,0,0,.45); }
+.flag-stripe::after { content: ""; position: absolute; inset: 0 4px; background: var(--c-gold);
+  -webkit-mask: url("../img/orn/stripe.svg") repeat-y center 0 / 100% auto;
+  mask: url("../img/orn/stripe.svg") repeat-y center 0 / 100% auto;
+  animation: stripe-drift 40s linear infinite; }
+@keyframes stripe-drift { to { -webkit-mask-position: center 1150px; mask-position: center 1150px; } }
+@media (min-width: 1300px) { .flag-stripe { display: block; } }
+
+/* Подвал: узор и бордюр сверху */
+.footer-big { position: relative; isolation: isolate; border-top: 0; }
+.footer-big::before { content: ""; position: absolute; inset: 0; z-index: -1; background: var(--c-gold); opacity: .05;
+  -webkit-mask: url("../img/orn/gol-pattern.svg") repeat 0 0 / 180px 140px; mask: url("../img/orn/gol-pattern.svg") repeat 0 0 / 180px 140px; }
+.footer-big > .carpet-band { position: absolute; left: 0; right: 0; top: 0; }
+
+/* Красный баннер: узор гёлей белым вместо простой сетки */
+.banner-red::before { background-image: none !important; background: #fff; opacity: .07 !important;
+  -webkit-mask: url("../img/orn/gol-pattern.svg") repeat 0 0 / 180px 140px; mask: url("../img/orn/gol-pattern.svg") repeat 0 0 / 180px 140px; }
+.banner-red > .carpet-band { position: absolute; left: 0; right: 0; z-index: 1; }
+.banner-red > .carpet-band.top { top: 10px; }
+.banner-red > .carpet-band.bottom { bottom: 10px; }
+
+/* Магазин: бордюр внизу золотого блока */
+.store-banner .left .carpet-band { position: absolute; left: 0; right: 0; bottom: 12px; }
+
+/* Шапки разделов с медальоном */
+.orn-head { position: relative; overflow: hidden; }
+.orn-head > .container { position: relative; z-index: 1; }
+
+@media (prefers-reduced-motion: reduce) {
+  .carpet-band, .medallion, .flag-stripe::after { animation: none !important; }
+}
+
+/* Маленький гёль перед подзаголовками разделов */
+.sec-title h2 small { display: flex !important; align-items: center; gap: 10px; }
+.sec-title h2 small::before { content: ""; width: 26px; height: 18px; flex: none; background: var(--c-gold);
+  -webkit-mask: url("../img/orn/gol.svg") center / contain no-repeat; mask: url("../img/orn/gol.svg") center / contain no-repeat; }
+.scout-hero, .shop-hero { position: relative; }
+.scout-hero > *:not(.medallion), .shop-hero > *:not(.medallion) { position: relative; z-index: 1; }

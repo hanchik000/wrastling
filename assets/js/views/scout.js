@@ -35,6 +35,7 @@ export default function scout({ user }) {
 
   const html = `
   <section class="container scout-hero">
+    <span class="medallion" aria-hidden="true" style="color:var(--c-gold);--o:.09;opacity:.09;width:300px;aspect-ratio:1.4;right:var(--gutter);top:24px"></span>
     <p class="eyebrow">Talent Scout</p>
     <h1 class="display mt-2" data-split>${esc(t('scout.title'))}</h1>
     <p class="muted mt-4 max-prose">${esc(t('scout.lead'))}</p>
