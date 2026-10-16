@@ -134,7 +134,7 @@ export async function getVideo(id) {
   }
 }
 
-// ---------- Помощник Dost: боли, вода, чат, ключ ИИ ----------
+// ---------- Помощник Champ AI: боли, вода, чат, ключ ИИ ----------
 export function getPains() { return load('pains', []); }
 export function savePains(list) { save('pains', list); emit('pains'); }
 export function addPain(p) { savePains([p, ...getPains()].slice(0, 60)); }

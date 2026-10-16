@@ -157,7 +157,7 @@ function shell() {
 // Плавающая кнопка помощника: на всех страницах, кроме самого помощника и камеры
 function updateFab(path) {
   let fab = document.querySelector('.dost-fab');
-  const show = !['/assistant', '/training/live', '/login'].includes(path) && !path.startsWith('/scout/record');
+  const show = !['/assistant', '/training/live', '/login'].includes(path) && !path.startsWith('/scout/record') && !path.startsWith('/coach');
   if (!fab) {
     fab = document.createElement('a');
     fab.className = 'dost-fab';

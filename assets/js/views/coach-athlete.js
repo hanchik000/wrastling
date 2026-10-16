@@ -1,4 +1,4 @@
-// Кабинет ученика глазами тренера: состояние сегодня (по данным Dost), нагрузка, прогресс,
+// Кабинет ученика глазами тренера: состояние сегодня (по данным Champ AI), нагрузка, прогресс,
 // тренировки с камерой, дневник боли и заметки тренера.
 import { t, tr, fmtNum, fmtDate, getLang } from '../i18n.js';
 import { esc, icon, toast } from '../ui.js';
@@ -7,7 +7,8 @@ import { getStudent } from '../students.js';
 import { weekly, heatmap, series, METRICS, load as sLoad } from '../training-lib.js';
 import { barsChart, lineChart, heatGrid, bindTips, setsLine, moodFace } from './training.js';
 import { trainingText, pick, areaById, PAIN_KINDS, RED_FLAGS, exName } from '../assistant.js';
-import { load, save } from '../store.js';
+import { load, save, addCoachMsg, getCoachMsgs } from '../store.js';
+import { readinessGol } from '../dost-ui.js';
 
 export default function coachAthlete({ params, user }) {
   if (!user?.profile) return { redirect: '/login?next=/coach' };
@@ -30,8 +31,15 @@ export default function coachAthlete({ params, user }) {
         <h1 class="display mt-2" style="font-size:var(--fs-h2)">${esc(a.name)}</h1>
         <p class="muted mt-1">${P.age != null ? P.age + ' ' + esc(t('unit.years')) + ' · ' : ''}${esc(tr(styleName(a.style)))} · ${a.weight} ${esc(t('unit.kg'))}${a.region ? ' · ' + esc(tr(regionName(a.region))) : ''}</p>
       </div>
-      ${s.demo ? `<a class="btn btn-ghost" href="#/athlete/${s.id}">${icon.trophy}${esc(t('ath.open'))}</a>` : ''}
+      ${readinessGol(s.ready.score, s.ready.zone, t('me.readiness'), t('me.zone_' + s.ready.zone))}
     </div>
+    <div class="row row-wrap mt-4" style="gap:8px">
+      <button class="btn btn-gold btn-sm" data-act="light">${esc(t('coach.a_light'))}</button>
+      <button class="btn btn-danger btn-sm" data-act="doctor">${esc(t('coach.a_doctor'))}</button>
+      <button class="btn btn-ghost btn-sm" data-act="msg">${icon.chat}${esc(t('coach.a_msg'))}</button>
+      ${s.demo ? `<a class="btn btn-quiet btn-sm" href="#/athlete/${s.id}">${icon.trophy}${esc(t('ath.open'))}</a>` : ''}
+    </div>
+    <div data-msgs></div>
 
     <div class="grid-2 mt-6" style="align-items:start">
       <article class="panel dost-train ${lvCls}">
@@ -97,6 +105,24 @@ export default function coachAthlete({ params, user }) {
     html,
     title: a.name,
     mount(root) {
+      const nm = (a.name || '').split(' ')[0];
+      const drawMsgs = () => {
+        const ms = getCoachMsgs(s.id);
+        root.querySelector('[data-msgs]').innerHTML = ms.length ? `<div class="msg-hist mt-4"><p class="eyebrow">${esc(t('coach.history'))}</p>${ms.slice(0, 4).map((m) => `<div class="mh"><span class="badge ${m.kind === 'doctor' ? 'badge-red' : m.kind === 'light' ? 'badge-warn' : ''}">${esc(t('coach.st_' + m.kind))}</span><span>${esc(m.text)}</span><small>${esc(fmtDate(m.at, { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }))}${m.read ? ' · ✓ ' + esc(t('coach.read')) : ''}</small></div>`).join('')}</div>` : '';
+      };
+      drawMsgs();
+      root.querySelectorAll('[data-act]').forEach((b) => b.addEventListener('click', () => {
+        const kind = b.dataset.act;
+        if (kind === 'msg') {
+          const text = prompt(t('coach.write_to', { n: a.name }), t('coach.t_how', { n: nm }));
+          if (!text) return;
+          addCoachMsg({ to: s.id, kind: 'msg', text });
+        } else {
+          addCoachMsg({ to: s.id, kind, text: t(kind === 'doctor' ? 'coach.t_doctor' : 'coach.t_light', { n: nm }) });
+        }
+        toast(t(kind === 'doctor' ? 'coach.done_doctor' : kind === 'light' ? 'coach.done_light' : 'coach.sent', { n: nm }));
+        drawMsgs();
+      }));
       const chartW = (host) => Math.round(Math.max(300, Math.min(640, (host.clientWidth || 640) - 10)));
       const bars = root.querySelector('[data-bars]');
       bars.innerHTML = barsChart(weekly(s.trainings, 8), chartW(bars));

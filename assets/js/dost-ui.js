@@ -1,11 +1,11 @@
-// Визуальные элементы помощника и кабинета: лицо Dost, кольцо готовности, стакан воды,
+// Визуальные элементы помощника и кабинета: лицо Champ AI, кольцо готовности, стакан воды,
 // иконки упражнений, мини-графики. Всё — SVG, без картинок.
 import { testArt } from './art.js';
 import { exName } from './assistant.js';
 
 const OCT = (cx, cy, r) => { const a = r * 0.414; return `M${cx - a} ${cy - r}h${2 * a}l${r - a} ${r - a}v${2 * a}l${a - r} ${r - a}h${-2 * a}l${a - r} ${a - r}v${-2 * a}z`; };
 
-// Лицо Dost: настроение меняет рот и брови. Глаза моргают.
+// Лицо Champ AI: настроение меняет рот и брови. Глаза моргают.
 export function dostFace(mood = 'happy', cls = '') {
   const mouth = { happy: 'M17 29q7 6 14 0', calm: 'M18 30h12', worried: 'M18 31q6-4 12 0' }[mood];
   const brows = mood === 'worried' ? '<path d="M14 15l6 2M34 15l-6 2" stroke="#f4f2ee" stroke-width="1.8" stroke-linecap="round"/>' : '';

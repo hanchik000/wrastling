@@ -1,9 +1,10 @@
-// Ученики тренера: у каждого свой дневник, боли и план помощника Dost.
+// Ученики тренера: у каждого свой дневник, боли и план помощника Champ AI.
 // В демо — 8 учеников с данными-примером, плюс спортсмен этого устройства (его настоящие записи).
 import { DEMO_ATHLETES } from './data.js';
 import { demoTrainings, summary } from './training-lib.js';
 import { plan as dostPlan } from './assistant.js';
-import { getUser, getTrainings, getPains } from './store.js';
+import { getUser, getTrainings, getPains, coachDirective } from './store.js';
+import { readiness } from './assistant.js';
 
 const daysAgo = (n) => new Date(Date.now() - n * 864e5).toISOString();
 // Настройки демо: сила, скачок нагрузки, боли
@@ -37,12 +38,17 @@ export function getStudents() {
   if (u?.role === 'athlete' && u.profile) {
     list.unshift({ id: 'me', me: true, athlete: { id: 'me', name: u.profile.name, age: null, region: u.profile.region, style: u.profile.style, weight: u.profile.weight }, profile: u.profile, trainings: getTrainings(), pains: getPains() });
   }
-  return list.map((s) => ({ ...s, sm: summary(s.trainings), plan: dostPlan(s.profile, s.trainings, s.pains) }));
+  return list.map((s) => {
+    const directive = coachDirective(s.id);
+    const plan = dostPlan(s.profile, s.trainings, s.pains, new Date(), directive);
+    return { ...s, directive, sm: summary(s.trainings), plan, ready: readiness(plan, s.trainings) };
+  });
 }
 export const getStudent = (id) => getStudents().find((s) => s.id === id) || null;
 
 // Насколько ученику нужно внимание тренера: 3 — срочно, 0 — всё хорошо
 export function attention(s) {
+  if (s.directive) return s.plan.act.some((p) => p.level >= 7 || (p.flags || []).length) && s.directive.kind !== 'doctor' ? 3 : 0.5; // тренер уже отреагировал
   if (['stop', 'doctor'].includes(s.plan.level)) return 3;
   if (s.plan.level === 'light' || (s.sm.acwr != null && s.sm.acwr > 1.5)) return 2;
   if (s.plan.act.length) return 1;

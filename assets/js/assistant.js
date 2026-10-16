@@ -1,4 +1,4 @@
-// «Dost» — личный помощник спортсмена. Работает на устройстве, без интернета:
+// «Champ AI» — личный помощник спортсмена. Работает на устройстве, без интернета:
 // считает воду и питание по анкете, советует по тренировке с учётом дневника и болей, отвечает в чате
 // на туркменском, русском и английском. Это не врач: при тревожных признаках всегда отправляет к врачу.
 import { summary, load as sLoad, parse, iso, addDays } from './training-lib.js';
@@ -363,7 +363,7 @@ export function reply(text, ctx) {
     out.push(L(T3('Hemişe taýyn! Başga sorag bar bolsa ýaz. 🤝', 'Всегда пожалуйста! Пиши, если что-то ещё. 🤝', 'Any time! Write if anything else comes up. 🤝')));
   } else if (has(s, INT.greet)) {
     kind = 'greet';
-    out.push(L(T3(`Salam, ${name}! Men Dost — seniň sport kömekçiň. Suw, nahar, türgenleşik ýa-da agyry barada sora.`, `Привет, ${name}! Я Dost — твой спортивный помощник. Спрашивай про воду, еду, тренировки или боль.`, `Hi ${name}! I’m Dost, your sports buddy. Ask me about water, food, training or pain.`)));
+    out.push(L(T3(`Salam, ${name}! Men Champ AI — seniň sport kömekçiň. Suw, nahar, türgenleşik ýa-da agyry barada sora.`, `Привет, ${name}! Я Champ AI — твой спортивный помощник. Спрашивай про воду, еду, тренировки или боль.`, `Hi ${name}! I’m Champ AI, your sports buddy. Ask me about water, food, training or pain.`)));
   } else {
     out.push(L(T3('Men muny düşünmedim. Men kömek edip bilýän zatlar: suw, nahar we «muny iýip bolýarmy», türgenleşik, agyry, agram, uky, ýaryşa taýýarlyk.',
       'Я не совсем понял. Я помогаю с: водой, едой и «можно ли это есть», тренировками, болью, весом, сном и подготовкой к турниру.',
@@ -410,6 +410,8 @@ export function readiness(P, trainings = []) {
   if (last?.mood) { const m = { 5: 0, 4: -3, 3: -10, 2: -20, 1: -30 }[last.mood] || 0; if (m) { r += m; why.push({ k: 'mood', v: last.mood }); } }
   if (P.sm.rpe != null && P.sm.rpe > 8) { r -= 10; why.push({ k: 'rpe', v: P.sm.rpe }); }
   if (P.sm.sessions >= 7) { r -= 15; why.push({ k: 'streak', v: P.sm.sessions }); }
+  if (P.level === 'doctor') r = Math.min(r, 35);
+  if (P.level === 'stop') r = Math.min(r, 10);
   r = Math.max(5, Math.min(100, Math.round(r)));
   return { score: r, zone: r >= 75 ? 'go' : r >= 50 ? 'care' : 'rest', why };
 }

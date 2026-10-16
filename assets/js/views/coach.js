@@ -3,7 +3,10 @@ import { esc, icon, demoBadge } from '../ui.js';
 import { TESTS, DEMO_ATHLETES, REGIONS, STYLES, AGE_GROUPS, regionName, styleName, testById } from '../data.js';
 import { getResults, ageGroup } from '../store.js';
 import { getStudents, attention } from '../students.js';
-import { areaById, pick } from '../assistant.js';
+import { readinessGol } from '../dost-ui.js';
+import { addCoachMsg, getCoachMsgs } from '../store.js';
+import { sheet, toast } from '../ui.js';
+import { areaById, pick, exName } from '../assistant.js';
 import { getLang } from '../i18n.js';
 
 // Демо-записи очереди без видео — чтобы показать, как выглядит загруженная очередь
@@ -33,7 +36,6 @@ export default function coach({ user, query }) {
   </section>
   <section class="container section-tight" style="padding-bottom:var(--s-16)" data-pane="students" ${pane === 'students' ? '' : 'hidden'}>
     <div class="kpis" id="skpis"></div>
-    <div class="row row-wrap between mt-8 mb-4"><h2 class="eyebrow">${esc(t('coach.students'))}</h2><span class="muted" style="font-size:var(--fs-small)">${esc(t('coach.students_hint'))}</span></div>
     <div class="slist" id="slist"></div>
   </section>
   <section class="container" style="padding-bottom:var(--s-16)" data-pane="videos" ${pane === 'videos' ? '' : 'hidden'}>
@@ -73,37 +75,82 @@ export default function coach({ user, query }) {
       .filter((r) => fStatus === 'all' || (fStatus === 'pending' ? r.coach?.status !== 'reviewed' : r.coach?.status === 'reviewed'));
   }
 
+  // Причины внимания — человеческим языком
+  function reasons(s, lang) {
+    const out = [];
+    for (const p of s.plan.act) {
+      const nm = pick(areaById(p.area).name, lang);
+      if (p.area === 'head' || (p.flags || []).includes('headhit')) out.push(t('coach.r_head'));
+      else if (p.level >= 7 || (p.flags || []).length) out.push(t('coach.r_pain_red', { a: nm, l: p.level }));
+      else out.push(t('coach.r_pain', { a: nm, l: p.level }));
+    }
+    if (s.sm.acwr != null && s.sm.acwr > 1.5) out.push(t('coach.r_load', { r: s.sm.acwr.toFixed(1) }));
+    if (s.plan.reasons.some((r) => r.mood)) out.push(t('coach.r_mood'));
+    if (s.plan.reasons.some((r) => r.streak)) out.push(t('coach.r_streak'));
+    if (s.plan.reasons.some((r) => r.hard)) out.push(t('coach.r_hard'));
+    return out;
+  }
+
+  function act(root, s, kind) {
+    const nm = (s.athlete.name || '').split(' ')[0];
+    if (kind === 'msg') {
+      const tpl = ['coach.t_good', 'coach.t_how', 'coach.t_rest'].map((k) => t(k, { n: nm }));
+      sheet(`<h3>${esc(t('coach.write_to', { n: s.athlete.name }))}</h3>
+        <div class="chips mt-3" style="flex-wrap:wrap">${tpl.map((x) => `<button class="chip" data-tpl="${esc(x)}">${esc(x)}</button>`).join('')}</div>
+        <textarea class="input mt-4" rows="4" data-text placeholder="${esc(t('coach.write_ph'))}"></textarea>
+        <div class="stack mt-4"><button class="btn btn-gold btn-block" data-send>${esc(t('coach.send'))}</button><button class="btn btn-quiet btn-block" data-close>${esc(t('common.cancel'))}</button></div>`,
+      (panel, close) => {
+        const ta = panel.querySelector('[data-text]');
+        panel.querySelectorAll('[data-tpl]').forEach((b) => b.addEventListener('click', () => { ta.value = b.dataset.tpl; ta.focus(); }));
+        panel.querySelector('[data-send]').addEventListener('click', () => {
+          const text = ta.value.trim(); if (!text) { ta.focus(); return; }
+          addCoachMsg({ to: s.id, kind: 'msg', text }); close(); toast(t('coach.sent', { n: nm })); renderStudents(root);
+        });
+      });
+      return;
+    }
+    const lang = getLang();
+    const avoid = s.plan.avoid.length ? ' ' + t('coach.t_avoid', { x: s.plan.avoid.slice(0, 4).map((x) => exName(x, lang)).join(', ') }) : '';
+    addCoachMsg({ to: s.id, kind, text: t(kind === 'doctor' ? 'coach.t_doctor' : 'coach.t_light', { n: nm }) + (kind === 'light' ? avoid : '') });
+    toast(t(kind === 'doctor' ? 'coach.done_doctor' : 'coach.done_light', { n: nm }));
+    renderStudents(root);
+  }
+
   function renderStudents(root) {
     const lang = getLang();
-    const list = getStudents().map((s) => ({ ...s, att: attention(s) })).sort((a, b) => (a.me ? -1 : b.me ? 1 : b.att - a.att));
-    const cam = list.reduce((n, s) => n + s.trainings.filter((x) => x.camera && (Date.now() - new Date(x.date)) / 864e5 <= 7).length, 0);
-    root.querySelector('#skpis').innerHTML = [
-      ['coach.k_students', list.length], ['coach.k_attention', list.filter((s) => s.att >= 2).length],
-      ['coach.k_pains', list.reduce((n, s) => n + s.plan.act.length, 0)], ['coach.k_camera', cam],
-    ].map(([k, v], i) => `<div class="panel-flat ${i === 1 && v ? 'kpi-alert' : ''}"><span class="eyebrow">${esc(t(k))}</span><b class="display num" style="display:block;font-size:2.6rem;margin-top:6px">${v}</b></div>`).join('');
-    const stat = { normal: 'ok', light: 'warn', rest: 'info', doctor: 'bad', stop: 'bad' };
-    root.querySelector('#slist').innerHTML = list.map((s) => {
-      const a = s.athlete, sm = s.sm, P = s.plan;
-      const delta = sm.loadPrev ? Math.round(((sm.load - sm.loadPrev) / sm.loadPrev) * 100) : null;
-      const camN = s.trainings.filter((x) => x.camera).length;
-      return `<a class="scard att${s.att}" href="#/coach/athlete/${s.id}">
-        <div class="scard-h"><span class="avatar sm">${esc((a.name || '?')[0])}</span>
-          <span class="grow"><b>${esc(a.name)}</b>${s.me ? ` <span class="badge badge-gold">${esc(t('coach.this_device'))}</span>` : s.demo ? ` <span class="badge badge-demo">${esc(t('common.demo'))}</span>` : ''}
-          <small>${a.age ? a.age + ' ' + esc(t('unit.years')) + ' · ' : ''}${esc(tr(styleName(a.style)))} · ${a.weight} ${esc(t('unit.kg'))}</small></span>
-          <span class="sstat ${stat[P.level]}">${esc(t('coach.lv_' + P.level))}</span></div>
-        <div class="scard-m">
-          <div><span>${esc(t('train.k_sessions'))}</span><b class="num">${sm.sessions}</b></div>
-          <div><span>${esc(t('train.k_load'))}</span><b class="num">${sm.load}</b>${delta != null ? `<i class="delta ${delta >= 0 ? 'up' : 'down'}">${delta >= 0 ? '▲' : '▼'}${Math.abs(delta)}%</i>` : ''}</div>
-          <div><span>RPE</span><b class="num">${sm.rpe != null ? sm.rpe.toFixed(1) : '—'}</b></div>
-          <div><span>${esc(t('coach.camera'))}</span><b class="num">${camN}</b></div>
-        </div>
-        <div class="scard-f">
-          ${P.act.map((p) => `<span class="badge ${p.level >= 7 || (p.flags || []).length ? 'badge-red' : 'badge-warn'}">⚠ ${esc(pick(areaById(p.area).name, lang))} ${p.level}/10</span>`).join('')}
-          ${sm.acwr != null && sm.acwr > 1.5 ? `<span class="badge badge-warn">${esc(t('coach.spike', { r: sm.acwr.toFixed(1) }))}</span>` : ''}
-          ${!P.act.length && !(sm.acwr > 1.5) ? `<span class="muted" style="font-size:var(--fs-micro)">${esc(t('coach.all_ok'))}</span>` : ''}
-        </div>
-      </a>`;
-    }).join('');
+    const list = getStudents().map((s) => ({ ...s, att: attention(s) }));
+    const need = list.filter((s) => s.att >= 1).sort((a, b) => b.att - a.att);
+    const handled = list.filter((s) => s.directive);
+    const host = root.querySelector('#slist');
+    root.querySelector('#skpis').innerHTML = `
+      <div class="team-sum">
+        <p class="team-big">${need.length ? esc(t('coach.need_today', { n: need.length })) : esc(t('coach.all_good_today'))}</p>
+        <p class="muted">${esc(t('coach.team_line', { n: list.length, h: handled.length }))}</p>
+      </div>`;
+    const zoneOrder = { rest: 0, care: 1, go: 2 };
+    host.innerHTML = `
+      ${need.length ? `<div class="attn">${need.map((s) => {
+        const rs = reasons(s, lang);
+        const red = s.att >= 3;
+        return `<article class="attn-card ${red ? 'red' : 'amber'}">
+          <a class="attn-who" href="#/coach/athlete/${s.id}">${readinessGol(s.ready.score, s.ready.zone, '', '')}<span><b>${esc(s.athlete.name)}</b>${s.me ? ` <span class="badge badge-gold">${esc(t('coach.this_device'))}</span>` : ''}<small>${s.athlete.age ? s.athlete.age + ' ' + esc(t('unit.years')) + ', ' : ''}${esc(tr(styleName(s.athlete.style)))}, ${s.athlete.weight} ${esc(t('unit.kg'))}</small></span></a>
+          <ul class="attn-why">${rs.map((r) => `<li>${esc(r)}</li>`).join('')}</ul>
+          <div class="attn-act">
+            ${red ? `<button class="btn btn-danger btn-sm" data-act="doctor" data-id="${s.id}">${esc(t('coach.a_doctor'))}</button>` : ''}
+            <button class="btn ${red ? 'btn-ghost' : 'btn-gold'} btn-sm" data-act="light" data-id="${s.id}">${esc(t('coach.a_light'))}</button>
+            <button class="btn btn-ghost btn-sm" data-act="msg" data-id="${s.id}">${icon.chat}${esc(t('coach.a_msg'))}</button>
+          </div>
+        </article>`;
+      }).join('')}</div>` : ''}
+      <h2 class="eyebrow mt-10 mb-4">${esc(t('coach.team'))}</h2>
+      <div class="team">${[...list].sort((a, b) => zoneOrder[a.ready.zone] - zoneOrder[b.ready.zone] || a.ready.score - b.ready.score).map((s) => `
+        <a class="tm ${s.ready.zone}" href="#/coach/athlete/${s.id}">
+          ${readinessGol(s.ready.score, s.ready.zone, '', '')}
+          <b>${esc((s.athlete.name || '').split(' ')[0])}</b>
+          <small>${s.directive ? '✓ ' + esc(t('coach.st_' + s.directive.kind)) : esc(t('coach.lv_' + s.plan.level))}</small>
+        </a>`).join('')}</div>
+      <p class="muted mt-4" style="font-size:var(--fs-micro)">${esc(t('coach.ready_note'))}</p>`;
+    host.querySelectorAll('[data-act]').forEach((b) => b.addEventListener('click', () => act(root, list.find((x) => x.id === b.dataset.id), b.dataset.act)));
   }
 
   function render(root) {

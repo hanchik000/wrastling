@@ -1,4 +1,4 @@
-// Экран личного помощника Dost: план на сегодня, чат, дневник боли, анкета.
+// Экран личного помощника Champ AI: план на сегодня, чат, дневник боли, анкета.
 import { t, getLang as curLang, fmtDate } from '../i18n.js';
 import { esc, icon, toast, sheet } from '../ui.js';
 import { getUser, setUser, getTrainings, getPains, addPain, savePains, getWater, addWater, getChat, saveChat, getAiKey, setAiKey, uid } from '../store.js';
@@ -33,7 +33,7 @@ export default function assistant({ user, query, go }) {
   <section class="container dost-head">
     <div class="row" style="gap:14px;align-items:center">
       ${dostFace('happy', 'mid')}
-      <div><h1 class="display" style="font-size:var(--fs-h3, 1.6rem)">Dost</h1><p class="muted" style="font-size:var(--fs-small)">${esc(t('dost.status'))}</p></div>
+      <div><h1 class="display" style="font-size:var(--fs-h3, 1.6rem)">Champ AI</h1><p class="muted" style="font-size:var(--fs-small)">${esc(t('dost.status'))}</p></div>
       <a class="btn btn-quiet btn-sm" href="#/me" style="margin-left:auto">${esc(t('me.title'))}</a>
     </div>
     <div class="tabs mt-4" role="tablist">${['chat', 'pain', 'data'].map((x) => `<button role="tab" data-tab="${x}" aria-selected="${x === tab}">${esc(t('dost.tab_' + x))}</button>`).join('')}</div>
