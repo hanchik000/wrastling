@@ -26,68 +26,69 @@ export const EXPERIENCE = [
   { id: '3+', name: { tk: '3 ýyldan köp', ru: 'Больше 3 лет', en: 'Over 3 years' } },
 ];
 
-// Набор тестов — черновик, утверждают тренеры федерации.
-// kind: что можно честно измерить по видео с телефона.
+// Набор тестов — борцовская специфика. Черновик: утверждают тренеры федерации.
+// kind: что можно честно измерить по видео с телефона. space: сколько метров нужно.
 export const TESTS = [
   {
-    id: 'squat', minAge: 7, maxAge: 22, seconds: 30, kind: 'reps', side: true,
-    name: { tk: '30 sekuntda çökmek', ru: 'Приседания за 30 секунд', en: '30-second squats' },
-    short: { tk: 'Aýak güýji we çeýeligi', ru: 'Сила и выносливость ног', en: 'Leg strength and endurance' },
+    id: 'sprawl', minAge: 7, maxAge: 22, seconds: 30, kind: 'reps', space: 3,
+    name: { tk: '30 sekuntda sprawl (aýaklary taşlamak)', ru: 'Спраул за 30 секунд', en: '30-second sprawls' },
+    short: { tk: 'Geçişden goranmak, bagryň tizligi', ru: 'Защита от прохода, скорость таза', en: 'Shot defence, hip speed' },
     rules: {
-      tk: ['Telefony bil derejesinde gapdaldan goýuň', 'Bütin bedeniňiz kadrda bolsun', 'Budlar pola parallel bolýança çöküň', 'Dabanlary polda saklaň'],
-      ru: ['Поставьте телефон сбоку на уровне пояса', 'Всё тело должно быть в кадре', 'Опускайтесь до параллели бёдер с полом', 'Пятки не отрывайте от пола'],
-      en: ['Place the phone at waist height, side view', 'Keep your whole body in frame', 'Lower until thighs are parallel to the floor', 'Keep heels on the floor'],
+      tk: ['Telefony 3 metr uzaklykda gapdaldan goýuň', 'Göreş durşundan aýaklary yza taşlaň — bagyr düşege degsin', 'Döşi ýokary saklaň, kelläni galdyryň', 'Derrew durşa gaýdyp geliň — bu bir gaýtalama'],
+      ru: ['Поставьте телефон сбоку в 3 метрах', 'Из борцовской стойки резко отбросьте ноги назад — бёдра касаются ковра', 'Грудь и голова подняты', 'Сразу вернитесь в стойку — это одно повторение'],
+      en: ['Place the phone 3 metres away, side view', 'From your wrestling stance, kick your legs back — hips touch the mat', 'Keep your chest and head up', 'Return to stance at once — that is one rep'],
     },
   },
   {
-    id: 'pushup', minAge: 7, maxAge: 22, seconds: 30, kind: 'reps', side: true,
-    name: { tk: '30 sekuntda ýere basyp galmak', ru: 'Отжимания за 30 секунд', en: '30-second push-ups' },
-    short: { tk: 'Gol we egin güýji', ru: 'Сила рук и плечевого пояса', en: 'Arm and shoulder strength' },
-    note: { tk: '7–10 ýaş — dyzlardan', ru: '7–10 лет — с колен', en: 'Ages 7–10 — from knees' },
+    id: 'shot', minAge: 7, maxAge: 22, seconds: 30, kind: 'reps', space: 3,
+    name: { tk: '30 sekuntda aýaga geçiş', ru: 'Проходы в ноги за 30 секунд', en: '30-second shots' },
+    short: { tk: 'Hüjümiň derejesi we tizligi', ru: 'Уровень и скорость атаки', en: 'Attack level and speed' },
     rules: {
-      tk: ['Telefony pola gapdaldan goýuň', 'Bedeniňizi göni saklaň', 'Döşüňizi pola ýakynlaşdyryň', 'Gollary doly göneldiň'],
-      ru: ['Поставьте телефон на пол сбоку', 'Держите корпус ровно', 'Опускайте грудь близко к полу', 'Полностью выпрямляйте руки'],
-      en: ['Place the phone on the floor, side view', 'Keep your body straight', 'Bring your chest close to the floor', 'Fully straighten your arms'],
+      tk: ['Telefony 3 metr uzaklykda gapdaldan goýuň', 'Durşdan derejäni peseldip, öňe ädim ätiň — dyz düşege degsin', 'Gollar öňe, arka göni, kelle ýokary', 'Durşa gaýdyp geliň, aýaklary çalşyryň'],
+      ru: ['Поставьте телефон сбоку в 3 метрах', 'Из стойки опустите уровень и сделайте шаг вперёд — колено касается ковра', 'Руки вперёд, спина прямая, голова поднята', 'Вернитесь в стойку, чередуйте ноги'],
+      en: ['Place the phone 3 metres away, side view', 'From stance, change level and step in — knee touches the mat', 'Arms forward, back straight, head up', 'Return to stance, alternate legs'],
     },
   },
   {
-    id: 'burpee', minAge: 11, maxAge: 22, seconds: 30, kind: 'reps', side: true,
-    name: { tk: '30 sekuntda berpi', ru: 'Бёрпи за 30 секунд', en: '30-second burpees' },
-    short: { tk: 'Çydamlylyk we tizlik', ru: 'Выносливость и скорость', en: 'Endurance and speed' },
+    id: 'bridge_up', minAge: 11, maxAge: 22, seconds: 15, kind: 'hold', space: 2,
+    name: { tk: 'Durşdan köpri durmak', ru: 'Вставание на мост из стойки', en: 'Back bend into a bridge' },
+    short: { tk: 'Arkanyň çeýeligi', ru: 'Гибкость спины', en: 'Back flexibility' },
+    note: { tk: 'Ilkinji gezek — tälimçi bilen', ru: 'Впервые — со страховкой тренера', en: 'First time — with a coach spotting' },
     rules: {
-      tk: ['Telefony 3 metr uzaklykda goýuň', 'Planka we bökmek kadrda görünsin', 'Her gezek doly turuň'],
-      ru: ['Поставьте телефон в 3 метрах', 'Планка и прыжок должны быть в кадре', 'Каждый раз выпрямляйтесь полностью'],
-      en: ['Place the phone 3 metres away', 'Plank and jump must be in frame', 'Stand up fully every time'],
+      tk: ['Diňe ýumşak düşekde', 'Düşege arkaňyz bilen duruň, gollary ýokary galdyryň', 'Yza egilip, gollara daýanyp köpri duruň', '3 sekunt saklaň we ýuwaşlyk bilen turuň'],
+      ru: ['Только на мягком ковре', 'Встаньте спиной к ковру, руки вверх', 'Прогнитесь назад и встаньте на мост с опорой на руки', 'Удержите 3 секунды и плавно выйдите'],
+      en: ['Only on a soft mat', 'Stand with your back to the mat, arms up', 'Arch back into a bridge, landing on your hands', 'Hold for 3 seconds and come up smoothly'],
     },
   },
   {
-    id: 'jump', minAge: 7, maxAge: 22, seconds: 10, kind: 'coach', side: true,
-    name: { tk: 'Ýerinden uzynlyga bökmek', ru: 'Прыжок в длину с места', en: 'Standing long jump' },
-    short: { tk: 'Partlaýjy güýç', ru: 'Взрывная сила', en: 'Explosive power' },
+    id: 'bridge_walk', minAge: 14, maxAge: 22, seconds: 30, kind: 'hold', space: 2, coachOnly: true,
+    name: { tk: 'Köpride aýlanmak', ru: 'Забегания на мосту', en: 'Bridge walk-arounds' },
+    short: { tk: 'Boýun we arka — diňe tälimçi bilen', ru: 'Шея и спина — только с тренером', en: 'Neck and back — coach only' },
     rules: {
-      tk: ['Kadrda A4 kagyzyny goýuň — ölçeg üçin', 'Gapdaldan düşüriň', 'Iki aýak bilen bökiň we gonuň'],
-      ru: ['Положите в кадр лист А4 — для масштаба', 'Снимайте сбоку', 'Отталкивайтесь и приземляйтесь на обе ноги'],
-      en: ['Put an A4 sheet in frame for scale', 'Film from the side', 'Take off and land on both feet'],
+      tk: ['Diňe tälimçiniň gözegçiliginde', 'Kellä daýanyp göreş köprüsinde duruň', 'Aýaklar bilen kelläniň töwereginde aýlanyň', 'Boýunda agyry bolsa — derrew bes ediň'],
+      ru: ['Только под контролем тренера', 'Встаньте на борцовский мост с опорой на голову', 'Переступайте ногами по кругу вокруг головы', 'При боли в шее — сразу прекратите'],
+      en: ['Only under a coach’s supervision', 'Get into a wrestler’s bridge on your head', 'Walk your feet in a circle around your head', 'Stop at once if your neck hurts'],
     },
   },
   {
-    id: 'reach', minAge: 7, maxAge: 22, seconds: 15, kind: 'angle', side: true,
-    name: { tk: 'Oturyp öňe egilmek', ru: 'Наклон вперёд сидя', en: 'Sit-and-reach' },
-    short: { tk: 'Çeýelik', ru: 'Гибкость', en: 'Flexibility' },
+    id: 'pullup', minAge: 7, maxAge: 22, seconds: 60, kind: 'reps', space: 2,
+    name: { tk: 'Turnikde dartynmak', ru: 'Подтягивания на турнике', en: 'Pull-ups' },
+    short: { tk: 'Tutuş we arka güýji', ru: 'Сила хвата и спины', en: 'Grip and back strength' },
+    note: { tk: '7–10 ýaş — pes turnikde ýatyp', ru: '7–10 лет — из виса лёжа на низкой перекладине', en: 'Ages 7–10 — inverted rows on a low bar' },
     rules: {
-      tk: ['Aýaklary göni oturyň', 'Ýuwaşlyk bilen öňe uzanyň', '2 sekunt saklaň'],
-      ru: ['Сядьте, ноги прямые', 'Плавно тянитесь вперёд', 'Задержитесь на 2 секунды'],
-      en: ['Sit with straight legs', 'Reach forward smoothly', 'Hold for 2 seconds'],
+      tk: ['Telefony gapdaldan goýuň — turnik we bütin beden kadrda bolsun', 'Ýokardan tutuň, egin giňliginde', 'Eňek turnikden ýokary galsyn', 'Aşakda gollary doly göneldiň, yrgyldamaň'],
+      ru: ['Поставьте телефон сбоку — турник и всё тело в кадре', 'Хват сверху на ширине плеч', 'Подбородок выше перекладины', 'Внизу полностью выпрямляйте руки, без раскачки'],
+      en: ['Place the phone at the side — bar and whole body in frame', 'Overhand grip, shoulder width', 'Chin above the bar', 'Fully straighten your arms at the bottom, no swinging'],
     },
   },
   {
-    id: 'bridge', minAge: 14, maxAge: 22, seconds: 20, kind: 'hold', side: true, coachOnly: true,
-    name: { tk: 'Göreş köprüsi', ru: 'Борцовский мост', en: "Wrestler's bridge" },
-    short: { tk: 'Diňe tälimçiniň ýanynda', ru: 'Только в присутствии тренера', en: 'Only with a coach present' },
+    id: 'shuttle', minAge: 7, maxAge: 22, seconds: 20, kind: 'time', space: 10,
+    name: { tk: '3×10 m ylgamak', ru: 'Челночный бег 3×10 м', en: '3×10 m shuttle run' },
+    short: { tk: 'Tizlik we çeýelik', ru: 'Скорость и ловкость', en: 'Speed and agility' },
     rules: {
-      tk: ['Diňe tälimçiniň gözegçiliginde ýerine ýetiriň', 'Ýumşak düşekde', 'Agyry bolsa — derrew bes ediň'],
-      ru: ['Выполняйте только под контролем тренера', 'Только на мягком ковре', 'При боли — сразу прекратите'],
-      en: ['Perform only under a coach’s supervision', 'Only on a soft mat', 'Stop immediately if it hurts'],
+      tk: ['10 metri iki çyzyk bilen belläň', 'Telefony ortada gapdaldan goýuň — iki çyzyk hem kadrda bolsun', 'Ýazgyny başlangyçdan öň başlaň', '3 bölegi ylgaň, her gezek çyzyga el degiriň'],
+      ru: ['Разметьте 10 метров двумя линиями', 'Поставьте телефон сбоку посередине — обе линии в кадре', 'Включите запись до старта', 'Пробегите 3 отрезка, каждый раз касаясь линии рукой'],
+      en: ['Mark 10 metres with two lines', 'Place the phone at the side, in the middle — both lines in frame', 'Start recording before you start', 'Run 3 lengths, touching the line with your hand each time'],
     },
   },
 ];

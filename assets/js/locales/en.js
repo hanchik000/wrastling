@@ -40,7 +40,7 @@ export default {
     mi_tracking: 'Tracking', mi_knee: 'Knee angle', mi_hip: 'Hip height', mi_torso: 'Torso lean',
     mi_example: 'Example', mi_replay: 'Replay',
     how_title: 'Three steps to a tryout', how_cta: 'How it works',
-    how_1_t: 'Record a test', how_1_d: 'A phone, 2 metres of space and 30 seconds. No expensive equipment.',
+    how_1_t: 'Record a test', how_1_d: 'A phone, a mat or soft floor and 30 seconds. Any bar for pull-ups.',
     how_2_t: 'Get your numbers', how_2_d: 'The system maps your joints and counts reps, tempo and range of motion.',
     how_3_t: 'A coach decides', how_3_d: 'Federation coaches review the video and invite the best to an in-person tryout.',
     trust_eyebrow: 'Honest data', trust_title: 'Every number is labelled',
@@ -55,7 +55,7 @@ export default {
 
   scout: {
     title: 'Show us how you move', lead: 'Short phone tests for initial screening. The system measures, a coach decides.',
-    free: 'Free', no_equipment: 'No equipment', coach_decides: 'A coach decides',
+    free: 'Free', no_equipment: 'Minimal equipment', coach_decides: 'A coach decides',
     start_title: 'First, a quick sign-up', start_lead: 'Phone number, age, region and wrestling style. Under 18s need a parent’s consent.',
     start_cta: 'Sign up', preview_note: 'You can look at the tests right now.', tests_preview: 'Tests',
     your_tests: 'Tests for age group {group}', from_age: 'from age {n}', history: 'Attempt history',
@@ -105,11 +105,13 @@ export default {
     disclaimer: 'A phone video cannot measure everything. One attempt does not decide an athlete’s future — coaches always make the final call.',
   },
   metric: {
+    level: 'Shot level (hip vs stance)', time_bridge: 'Time in bridge', run_time: 'Run time', turns: 'Turns', coach_time: 'Stopwatch time', rotations: 'Bridge rotations',
     reps: 'Reps', tempo: 'Tempo', knee: 'Depth: knee angle', elbow: 'Depth: elbow angle',
     consistency: 'Tempo consistency', body_line: 'Torso sag', fatigue: 'Drop in 2nd half',
     hip_angle: 'Reach angle', hold: 'Hold', airtime: 'Air time', distance: 'Jump distance',
   },
   issue: {
+    sprawl_hips: 'Drop your hips to the mat — they are staying high', shot_level: 'Shoot lower: your knee should touch the mat', pullup_range: 'Fully straighten your arms at the bottom — partial reps were not counted', pullup_chin: 'Get your chin above the bar', bridge_none: 'No bridge detected: hips above shoulders, hands on the mat', bridge_short: 'Hold the bridge for at least 3 seconds', shuttle_turns: 'Turns not visible: both lines must be in frame',
     squat_depth: 'Squat deeper — until your thighs are parallel to the floor',
     pushup_depth: 'Go lower — elbows to a right angle',
     pushup_line: 'Keep your body straight, don’t let your lower back sag',

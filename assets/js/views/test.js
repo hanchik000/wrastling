@@ -31,7 +31,7 @@ export default function testView({ params, user, go }) {
         <ol class="rules">${tr(x.rules).map((r) => `<li><span>${esc(r)}</span></li>`).join('')}</ol>
         <div class="grid-3 mt-8" style="grid-template-columns:repeat(3,1fr)">
           <div class="panel-flat" style="padding:var(--s-4)"><span class="eyebrow">${esc(t('test.time'))}</span><b class="display num" style="display:block;font-size:1.8rem;margin-top:4px">${x.seconds}<small class="muted" style="font-size:.9rem"> ${esc(t('unit.sec'))}</small></b></div>
-          <div class="panel-flat" style="padding:var(--s-4)"><span class="eyebrow">${esc(t('test.space'))}</span><b class="display num" style="display:block;font-size:1.8rem;margin-top:4px">${x.id === 'burpee' || x.id === 'jump' ? '3' : '2'}<small class="muted" style="font-size:.9rem"> ${esc(t('unit.m'))}</small></b></div>
+          <div class="panel-flat" style="padding:var(--s-4)"><span class="eyebrow">${esc(t('test.space'))}</span><b class="display num" style="display:block;font-size:1.8rem;margin-top:4px">${x.space || 2}<small class="muted" style="font-size:.9rem"> ${esc(t('unit.m'))}</small></b></div>
           <div class="panel-flat" style="padding:var(--s-4)"><span class="eyebrow">${esc(t('test.view'))}</span><b class="display" style="display:block;font-size:1.3rem;margin-top:8px">${esc(t('test.side'))}</b></div>
         </div>
         <div class="stack mt-8">

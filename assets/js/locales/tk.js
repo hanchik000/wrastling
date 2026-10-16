@@ -41,7 +41,7 @@ export default {
     mi_tracking: 'Bellik', mi_knee: 'Dyzyň burçy', mi_hip: 'Bagryň beýikligi', mi_torso: 'Göwräniň egilmesi',
     mi_example: 'Mysal', mi_replay: 'Gaýtala',
     how_title: 'Saýlawa çenli üç ädim', how_cta: 'Nähili işleýär',
-    how_1_t: 'Synagy düşüriň', how_1_d: 'Telefon, 2 metr ýer we 30 sekunt. Gymmat enjam gerek däl.',
+    how_1_t: 'Synagy düşüriň', how_1_d: 'Telefon, düşek ýa-da ýumşak pol we 30 sekunt. Dartynmak üçin islendik turnik.',
     how_2_t: 'Görkezijileri alyň', how_2_d: 'Ulgam bognuklary belleýär, gaýtalamalary, depgini we amplitudany hasaplaýar.',
     how_3_t: 'Tälimçi karar berýär', how_3_d: 'Federasiýanyň tälimçisi wideony barlaýar we iň gowularyny ýüzbe-ýüz saýlawa çagyrýar.',
     trust_eyebrow: 'Dogruçyl maglumat', trust_title: 'Her san bellenendir',
@@ -56,7 +56,7 @@ export default {
 
   scout: {
     title: 'Nähili hereket edýäniňi görkez', lead: 'Ilkinji saýlaw üçin telefonda gysga synaglar. Ulgam ölçeýär, tälimçi karar berýär.',
-    free: 'Mugt', no_equipment: 'Enjamsyz', coach_decides: 'Karar tälimçiniňki',
+    free: 'Mugt', no_equipment: 'Az enjam', coach_decides: 'Karar tälimçiniňki',
     start_title: 'Ilki gysga hasaba alyş', start_lead: 'Telefon belgisi, ýaşy, sebiti we göreş görnüşi. 18 ýaşdan kiçiler üçin ene-atanyň razylygy gerek.',
     start_cta: 'Hasaba durmak', preview_note: 'Synaglary häzir hem görüp bilersiňiz.', tests_preview: 'Synaglar',
     your_tests: '{group} topar üçin synaglar', from_age: '{n} ýaşdan', history: 'Synanyşyklaryň taryhy',
@@ -106,11 +106,13 @@ export default {
     disclaimer: 'Telefon wideosy hemme zady ölçäp bilmeýär. Bir synanyşyk türgeniň geljegini kesgitlemeýär — jemleýji karar elmydama tälimçileriňki.',
   },
   metric: {
+    level: 'Geçiş derejesi (bagyr durşa görä)', time_bridge: 'Köprüdäki wagt', run_time: 'Ylgaýyş wagty', turns: 'Öwrülişler', coach_time: 'Sekundomer boýunça wagt', rotations: 'Köprüde aýlaw',
     reps: 'Gaýtalamalar', tempo: 'Depgin', knee: 'Çuňluk: dyzyň burçy', elbow: 'Çuňluk: tirsegiň burçy',
     consistency: 'Depginiň deňligi', body_line: 'Göwräniň egrelmesi', fatigue: '2-nji ýarymda peselme',
     hip_angle: 'Egilme burçy', hold: 'Saklamak', airtime: 'Howadaky wagt', distance: 'Bökmegiň uzynlygy',
   },
   issue: {
+    sprawl_hips: 'Bagry düşege çenli düşüriň — häzir ýokarda galýar', shot_level: 'Has pes geçiň: dyz düşege degmeli', pullup_range: 'Aşakda gollary doly göneldiň — doly däl gaýtalamalar hasaba alynmady', pullup_chin: 'Eňegi turnikden ýokary galdyryň', bridge_none: 'Köpri tanalmady: bagyr eginden ýokary, gollar düşekde bolmaly', bridge_short: 'Köprini azyndan 3 sekunt saklaň', shuttle_turns: 'Öwrülişler görünmeýär: iki çyzyk hem kadrda bolmaly',
     squat_depth: 'Has çuň çöküň — budlar pola parallel bolýança',
     pushup_depth: 'Has aşak düşüň — tirsekler göni burça çenli',
     pushup_line: 'Göwräňizi göni saklaň, bil tarapyndan egrelmäň',

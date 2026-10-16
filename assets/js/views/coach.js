@@ -5,9 +5,9 @@ import { getResults, ageGroup } from '../store.js';
 
 // Демо-записи очереди без видео — чтобы показать, как выглядит загруженная очередь
 const DEMO_QUEUE = [
-  { id: 'dq1', demo: true, testId: 'squat', createdAt: '2026-10-15T09:12:00+05:00', athlete: { name: 'Kerim T.', age: 11, region: 'ahal', style: 'greco' }, reps: 21, conf: 'high' },
-  { id: 'dq2', demo: true, testId: 'pushup', createdAt: '2026-10-14T18:40:00+05:00', athlete: { name: 'Aýna M.', age: 10, region: 'asgabat', style: 'women' }, reps: 14, conf: 'medium' },
-  { id: 'dq3', demo: true, testId: 'burpee', createdAt: '2026-10-14T16:05:00+05:00', athlete: { name: 'Begenç D.', age: 14, region: 'dasoguz', style: 'greco' }, reps: 11, conf: 'high' },
+  { id: 'dq1', demo: true, testId: 'sprawl', createdAt: '2026-10-15T09:12:00+05:00', athlete: { name: 'Kerim T.', age: 11, region: 'ahal', style: 'greco' }, reps: 21, conf: 'high' },
+  { id: 'dq2', demo: true, testId: 'shot', createdAt: '2026-10-14T18:40:00+05:00', athlete: { name: 'Aýna M.', age: 10, region: 'asgabat', style: 'women' }, reps: 14, conf: 'medium' },
+  { id: 'dq3', demo: true, testId: 'pullup', createdAt: '2026-10-14T16:05:00+05:00', athlete: { name: 'Begenç D.', age: 14, region: 'dasoguz', style: 'greco' }, reps: 11, conf: 'high' },
 ];
 
 export default function coach({ user }) {

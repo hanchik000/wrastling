@@ -3,7 +3,7 @@ import { esc, icon, toast } from '../ui.js';
 import { testById, regionName, styleName } from '../data.js';
 import { getResult, getVideo, updateResult } from '../store.js';
 import { drawFrame, frameAt } from '../pose.js';
-import { statDefs } from './result.js';
+import { statDefs, COACH_EXTRA, REP_TESTS } from './result.js';
 
 export default function review({ params, user, go }) {
   if (!user?.profile) return { redirect: '/login?next=/coach' };
@@ -41,9 +41,9 @@ export default function review({ params, user, go }) {
       </div>
       <form class="panel stack" data-form novalidate>
         <h2 class="eyebrow">${esc(t('review.form'))}</h2>
-        ${a.metrics?.reps != null || r.testId !== 'jump' && r.testId !== 'reach' && r.testId !== 'bridge' ? `
+        ${a.metrics?.reps != null || REP_TESTS.includes(r.testId) ? `
         <div class="field"><label for="reps">${esc(t('review.reps_confirm'))}</label><input id="reps" class="input num" inputmode="numeric" value="${esc(c.repsConfirmed ?? a.metrics?.reps ?? '')}"><span class="hint">${esc(t('review.reps_hint'))}</span></div>` : ''}
-        ${r.testId === 'jump' ? `<div class="field"><label for="dist">${esc(t('review.distance'))}</label><input id="dist" class="input num" inputmode="numeric" placeholder="180" value="${esc(c.distance ?? '')}"></div>` : ''}
+        ${COACH_EXTRA[r.testId] ? `<div class="field"><label for="extra">${esc(t(COACH_EXTRA[r.testId].k))}${COACH_EXTRA[r.testId].unit ? ', ' + esc(t(COACH_EXTRA[r.testId].unit)) : ''}</label><input id="extra" class="input num" inputmode="decimal" placeholder="${COACH_EXTRA[r.testId].ph}" value="${esc(c.extra ?? '')}"></div>` : ''}
         <div class="field">
           <label for="score">${esc(t('review.technique'))}: <b data-score-out class="num">${c.score ?? 7}</b> / 10</label>
           <input id="score" type="range" min="1" max="10" step="1" value="${c.score ?? 7}" style="accent-color:#27b663;width:100%">
@@ -76,7 +76,7 @@ export default function review({ params, user, go }) {
             by: user.profile.name,
             score: +root.querySelector('#score').value,
             repsConfirmed: reps === '' || reps == null ? null : +reps,
-            distance: root.querySelector('#dist')?.value || null,
+            extra: root.querySelector('#extra')?.value.replace(',', '.') || null,
             comment: root.querySelector('#cmt').value.trim(),
             recommendation: root.querySelector('input[name=rec]:checked').value,
           },

@@ -5,25 +5,31 @@ import { getResult, getResults, getVideo, putVideo, updateResult } from '../stor
 import { drawFrame, frameAt, analyzeVideo } from '../pose.js';
 
 // Карточки показателей: что измерено, единицы, источник
+// Что тренер вносит вручную (то, что по видео с телефона честно не измерить)
+export const COACH_EXTRA = {
+  shuttle: { k: 'metric.coach_time', unit: 'unit.sec', ph: '9.8' },
+  bridge_walk: { k: 'metric.rotations', unit: '', ph: '3' },
+};
+export const REP_TESTS = ['sprawl', 'shot', 'pullup'];
+
 export function statDefs(testId) {
   const D = {
     reps: { k: 'metric.reps', unit: '', digits: 0, src: 'measured' },
     tempo: { k: 'metric.tempo', unit: 'unit.per_min', digits: 0, src: 'measured' },
-    depth: { k: testId === 'pushup' ? 'metric.elbow' : 'metric.knee', unit: '°', digits: 0, src: 'measured' },
     consistency: { k: 'metric.consistency', unit: '%', digits: 0, src: 'measured' },
-    bodyLine: { k: 'metric.body_line', unit: '°', digits: 0, src: 'measured' },
     fatigue: { k: 'metric.fatigue', unit: '%', digits: 0, src: 'measured' },
-    hipAngle: { k: 'metric.hip_angle', unit: '°', digits: 0, src: 'measured' },
-    hold: { k: 'metric.hold', unit: 'unit.sec', digits: 1, src: 'measured' },
-    airtime: { k: 'metric.airtime', unit: 'unit.sec', digits: 2, src: 'model' },
+    level: { k: 'metric.level', unit: '%', digits: 0, src: 'measured' },
+    hold: { k: testId === 'bridge_walk' ? 'metric.time_bridge' : 'metric.hold', unit: 'unit.sec', digits: 1, src: 'measured' },
+    runTime: { k: 'metric.run_time', unit: 'unit.sec', digits: 2, src: 'model' },
+    turns: { k: 'metric.turns', unit: '', digits: 0, src: 'measured' },
   };
   const order = {
-    squat: ['reps', 'tempo', 'depth', 'consistency'],
-    pushup: ['reps', 'tempo', 'depth', 'bodyLine'],
-    burpee: ['reps', 'tempo', 'fatigue'],
-    reach: ['hipAngle'],
-    bridge: ['hold'],
-    jump: ['airtime'],
+    sprawl: ['reps', 'tempo', 'fatigue'],
+    shot: ['reps', 'tempo', 'level', 'consistency'],
+    bridge_up: ['hold'],
+    bridge_walk: ['hold'],
+    pullup: ['reps', 'tempo', 'fatigue'],
+    shuttle: ['runTime', 'turns'],
   }[testId] || [];
   return order.map((key) => ({ key, ...D[key] }));
 }
@@ -112,8 +118,8 @@ export default function result({ params, go }) {
               <span class="badge badge-${d.src}" style="justify-self:start">${esc(t('label.' + d.src))}</span>
             </div>`;
           }).join('')}
-          ${r.testId === 'jump' ? `<div class="stat wide"><span class="k">${esc(t('metric.distance'))}</span><span class="v" style="font-size:1.4rem">${r.coach?.distance ? esc(r.coach.distance) + ' <small>' + esc(t('unit.cm')) + '</small>' : esc(t('result.coach_measures'))}</span><span class="badge badge-coach" style="justify-self:start">${esc(t('label.coach'))}</span></div>` : ''}
         </div>` : ''}
+        ${COACH_EXTRA[r.testId] ? `<div class="stats"><div class="stat wide"><span class="k">${esc(t(COACH_EXTRA[r.testId].k))}</span><span class="v" style="font-size:1.4rem">${r.coach?.extra ? esc(r.coach.extra) + (COACH_EXTRA[r.testId].unit ? ' <small>' + esc(t(COACH_EXTRA[r.testId].unit)) + '</small>' : '') : esc(t('result.coach_measures'))}</span><span class="badge badge-coach" style="justify-self:start">${esc(t('label.coach'))}</span></div></div>` : ''}
 
         ${(a.issues || []).length ? `
         <div class="panel">

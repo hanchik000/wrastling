@@ -273,7 +273,7 @@ export default function home() {
       // Телефон в красном баннере: живая разметка приседаний, счётчик повторений
       const loopHost = root.querySelector('#phone-loop');
       if (loopHost) {
-        loop = mountExerciseLoop(loopHost, 'squat');
+        loop = mountExerciseLoop(loopHost, 'sprawl');
         const reps = root.querySelector('#phone-reps');
         const knee = root.querySelector('#phone-knee');
         let n = 0, down = false;

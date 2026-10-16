@@ -123,61 +123,107 @@ export function computeMetrics(testId, frames, duration) {
   const issues = [];
   const m = {};
 
-  if (testId === 'squat') {
-    const knee = smooth(frames.map((f) => { const h = P(f, 'hip'), k = P(f, 'kn'), a = P(f, 'an'); return h && k && a ? ang(h, k, a) : null; }));
-    const r = countReps(knee, times, 115, 150);
-    m.reps = r.reps;
-    m.depth = median(r.mins);
-    m.tempo = duration ? (r.reps / duration) * 60 : null;
-    m.consistency = consistency(r.durs);
-    if (m.depth != null && m.depth > 105) issues.push('squat_depth');
-  } else if (testId === 'pushup') {
-    const elbow = smooth(frames.map((f) => { const s = P(f, 'sh'), e = P(f, 'el'), w = P(f, 'wr'); return s && e && w ? ang(s, e, w) : null; }));
-    const r = countReps(elbow, times, 105, 145);
-    m.reps = r.reps;
-    m.depth = median(r.mins);
-    m.tempo = duration ? (r.reps / duration) * 60 : null;
-    m.consistency = consistency(r.durs);
-    const line = frames.map((f) => { const s = P(f, 'sh'), h = P(f, 'hip'), a = P(f, 'an'); return s && h && a ? 180 - ang(s, h, a) : null; }).filter((x) => x != null);
-    m.bodyLine = median(line);
-    if (m.depth != null && m.depth > 100) issues.push('pushup_depth');
-    if (m.bodyLine != null && m.bodyLine > 20) issues.push('pushup_line');
-  } else if (testId === 'burpee') {
-    // Стоя: корпус почти вертикален. Планка: корпус почти горизонтален.
-    let state = null, reps = 0;
-    const repT = [];
+  const tiltOf = (f) => { const sh = P(f, 'sh'), h = P(f, 'hip'); return sh && h ? (Math.atan2(Math.abs(sh[0] - h[0]), Math.abs(h[1] - sh[1])) * 180) / Math.PI : null; };
+  const hipGap = (f) => { const h = P(f, 'hip'), a = P(f, 'an'); return h && a ? a[1] - h[1] : null; }; // высота таза над стопой
+  const fatigueOf = (repT) => {
+    if (repT.length < 4 || !duration) return null;
+    const a = repT.filter((x) => x <= duration / 2).length, b = repT.length - a;
+    return a ? Math.max(0, ((a - b) / a) * 100) : null;
+  };
+
+  if (testId === 'sprawl') {
+    // Стойка: корпус ближе к вертикали. Спраул: корпус почти горизонтален, таз у ковра.
+    let state = null, reps = 0, minGap = Infinity;
+    const repT = [], gaps = [];
     frames.forEach((f) => {
-      const s = P(f, 'sh'), h = P(f, 'hip');
-      if (!s || !h) return;
-      const tilt = (Math.atan2(Math.abs(s[0] - h[0]), Math.abs(h[1] - s[1])) * 180) / Math.PI;
-      if (tilt < 30) { if (state === 'plank') { reps++; repT.push(f.t); } state = 'stand'; }
-      else if (tilt > 62) state = state === 'stand' || state === 'plank' ? 'plank' : state;
+      const tilt = tiltOf(f); if (tilt == null) return;
+      const g = hipGap(f);
+      if (tilt < 40) {
+        if (state === 'down') { reps++; repT.push(f.t); if (Number.isFinite(minGap)) gaps.push(minGap); }
+        state = 'up'; minGap = Infinity;
+      } else if (tilt > 52 && state === 'up') state = 'down';
+      if (state === 'down' && g != null) minGap = Math.min(minGap, g);
     });
     m.reps = reps;
     m.tempo = duration ? (reps / duration) * 60 : null;
-    if (repT.length >= 4) {
-      const half = duration / 2;
-      const a = repT.filter((x) => x <= half).length, b = repT.length - a;
-      m.fatigue = a ? Math.max(0, ((a - b) / a) * 100) : null;
-    }
-  } else if (testId === 'reach') {
-    const flex = frames.map((f) => { const s = P(f, 'sh'), h = P(f, 'hip'), k = P(f, 'kn'); return s && h && k ? ang(s, h, k) : null; }).filter((x) => x != null);
-    m.hipAngle = flex.length ? Math.min(...smooth(flex).filter((x) => x != null)) : null;
-  } else if (testId === 'bridge') {
-    let hold = 0, best = 0;
-    frames.forEach((f, i) => {
-      const s = P(f, 'sh'), h = P(f, 'hip');
-      const ok = s && h && h[1] < s[1] - 0.04;
-      const dt = i ? f.t - frames[i - 1].t : 0;
-      if (ok) { hold += dt; best = Math.max(best, hold); } else hold = 0;
+    m.fatigue = fatigueOf(repT);
+    if (gaps.length && median(gaps) > 0.1) issues.push('sprawl_hips');
+  } else if (testId === 'shot') {
+    // Смена уровня: высота таза падает относительно стойки и возвращается
+    const h = smooth(frames.map(hipGap));
+    const vals = h.filter((x) => x != null).sort((a, b) => a - b);
+    const base = vals.length ? vals[Math.floor(vals.length * 0.85)] : null;
+    if (base && base > 0.05) {
+      let state = 'up', reps = 0, curMin = Infinity, startT = null;
+      const mins = [], durs = [];
+      h.forEach((v, i) => {
+        if (v == null) return;
+        const r = v / base;
+        if (state === 'up' && r < 0.7) { state = 'down'; curMin = r; startT = times[i]; }
+        else if (state === 'down') {
+          curMin = Math.min(curMin, r);
+          if (r > 0.85) { reps++; mins.push(curMin); durs.push(times[i] - startT); state = 'up'; }
+        }
+      });
+      m.reps = reps;
+      m.level = mins.length ? median(mins) * 100 : null;
+      m.tempo = duration ? (reps / duration) * 60 : null;
+      m.consistency = consistency(durs);
+      if (m.level != null && m.level > 60) issues.push('shot_level');
+    } else m.reps = 0;
+  } else if (testId === 'pullup') {
+    // Повторение засчитывается, когда подбородок выше кистей после полного виса
+    let armed = false, inTop = false, reps = 0, partial = 0, pulls = 0, bent = false, reached = false;
+    const repT = [];
+    frames.forEach((f) => {
+      if (!f.p) return;
+      const nose = f.p[0][2] > 0.4 ? f.p[0] : null;
+      const sh = P(f, 'sh'), el = P(f, 'el'), wr = P(f, 'wr');
+      if (!sh || !el || !wr) return;
+      const elbow = ang(sh, el, wr);
+      if (elbow > 150) { armed = true; if (bent && !reached) pulls++; bent = false; reached = false; }
+      if (elbow < 90) bent = true;
+      const top = nose ? nose[1] < wr[1] : false;
+      if (top && !inTop) { if (armed) { reps++; repT.push(f.t); } else partial++; armed = false; reached = true; }
+      inTop = top;
     });
-    m.hold = best;
-  } else if (testId === 'jump') {
-    const ank = frames.map((f) => { const a = P(f, 'an'); return a ? a[1] : null; });
-    const base = median(ank.slice(0, Math.max(3, Math.floor(ank.length / 5))).filter((x) => x != null));
-    let air = 0;
-    if (base != null) ank.forEach((y, i) => { if (y != null && y < base - 0.04 && i) air += frames[i].t - frames[i - 1].t; });
-    m.airtime = air || null;
+    m.reps = reps;
+    m.tempo = duration ? (reps / duration) * 60 : null;
+    m.fatigue = fatigueOf(repT);
+    if (partial >= 2) issues.push('pullup_range');
+    if (pulls >= 2) issues.push('pullup_chin');
+  } else if (testId === 'bridge_up' || testId === 'bridge_walk') {
+    // Мост: таз выше плеч. Для вставания — ещё и руки ниже плеч (опора на руки).
+    let hold = 0, best = 0, total = 0;
+    frames.forEach((f, i) => {
+      const sh = P(f, 'sh'), h = P(f, 'hip'), wr = P(f, 'wr');
+      let ok = sh && h && h[1] < sh[1] - 0.04;
+      if (ok && testId === 'bridge_up') ok = wr ? wr[1] > sh[1] : false;
+      const dt = i ? f.t - frames[i - 1].t : 0;
+      if (ok) { hold += dt; total += dt; best = Math.max(best, hold); } else hold = 0;
+    });
+    m.hold = testId === 'bridge_walk' ? total : best;
+    if (testId === 'bridge_up') {
+      if (best < 0.5) issues.push('bridge_none');
+      else if (best < 3) issues.push('bridge_short');
+    }
+  } else if (testId === 'shuttle') {
+    // Время от начала до конца движения и количество разворотов
+    const xs = smooth(frames.map((f) => { const h = P(f, 'hip'); return h ? h[0] : null; }), 2);
+    const v = xs.map((x, i) => (i && x != null && xs[i - 1] != null ? (x - xs[i - 1]) / (times[i] - times[i - 1] || 1) : null));
+    const moving = v.map((d) => d != null && Math.abs(d) > 0.12);
+    let start = null, end = null;
+    moving.forEach((mv, i) => { if (mv) { if (start == null) start = times[i]; end = times[i]; } });
+    let turns = 0, lastSign = 0, lastTurnT = -1;
+    v.forEach((d, i) => {
+      if (d == null || Math.abs(d) < 0.12) return;
+      const sg = Math.sign(d);
+      if (lastSign && sg !== lastSign && times[i] - lastTurnT > 0.4) { turns++; lastTurnT = times[i]; }
+      lastSign = sg;
+    });
+    m.runTime = start != null && end > start ? end - start : null;
+    m.turns = turns;
+    if (turns < 2) issues.push('shuttle_turns');
   }
   return { metrics: m, issues, side: S === L ? 'left' : 'right' };
 }

@@ -235,43 +235,61 @@ export function mountMotionIntelligence(stage, { onDone } = {}) {
 }
 
 // ---------- Видео-образцы упражнений (схема, вид сбоку, viewBox 300×300) ----------
+const STANCE_W = { head: [170, 92], sh: [158, 118], el: [190, 150], wr: [214, 140], hip: [118, 170], kn: [160, 208], an: [146, 256], toe: [166, 258] };
+const shift = (P, dx, dy = 0) => Object.fromEntries(Object.entries(P).map(([k, [x, y]]) => [k, [x + dx, y + dy]]));
+const flip = (P) => Object.fromEntries(Object.entries(P).map(([k, [x, y]]) => [k, [-x, y]]));
+const RUN1 = { head: [12, 66], sh: [6, 96], el: [24, 118], wr: [38, 104], hip: [-2, 162], kn: [26, 198], an: [10, 252], toe: [26, 256] };
+const RUN2 = { head: [12, 66], sh: [6, 96], el: [-12, 118], wr: [-4, 140], hip: [-2, 162], kn: [-18, 204], an: [-34, 244], toe: [-24, 252] };
+const TOUCH = { head: [30, 170], sh: [14, 182], el: [26, 220], wr: [34, 256], hip: [-24, 190], kn: [8, 220], an: [-8, 256], toe: [8, 258] };
+
 const EX = {
-  squat: [
-    { head: [150, 52], sh: [150, 86], el: [178, 96], wr: [206, 96], hip: [150, 160], kn: [153, 208], an: [150, 256], toe: [170, 258] },
-    { head: [170, 108], sh: [160, 138], el: [196, 140], wr: [230, 140], hip: [114, 196], kn: [170, 206], an: [150, 256], toe: [170, 258] },
+  // Спраул: стойка → ноги назад, бёдра на ковре, грудь поднята
+  sprawl: [
+    STANCE_W,
+    { head: [222, 186], sh: [206, 204], el: [214, 232], wr: [222, 256], hip: [130, 246], kn: [90, 252], an: [48, 254], toe: [38, 258] },
   ],
-  pushup: [
-    { head: [236, 166], sh: [216, 178], el: [216, 214], wr: [216, 250], hip: [150, 196], kn: [106, 212], an: [62, 230], toe: [52, 250] },
-    { head: [240, 212], sh: [220, 222], el: [196, 236], wr: [216, 250], hip: [150, 228], kn: [106, 236], an: [62, 242], toe: [52, 250] },
+  // Проход в ноги: смена уровня, колено к ковру, руки вперёд
+  shot: [
+    STANCE_W,
+    { head: [228, 150], sh: [210, 168], el: [242, 182], wr: [266, 184], hip: [150, 204], kn: [174, 254], an: [128, 256], toe: [116, 258] },
   ],
-  burpee: [
-    { head: [150, 52], sh: [150, 86], el: [152, 124], wr: [154, 158], hip: [150, 160], kn: [153, 208], an: [150, 256], toe: [170, 258] },
-    { head: [190, 150], sh: [176, 166], el: [184, 210], wr: [188, 252], hip: [128, 200], kn: [170, 214], an: [150, 256], toe: [170, 258] },
-    { head: [236, 166], sh: [216, 178], el: [216, 214], wr: [216, 250], hip: [150, 196], kn: [106, 212], an: [62, 230], toe: [52, 250] },
-    { head: [190, 150], sh: [176, 166], el: [184, 210], wr: [188, 252], hip: [128, 200], kn: [170, 214], an: [150, 256], toe: [170, 258] },
-    { head: [150, 26], sh: [150, 60], el: [150, 26], wr: [150, 0], hip: [150, 134], kn: [152, 184], an: [150, 232], toe: [166, 240] },
+  // Вставание на мост: стойка, руки вверх → прогиб → мост → держим → выход
+  bridge_up: [
+    { head: [150, 44], sh: [150, 74], el: [154, 44], wr: [156, 16], hip: [150, 142], kn: [152, 198], an: [150, 252], toe: [168, 256] },
+    { head: [118, 74], sh: [128, 96], el: [104, 80], wr: [86, 70], hip: [160, 150], kn: [172, 202], an: [158, 252], toe: [176, 256] },
+    { head: [96, 236], sh: [112, 214], el: [94, 236], wr: [82, 256], hip: [176, 160], kn: [212, 200], an: [214, 254], toe: [232, 256] },
+    { head: [96, 236], sh: [112, 212], el: [94, 236], wr: [82, 256], hip: [176, 154], kn: [212, 196], an: [214, 254], toe: [232, 256] },
+    { head: [118, 74], sh: [128, 96], el: [104, 80], wr: [86, 70], hip: [160, 150], kn: [172, 202], an: [158, 252], toe: [176, 256] },
   ],
-  jump: [
-    { head: [106, 110], sh: [100, 140], el: [80, 168], wr: [64, 186], hip: [76, 196], kn: [122, 210], an: [104, 256], toe: [124, 258] },
-    { head: [176, 66], sh: [166, 96], el: [196, 88], wr: [226, 78], hip: [140, 150], kn: [186, 172], an: [168, 212], toe: [186, 216] },
-    { head: [236, 116], sh: [228, 146], el: [258, 150], wr: [284, 152], hip: [196, 200], kn: [244, 212], an: [226, 256], toe: [246, 258] },
+  // Забегания на мосту: опора на голову, ноги переступают
+  bridge_walk: [
+    { head: [74, 250], sh: [94, 228], el: [118, 212], wr: [104, 200], hip: [168, 170], kn: [206, 206], an: [216, 254], toe: [234, 256] },
+    { head: [74, 250], sh: [94, 228], el: [118, 212], wr: [104, 200], hip: [162, 176], kn: [190, 216], an: [190, 256], toe: [208, 258] },
+    { head: [74, 250], sh: [94, 228], el: [118, 212], wr: [104, 200], hip: [168, 168], kn: [214, 200], an: [236, 252], toe: [254, 256] },
   ],
-  reach: [
-    { head: [112, 140], sh: [112, 172], el: [128, 200], wr: [150, 218], hip: [110, 246], kn: [170, 246], an: [226, 246], toe: [232, 232] },
-    { head: [190, 202], sh: [162, 206], el: [196, 222], wr: [226, 232], hip: [110, 246], kn: [170, 246], an: [226, 246], toe: [232, 232] },
+  // Подтягивания: вис → подбородок над перекладиной
+  pullup: [
+    { head: [152, 84], sh: [150, 102], el: [150, 66], wr: [150, 30], hip: [150, 172], kn: [156, 216], an: [150, 252], toe: [164, 256] },
+    { head: [154, 18], sh: [150, 62], el: [170, 62], wr: [150, 30], hip: [148, 134], kn: [154, 180], an: [148, 220], toe: [162, 224] },
   ],
-  bridge: [
-    { head: [104, 252], sh: [120, 226], el: [92, 230], wr: [82, 254], hip: [176, 176], kn: [216, 206], an: [228, 256], toe: [246, 258] },
-    { head: [100, 252], sh: [118, 222], el: [90, 228], wr: [82, 254], hip: [176, 164], kn: [218, 202], an: [228, 256], toe: [246, 258] },
+  // Челночный бег: бег → касание линии → разворот
+  shuttle: [
+    shift(RUN1, 70), shift(RUN2, 130), shift(RUN1, 190), shift(TOUCH, 236),
+    shift(flip(RUN1), 190), shift(flip(RUN2), 130), shift(flip(RUN1), 70), shift(flip(TOUCH), 64),
   ],
 };
+const EX_SEG = { sprawl: 700, shot: 750, bridge_up: 900, bridge_walk: 650, pullup: 750, shuttle: 420 };
 const EX_BONES = [['head', 'sh'], ['sh', 'el'], ['el', 'wr'], ['sh', 'hip'], ['hip', 'kn'], ['kn', 'an'], ['an', 'toe']];
 
 export function mountExerciseLoop(host, testId) {
-  const frames = EX[testId] || EX.squat;
+  const frames = EX[testId] || EX.sprawl;
   const svg = el('svg', { viewBox: '0 0 300 300', role: 'img', 'aria-label': t('scout.demo_aria') });
   svg.appendChild(el('path', { d: golPath(150, 150, 120), stroke: 'rgba(39,182,99,.1)', fill: 'none' }));
   svg.appendChild(el('line', { x1: 20, y1: 260, x2: 280, y2: 260, stroke: 'rgba(244,242,238,.25)' }));
+  if (testId === 'pullup') svg.appendChild(el('line', { x1: 96, y1: 28, x2: 204, y2: 28, stroke: '#f4f2ee', 'stroke-width': 4, 'stroke-linecap': 'round' }));
+  if (testId === 'shuttle') {
+    for (const x of [40, 260]) svg.appendChild(el('line', { x1: x, y1: 236, x2: x, y2: 262, stroke: '#27b663', 'stroke-width': 3 }));
+  }
   const sil = el('g', { stroke: '#2b2c31', 'stroke-width': 22, 'stroke-linecap': 'round' });
   const g = el('g', { stroke: '#f4f2ee', 'stroke-width': 2, 'stroke-linecap': 'round' });
   const sLines = EX_BONES.map(() => sil.appendChild(el('line')));
@@ -298,7 +316,7 @@ export function mountExerciseLoop(host, testId) {
   };
 
   const seq = frames.length === 2 ? [0, 1] : frames.map((_, i) => i);
-  const SEG = testId === 'bridge' ? 1400 : 800;
+  const SEG = EX_SEG[testId] || 800;
   let raf = 0, t0 = 0, paused = false, pausedAt = 0;
   const loop = (now) => {
     if (!t0) t0 = now;

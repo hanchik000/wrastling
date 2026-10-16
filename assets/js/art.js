@@ -25,12 +25,12 @@ export const newsArt = {
 };
 
 export const testArt = {
-  squat: S(`<circle cx="70" cy="30" r="8"/><path d="M66 38l-8 24-20 10 18 6-4 22M58 62l26-6M84 56h12" /><path d="M30 102h70" stroke="${G}"/>`),
-  pushup: S(`<circle cx="94" cy="54" r="7"/><path d="M88 60 30 74l-12 8M78 63v28M30 92h76" /><path d="M14 98h96" stroke="${G}"/>`),
-  burpee: S(`<circle cx="60" cy="18" r="8"/><path d="M60 26v34l-10 24M60 60l10 24M44 34l16-6 16 6" /><path d="M40 104h40" stroke="${G}"/><path d="M50 10l10-8 10 8" stroke="${G}"/>`),
-  jump: S(`<circle cx="58" cy="28" r="7"/><path d="M52 34l-10 26 22 8-6 20M42 60l-16 4M64 40l18-6" /><path d="M14 100h92" stroke="${G}"/><path d="M30 92l40-30 30 30" stroke="${G}" stroke-dasharray="3 5"/>`),
-  reach: S(`<circle cx="74" cy="56" r="7"/><path d="M68 62 36 86h56l8-6M66 66l26 12" /><path d="M20 92h84" stroke="${G}"/>`),
-  bridge: S(`<circle cx="28" cy="88" r="7"/><path d="M34 82c14-30 40-34 52-16l8 26M34 82l-10 10M86 66l-6 26" /><path d="M14 98h92" stroke="${G}"/>`),
+  sprawl: S(`<circle cx="94" cy="60" r="7"/><path d="M88 66 54 92H16M76 72l6 22M54 92l-10 4" /><path d="M10 98h100" stroke="${G}"/><path d="M58 40c-14 0-24 8-30 18" stroke="${G}" stroke-dasharray="3 5"/>`),
+  shot: S(`<circle cx="92" cy="46" r="7"/><path d="M86 52 56 70l-6 26M56 70l18 4 6 22M84 56l20 8" /><path d="M10 98h100" stroke="${G}"/><path d="M20 60h24m-6-6 6 6-6 6" stroke="${G}"/>`),
+  bridge_up: S(`<circle cx="30" cy="84" r="7"/><path d="M34 78c10-34 40-40 52-20l6 36M30 92l-6 6M86 58l-8 36" /><path d="M14 100h92" stroke="${G}"/><path d="M40 30c10-12 30-12 40 0" stroke="${G}" stroke-dasharray="3 5"/>`),
+  bridge_walk: S(`<circle cx="30" cy="92" r="7"/><path d="M36 86c10-30 36-34 48-16l10 28M84 70l-10 28" /><path d="M14 100h92" stroke="${G}"/><path d="M68 24a22 22 0 1 1-20 12" stroke="${G}"/><path d="M44 30l4 6 6-4" stroke="${G}"/>`),
+  pullup: S(`<path d="M24 16h72" stroke="${G}" stroke-width="4"/><circle cx="60" cy="30" r="7"/><path d="M48 16l4 20M72 16l-4 20M60 38v34l-8 26M60 72l8 26" />`),
+  shuttle: S(`<path d="M16 20v80M104 20v80" stroke="${G}" stroke-width="3"/><circle cx="56" cy="34" r="7"/><path d="M52 40l-6 26 16 6-4 22M46 66l-12 4M54 48l14-4" /><path d="M30 106h60m-6-5 6 5-6 5M36 106l-6-5" stroke="${G}"/>`),
 };
 
 export function artBox(svg, extra = '') {
