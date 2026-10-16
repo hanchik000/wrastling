@@ -121,6 +121,7 @@ function shell() {
             <a class="brand" href="#/">${logoMark()}<span class="brand-word">Wrestling Talent<small>AI · ${esc(t('brand.country'))}</small></span></a>
             <p class="mt-4" style="max-width:32ch">${esc(t('footer.about_text'))}</p>
             <p class="mt-4"><a href="https://www.instagram.com/turkmenistanwrestling" target="_blank" rel="noopener">Instagram ↗</a></p>
+            <div class="foot-ts"><img src="assets/img/turkmenistan-sport.jpg" alt="Turkmenistan Sport" loading="lazy"><span>${esc(t('home.ts_tag'))}</span></div>
           </div>
           <div><h4>${esc(t('footer.c_platform'))}</h4><ul>
             <li><a href="#/scout">Talent Scout</a></li><li><a href="#/training">${esc(t('nav.training'))}</a></li><li><a href="#/rankings">${esc(t('nav.rankings'))}</a></li><li><a href="#/coach">${esc(t('coach.open'))}</a></li></ul></div>

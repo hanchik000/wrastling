@@ -219,6 +219,20 @@ export default function home() {
     </div>
   </section>
 
+  <section class="section-tight">
+    <div class="container">
+      <div class="tsport reveal">
+        <div class="tsport-logo" data-tilt="4"><img src="assets/img/turkmenistan-sport.jpg" alt="Turkmenistan Sport" loading="lazy" width="640" height="619"></div>
+        <div class="tsport-text">
+          <span class="tag-gold">${esc(t('home.ts_tag'))}</span>
+          <h2 class="display mt-3" data-split>${esc(t('home.ts_title'))}</h2>
+          <p class="muted mt-4">${esc(t('home.ts_text'))}</p>
+          <div class="tsport-stars" aria-hidden="true">${['#2b9fd8', '#e8d21d', '#f4f2ee', '#27b663', '#d7262f'].map((c) => `<i style="--c:${c}"></i>`).join('')}</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <section class="section-tight" style="padding-bottom:var(--s-16)">
     <div class="container">
       <div class="sec-title"><h2 data-split><small>${esc(t('home.partners_eyebrow'))}</small>${esc(t('home.partners'))}</h2></div>

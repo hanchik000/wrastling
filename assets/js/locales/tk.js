@@ -28,7 +28,7 @@ export default {
     cal_eyebrow: 'Ýakyn wakalar', all_events: 'Ähli ýaryşlar', leader: 'Reýtingiň lideri',
     banner_title: '7–22 ýaşyňmy?<br>Özüňi görkez', banner_1: 'Diňe telefon we 2 metr ýer gerek', banner_2: 'Ulgam gaýtalamalary, burçlary we depgini hasaplar', banner_3: 'Iň gowulary federasiýa saýlawyna çagyrylar',
     banner_note: 'Ähli sebitler üçin mugt', news_eyebrow: 'Esasy', all_news: 'Ähli habarlar',
-    store_title: 'Fan-dükan', price_from: 'Bahalar', partners_eyebrow: 'Bize goldaw berýärler', partners: 'Hyzmatdaşlar', partner_slot: 'Hyzmatdaşyň nyşany',
+    store_title: 'Fan-dükan', price_from: 'Bahalar', ts_tag: 'Türkmenistanyň sporty', ts_title: 'Ýurdumyz üçin çempionlary ösdürýäris', ts_text: 'Platforma ähli welaýatlarda zehinleri tapmak we olary ilkinji türgenleşikden Türkmenistanyň ýygyndysyna çenli ýetirmek üçin döredilýär: wideo boýunça saýlaw, gündelik, reýting we ýaryşlar bir ýerde.', partners_eyebrow: 'Bize goldaw berýärler', partners: 'Hyzmatdaşlar', partner_slot: 'Hyzmatdaşyň nyşany',
     become_partner: 'Hyzmatdaş bolmak', partner_text: 'Hemaýatkärlik ähli sebitlerden çagalar üçin saýlawy mugt geçirmäge kömek edýär.',
     partner_list: ['Saýtda we programmada nyşan', 'Ýaryş ýaýlymlarynda bannerler', 'Atly ýaryş ýa-da baýrak', 'Her aý gerim hasabaty'],
     partner_contact: 'Hyzmatdaşlar üçin habarlaşmak maglumatlary iş wersiýasynda peýda bolar.',

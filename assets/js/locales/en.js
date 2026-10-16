@@ -27,7 +27,7 @@ export default {
     cal_eyebrow: 'Coming up', all_events: 'All events', leader: 'Rankings leader',
     banner_title: 'Aged 7–22?<br>Show what you’ve got', banner_1: 'All you need is a phone and 2 metres of space', banner_2: 'The system counts reps, angles and tempo', banner_3: 'The best get invited to a federation tryout',
     banner_note: 'Free for every region', news_eyebrow: 'Top stories', all_news: 'All news',
-    store_title: 'Fan shop', price_from: 'Prices from', partners_eyebrow: 'Supported by', partners: 'Partners', partner_slot: 'Partner logo',
+    store_title: 'Fan shop', price_from: 'Prices from', ts_tag: 'Turkmenistan Sport', ts_title: 'Raising champions for the country', ts_text: 'The platform is built to find talent in every province and take athletes from their first session to the Turkmenistan national team: video screening, a training diary, rankings and tournaments in one place.', partners_eyebrow: 'Supported by', partners: 'Partners', partner_slot: 'Partner logo',
     become_partner: 'Become a partner', partner_text: 'Sponsorship keeps talent search free for children from every region.',
     partner_list: ['Logo on the website and app', 'Banners in event broadcasts', 'A named tournament or award', 'A monthly reach report'],
     partner_contact: 'Partner contacts will appear in the live version.',
