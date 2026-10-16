@@ -70,6 +70,13 @@ function fmtTk(date, opts) {
   return s;
 }
 
+// Названия месяцев для списков выбора (именительный падеж)
+export function monthNames() {
+  if (current === 'tk') return ['Ýanwar', 'Fewral', 'Mart', 'Aprel', 'Maý', 'Iýun', 'Iýul', 'Awgust', 'Sentýabr', 'Oktýabr', 'Noýabr', 'Dekabr'];
+  if (current === 'ru') return ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
+  return ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+}
+
 export function fmtDate(d, opts = { day: 'numeric', month: 'long' }) {
   const date = d instanceof Date ? d : new Date(d);
   if (Number.isNaN(date.getTime())) return '—';

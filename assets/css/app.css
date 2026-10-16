@@ -1059,3 +1059,13 @@ main.theme-light::before {
 .moods button { flex: 1; min-height: 52px; font-size: 1.6rem; border-radius: var(--r-md); border: 1px solid var(--line-strong); background: var(--surface); cursor: pointer; filter: grayscale(1); opacity: .55; transition: all var(--t-press); }
 .moods button[aria-checked="true"] { filter: none; opacity: 1; border-color: var(--c-gold); background: var(--c-gold-soft); transform: scale(1.04); }
 .range { width: 100%; accent-color: var(--c-gold); }
+
+/* Дата рождения: три списка в ряд */
+.dob { display: grid; grid-template-columns: 0.8fr 1.4fr 1fr; gap: 8px; }
+.dob select { padding-inline: 12px; }
+/* Нативные поля даты и списки — в цветах темы (иначе значок календаря не видно на тёмном) */
+:root { color-scheme: dark; }
+.theme-light { color-scheme: light; }
+select.input { appearance: none; -webkit-appearance: none; padding-right: 34px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none' stroke='%238c8f96' stroke-width='1.6'%3E%3Cpath d='M1 1.5l5 5 5-5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 12px center; }

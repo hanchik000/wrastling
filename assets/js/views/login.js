@@ -1,11 +1,32 @@
 // Вход по номеру телефона и SMS-коду + анкета спортсмена + согласие родителя для детей до 18 лет.
 // SMS-шлюз (Altyn Asyr) подключается на этапе 1; в демо код показывается на экране.
-import { t, tr, LANGS, getLang, setLang } from '../i18n.js';
+import { t, tr, LANGS, getLang, setLang, monthNames } from '../i18n.js';
 import { esc, icon, toast } from '../ui.js';
 import { REGIONS, STYLES, EXPERIENCE } from '../data.js';
 import { getUser, setUser, ageOf, ageGroup } from '../store.js';
 
 const DEMO_CODE = '1234';
+
+// Дата рождения тремя списками: работает одинаково на всех телефонах,
+// не нужно листать календарь от текущего года назад.
+function dobSelects(value) {
+  const [vy, vm, vd] = (value || '').split('-').map(Number);
+  const now = new Date().getFullYear();
+  const years = []; for (let y = now - 7; y >= now - 22; y--) years.push(y);
+  const opt = (v, label, sel) => `<option value="${v}" ${sel ? 'selected' : ''}>${esc(String(label))}</option>`;
+  return `<div class="dob" role="group" aria-labelledby="bd-label">
+    <select id="bd-d" class="input" aria-label="${esc(t('auth.day'))}">${opt('', t('auth.day'), !vd)}${Array.from({ length: 31 }, (_, i) => opt(i + 1, i + 1, vd === i + 1)).join('')}</select>
+    <select id="bd-m" class="input" aria-label="${esc(t('auth.month'))}">${opt('', t('auth.month'), !vm)}${monthNames().map((n, i) => opt(i + 1, n, vm === i + 1)).join('')}</select>
+    <select id="bd-y" class="input" aria-label="${esc(t('auth.year'))}">${opt('', t('auth.year'), !vy)}${years.map((y) => opt(y, y, vy === y)).join('')}</select>
+  </div>`;
+}
+function readDob(host) {
+  const d = +host.querySelector('#bd-d').value, m = +host.querySelector('#bd-m').value, y = +host.querySelector('#bd-y').value;
+  if (!d || !m || !y) return '';
+  const dt = new Date(y, m - 1, d);
+  if (dt.getMonth() !== m - 1) return ''; // например, 31 февраля
+  return `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+}
 
 export default function login({ query, go }) {
   const next = query.next || '/profile';
@@ -105,7 +126,7 @@ export default function login({ query, go }) {
             <div class="field"><label for="region">${esc(t('profile.region'))}</label><select id="region" class="input">${REGIONS.map((r) => `<option value="${r.id}">${esc(tr(r.name))}</option>`).join('')}</select></div>`
           : `
           <div class="form-grid two">
-            <div class="field" id="f-bd"><label for="bd">${esc(t('profile.birthdate'))}</label><input id="bd" type="date" class="input" value="${esc(draft.birthdate || '')}" max="2019-12-31" min="2003-01-01"><span class="error">${esc(t('auth.age_err'))}</span></div>
+            <div class="field" id="f-bd"><span class="label" id="bd-label">${esc(t('profile.birthdate'))}</span>${dobSelects(draft.birthdate)}<span class="error">${esc(t('auth.age_err'))}</span></div>
             <div class="field"><span class="label">${esc(t('profile.gender'))}</span>
               <div class="segmented" role="group"><button type="button" data-g="m" aria-selected="${draft.gender === 'm'}">${esc(t('profile.male'))}</button><button type="button" data-g="f" aria-selected="${draft.gender === 'f'}">${esc(t('profile.female'))}</button></div>
             </div>
@@ -125,7 +146,7 @@ export default function login({ query, go }) {
         draft.name = host.querySelector('#name').value.trim();
         draft.region = host.querySelector('#region').value;
         if (draft.role === 'coach') { draft.license = host.querySelector('#lic').value.trim(); return; }
-        draft.birthdate = host.querySelector('#bd').value;
+        draft.birthdate = readDob(host);
         draft.style = host.querySelector('#style').value;
         draft.weight = host.querySelector('#w').value.replace(',', '.');
         draft.experience = host.querySelector('#exp').value;

@@ -128,14 +128,14 @@ export default {
     federation: 'Federasiýanyň karary', federation_d: 'Ýüzbe-ýüz saýlawa çakylyk',
   },
 
-  auth: {
+  auth: { day: 'Gün', month: 'Aý', year: 'Ýyl',
     title: 'Giriş', lead: 'Telefon belgisi boýunça. Açar söz gerek däl.', language: 'Dil', phone: 'Telefon belgisi',
     phone_err: '8 san giriziň, meselem 61 23 45 67', get_code: 'Kody almak',
     code_title: 'SMS kody', code_sent: 'Kod {p} belgä iberildi', digit: '{n}-nji san', code_wrong: 'Nädogry kod',
     demo_code: 'SMS-şlýuz entek birikdirilmedi. Demo kod: {c}',
     profile_title: 'Özüňiz barada', profile_lead: 'Adalatly deňeşdirmek üçin gerek: ýaşy, agramy we görnüşi.',
     role: 'Siz kim', license: 'Tälimçi ygtyýarnamasynyň belgisi', license_hint: 'Türgenlere girmek federasiýa barlandan soň açylýar',
-    age_err: '7-den 22 ýaşa çenli türgenler gatnaşyp bilýär', weight_err: 'Agramyňyzy kilogramda görkeziň',
+    age_err: 'Güni, aýy we ýyly saýlaň. 7-den 22 ýaşa çenli türgenler gatnaşyp bilýär', weight_err: 'Agramyňyzy kilogramda görkeziň',
     welcome: 'Hoş geldiňiz, {n}!',
   },
   consent: {

@@ -127,14 +127,14 @@ export default {
     federation: 'Federation decision', federation_d: 'Invitation to an in-person tryout',
   },
 
-  auth: {
+  auth: { day: 'Day', month: 'Month', year: 'Year',
     title: 'Sign in', lead: 'With your phone number. No password needed.', language: 'Language', phone: 'Phone number',
     phone_err: 'Enter 8 digits, e.g. 61 23 45 67', get_code: 'Get code',
     code_title: 'SMS code', code_sent: 'We sent a code to {p}', digit: 'Digit {n}', code_wrong: 'Wrong code',
     demo_code: 'The SMS gateway is not connected yet. Demo code: {c}',
     profile_title: 'About you', profile_lead: 'Needed for a fair comparison: age, weight and style.',
     role: 'You are', license: 'Coaching licence number', license_hint: 'Access to athletes opens after the federation verifies it',
-    age_err: 'Athletes aged 7 to 22 can take part', weight_err: 'Enter your weight in kilograms',
+    age_err: 'Choose day, month and year. Athletes aged 7 to 22 can take part', weight_err: 'Enter your weight in kilograms',
     welcome: 'Welcome, {n}!',
   },
   consent: {
