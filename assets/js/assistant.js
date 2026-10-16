@@ -121,7 +121,7 @@ export function activePains(pains, today = new Date()) {
   return pains.filter((p) => !p.resolved && (today - new Date(p.date)) / 864e5 <= 10);
 }
 
-export function plan(profile, trainings = [], pains = [], today = new Date()) {
+export function plan(profile, trainings = [], pains = [], today = new Date(), directive = null) {
   const h = profile.health || {};
   const age = ageFrom(profile.birthdate);
   const minor = age != null && age < 18;
@@ -226,6 +226,9 @@ export function plan(profile, trainings = [], pains = [], today = new Date()) {
   if (last2.length === 2 && last2.every((s) => s.rpe >= 9) && level === 'normal') { level = 'light'; reasons.push({ hard: true }); }
   if (last2[0]?.mood && last2[0].mood <= 2 && level === 'normal') { level = 'light'; reasons.push({ mood: last2[0].mood }); }
   if (sm.sessions >= 7 && level === 'normal') { level = 'rest'; reasons.push({ streak: sm.sessions }); }
+  // Указание тренера сильнее расчёта
+  if (directive?.kind === 'doctor' && !['stop'].includes(level)) { level = 'doctor'; reasons.push({ coach: 'doctor' }); }
+  if (directive?.kind === 'light' && level === 'normal') { level = 'light'; reasons.push({ coach: 'light' }); }
 
   return { age, minor, w, height, kcal: kcal && Math.round(kcal / 10) * 10, protein, fat, carbs, water, waterPlan, waterDont, meals, foods, alerts, level, avoid: [...avoid], reasons, act, sm, todayTrained, trainHour, avgMin: Math.round(avgMin), needsData: !height };
 }
@@ -268,9 +271,11 @@ export function reply(text, ctx) {
   const actions = [];
   const area = AREAS.find((a) => has(s, a.kw));
   const food = FOODS.find((f) => has(s, f.syn));
+  let kind = 'fallback';
   const num = (s.match(/\b(10|[0-9])\s*(\/\s*10|из 10|-?den 10|ball|балл)?\b/) || [])[1];
 
   if (has(s, INT.pain) && !(food && has(s, INT.can)) || (area && !food)) {
+    kind = 'pain';
     const a = area || null;
     const lvl = num != null ? +num : null;
     const red = has(s, ['отек', 'отёк', 'опух', 'синяк', 'онем', 'покалыв', 'не могу настав', 'не могу двиг', 'щелкн', 'щёлкн', 'хрустн', 'ночью', 'в покое', 'удар', 'упал', 'тошн', 'кружит', 'çiş', 'gögerme', 'ysmaýar', 'gije', 'ýykyl', 'urgy', 'ýürek bulan', 'baş aýlan', 'swell', 'bruis', 'numb', 'tingl', 'can’t', "can't", 'at night', 'fell', 'dizzy', 'nause']);
@@ -295,6 +300,7 @@ export function reply(text, ctx) {
     actions.push({ id: 'pain', area: a?.id, level: lvl });
     out.push(L(T3('Men lukman däl — çynlakaý ýagdaýda hemişe lukmana ýüz tut.', 'Я не врач — в серьёзных случаях всегда обращайся к врачу.', 'I’m not a doctor — for anything serious, always see one.')));
   } else if (food && (has(s, INT.can) || has(s, INT.food) || s.trim().split(/\s+/).length <= 3)) {
+    kind = 'food_check';
     const allergic = (food.all || []).filter((x) => (ctx.profile.health?.allergies || []).includes(x));
     if (allergic.length) {
       out.push(L(T3(`${pick(food.name, 'tk')} — saňa bolmaýar: anketada ${allergic.map((x) => pick(ALLERGENS.find((q) => q.id === x).name, 'tk')).join(', ')} görkezilen.`,
@@ -310,12 +316,14 @@ export function reply(text, ctx) {
       if (food.id === 'energy' && P.minor) out.push(L(T3('Sen 18 ýaşa ýetmedik — energetik düýbünden bolmaýar.', 'Тебе нет 18 — энергетики нельзя совсем.', 'You are under 18 — no energy drinks at all.')));
     }
   } else if (has(s, INT.water)) {
+    kind = 'water';
     out.push(L(T3(`Saňa günde takmynan ${(P.water / 1000).toFixed(1)} litr suw gerek (agramyňa we türgenleşige görä).`, `Тебе нужно около ${(P.water / 1000).toFixed(1)} л воды в день — по весу и тренировкам.`, `You need about ${(P.water / 1000).toFixed(1)} L of water a day, based on your weight and training.`)));
     out.push(P.waterPlan.slice(0, 6).map((x) => `• ${x.at} — ${x.ml} ${L(T3('ml', 'мл', 'ml'))}: ${L(x.note)}`).join('\n'));
     out.push(L(T3('Içme: ', 'Когда не пить много: ', 'When not to: ')) + P.waterDont.slice(0, 2).map(L).join(' '));
     out.push(L(T3('Peşewiň açyk sary bolsa — suw ýeterlik.', 'Если моча светло-жёлтая — воды хватает.', 'Pale yellow urine means you’re drinking enough.')));
     actions.push({ id: 'today' });
   } else if (has(s, INT.weight)) {
+    kind = 'weight';
     if (P.alerts.length) out.push(...P.alerts.map((a) => L(a.text)));
     else out.push(L(T3(`Häzirki agramyň ${P.w} kg. Agram peseltmek gerek bolsa, «Meniň maglumatlarym» bölüminde maksat kategoriýany görkez — men howpsuz meýilnama düzerin.`,
       `Твой вес сейчас ${P.w} кг. Если нужно попасть в категорию — укажи её в «Мои данные», я составлю безопасный план.`,
@@ -324,37 +332,44 @@ export function reply(text, ctx) {
       'Никогда: сгонка сауной, отказ от воды, мочегонные и жиросжигатели. Это опасно для сердца и почек.',
       'Never: sauna dehydration, cutting water, diuretics or fat burners. They are dangerous for the heart and kidneys.')));
   } else if (has(s, INT.food)) {
+    kind = 'food';
     if (P.kcal) out.push(L(T3(`Seniň günlük zerurlygyň: ~${P.kcal} kkal, belok ${P.protein} g, uglewod ${P.carbs} g, ýag ${P.fat} g.`, `Твоя норма в день: ~${P.kcal} ккал, белок ${P.protein} г, углеводы ${P.carbs} г, жиры ${P.fat} г.`, `Your daily needs: ~${P.kcal} kcal, protein ${P.protein} g, carbs ${P.carbs} g, fat ${P.fat} g.`)));
     out.push(P.meals.map((m) => `• ${m.at} ${L(m.name)}: ${m.what.map((id) => L(foodById(id).name)).join(', ')}`).join('\n'));
     out.push(L(T3('Az iý: palaw, gowrulan we süýji. Iýme: energetik, gazly suw, çipsy.', 'Меньше: плов, жареное, сладкое. Не надо: энергетики, газировка, чипсы.', 'Less: plov, fried food, sweets. Skip: energy drinks, soda, crisps.')));
     if (P.minor) out.push(L(T3('Sen ösýärsiň — nahardan ýüz öwürme we diýeta oturma.', 'Ты растёшь — не пропускай еду и не садись на диеты.', 'You’re growing — don’t skip meals or diet.')));
     actions.push({ id: 'today' });
   } else if (has(s, INT.comp)) {
+    kind = 'comp';
     out.push(L(T3('Ýaryşdan öňki gün: adaty nahar, köp suw, palaw we gowrulan ýok, 8–9 sagat uky. Ýaryş güni: çekişden soň ýeňil nahar (banan, çörek bal bilen), tutluşyklaryň arasynda az-azdan suw.',
       'Накануне: обычная еда, достаточно воды, без плова и жареного, сон 8–9 часов. В день турнира: после взвешивания лёгкая еда (банан, хлеб с мёдом), между схватками — вода маленькими глотками.',
       'Day before: normal meals, plenty of water, no plov or fried food, 8–9 hours of sleep. On the day: a light meal after weigh-in (banana, bread with honey), small sips of water between bouts.')));
   } else if (has(s, INT.sleep)) {
+    kind = 'sleep';
     out.push(L(T3(`Uky — iň gowy dikelme. ${P.minor ? '9–10' : '8–9'} sagat. Ýatmazdan 1 sagat öň telefony goý, agşam köp suw içme we agyr nahar iýme.`,
       `Сон — лучшее восстановление: ${P.minor ? '9–10' : '8–9'} часов. За час до сна убери телефон, вечером не пей много и не ешь тяжёлое.`,
       `Sleep is the best recovery: ${P.minor ? '9–10' : '8–9'} hours. Put the phone away an hour before bed, don’t drink a lot or eat heavy food late.`)));
   } else if (has(s, INT.tired)) {
+    kind = 'tired';
     out.push(L(T3('Ýadawlyk — bedeniň dynç almak isleýändigi. Şu gün ýeňil türgenleşik ýa-da dynç, 9 sagat uky, köpräk suw we adaty nahar. 3 günden köp dowam etse — tälimçä aýt.',
       'Усталость — сигнал, что телу нужен отдых. Сегодня лёгкая тренировка или выходной, сон 9 часов, больше воды и нормальная еда. Если так больше 3 дней — скажи тренеру.',
       'Tiredness means your body wants rest. Light session or a day off, 9 hours of sleep, more water and proper meals. If it lasts more than 3 days, tell your coach.')));
     out.push(L(T3(`${name}, çempionlar hem ýadaýar — esasy zat yzygiderlilik. Sen başarýarsyň! 💪`, `${name}, чемпионы тоже устают — главное постоянство. Ты справишься! 💪`, `${name}, champions get tired too — consistency is what counts. You’ve got this! 💪`)));
   } else if (has(s, INT.train)) {
+    kind = 'train';
     out.push(trainingText(P, lang));
     actions.push({ id: 'today' });
   } else if (has(s, INT.thanks)) {
+    kind = 'thanks';
     out.push(L(T3('Hemişe taýyn! Başga sorag bar bolsa ýaz. 🤝', 'Всегда пожалуйста! Пиши, если что-то ещё. 🤝', 'Any time! Write if anything else comes up. 🤝')));
   } else if (has(s, INT.greet)) {
+    kind = 'greet';
     out.push(L(T3(`Salam, ${name}! Men Dost — seniň sport kömekçiň. Suw, nahar, türgenleşik ýa-da agyry barada sora.`, `Привет, ${name}! Я Dost — твой спортивный помощник. Спрашивай про воду, еду, тренировки или боль.`, `Hi ${name}! I’m Dost, your sports buddy. Ask me about water, food, training or pain.`)));
   } else {
     out.push(L(T3('Men muny düşünmedim. Men kömek edip bilýän zatlar: suw, nahar we «muny iýip bolýarmy», türgenleşik, agyry, agram, uky, ýaryşa taýýarlyk.',
       'Я не совсем понял. Я помогаю с: водой, едой и «можно ли это есть», тренировками, болью, весом, сном и подготовкой к турниру.',
       'I didn’t quite get that. I can help with water, food and “can I eat this”, training, pain, weight, sleep and competition prep.')));
   }
-  return { lang, text: out.join('\n\n'), actions };
+  return { lang, text: out.join('\n\n'), actions, kind, food: food?.id, area: area?.id };
 }
 
 export function trainingText(P, lang) {
@@ -372,8 +387,35 @@ export function trainingText(P, lang) {
     if (r.load) lines.push('• ' + L(T3(`Ýükleme birden ýokarlandy (${r.load.toFixed(1)} esse)`, `Нагрузка резко выросла (в ${r.load.toFixed(1)} раза)`, `Load jumped (${r.load.toFixed(1)}×)`)));
     if (r.hard) lines.push('• ' + L(T3('Soňky iki türgenleşik gaty agyr boldy', 'Две последние тренировки были на пределе', 'Your last two sessions were maximal')));
     if (r.mood) lines.push('• ' + L(T3('Soňky gezek özüňi erbet duýduň', 'В прошлый раз самочувствие было плохим', 'You felt bad after the last session')));
+    if (r.coach) lines.push('• ' + L(r.coach === 'doctor' ? T3('Tälimçi: lukmana görün', 'Тренер: покажись врачу', 'Coach: see a doctor') : T3('Tälimçi: şu gün ýeňil türgenleş', 'Тренер: сегодня облегчённая тренировка', 'Coach: go light today')));
   });
   if (P.avoid.length) lines.push(L(T3('Etme: ', 'Не делай: ', 'Skip: ')) + P.avoid.map((x) => exName(x, lang)).join(', '));
   if (P.act.length) lines.push(L(T3('Deregine: ', 'Вместо этого: ', 'Instead: ')) + [...new Set(P.act.map((p) => areaAlt(p.area, lang)))].join(' '));
   return lines.join('\n');
 }
+
+// ---------- Готовность к тренировке (0–100) ----------
+// Складывается из болей, скачка нагрузки, самочувствия и количества тренировок подряд.
+export function readiness(P, trainings = []) {
+  let r = 100;
+  const why = [];
+  for (const p of P.act) {
+    if (p.area === 'head' || (p.flags || []).includes('headhit')) { r = Math.min(r, 5); why.push({ k: 'pain', area: p.area, level: p.level }); continue; }
+    const d = (p.flags || []).length ? 40 : p.level * 6;
+    r -= d; why.push({ k: 'pain', area: p.area, level: p.level });
+  }
+  const ac = P.sm.acwr;
+  if (ac != null && ac > 1.5) { r -= 20; why.push({ k: 'load', v: ac }); } else if (ac != null && ac > 1.3) { r -= 10; why.push({ k: 'load', v: ac }); }
+  const last = [...trainings].sort((a, b) => (a.date < b.date ? 1 : -1))[0];
+  if (last?.mood) { const m = { 5: 0, 4: -3, 3: -10, 2: -20, 1: -30 }[last.mood] || 0; if (m) { r += m; why.push({ k: 'mood', v: last.mood }); } }
+  if (P.sm.rpe != null && P.sm.rpe > 8) { r -= 10; why.push({ k: 'rpe', v: P.sm.rpe }); }
+  if (P.sm.sessions >= 7) { r -= 15; why.push({ k: 'streak', v: P.sm.sessions }); }
+  r = Math.max(5, Math.min(100, Math.round(r)));
+  return { score: r, zone: r >= 75 ? 'go' : r >= 50 ? 'care' : 'rest', why };
+}
+
+export const FOOD_EMOJI = {
+  chicken: '🍗', beef: '🥩', fish: '🐟', eggs: '🥚', gatyk: '🥛', suzme: '🧀', milk: '🥛', mash: '🫘', buckwheat: '🌾', rice: '🍚', oats: '🥣',
+  bread: '🍞', pasta: '🍝', potato: '🥔', veg: '🥗', melon: '🍈', fruit: '🍎', dried: '🍇', nuts: '🥜', honey: '🍯', chorba: '🍲',
+  palaw: '🍛', dograma: '🥘', fried: '🥟', sweets: '🍰', sausage: '🌭', fastfood: '🍔', soda: '🥤', energy: '⚡', chips: '🍟', burners: '💊',
+};

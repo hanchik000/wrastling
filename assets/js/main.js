@@ -29,6 +29,7 @@ import trainingLive from './views/training-live.js';
 import assistantView from './views/assistant.js';
 import coachAthlete from './views/coach-athlete.js';
 import athleteView from './views/athlete.js';
+import meView from './views/me.js';
 import notFound from './views/notfound.js';
 
 const ROUTES = [
@@ -42,10 +43,11 @@ const ROUTES = [
   ['/coach', coach, 'profile'],
   ['/coach/review/:id', review, 'profile'],
   ['/rankings', rankings, 'rankings'],
-  ['/training', training, 'training'],
-  ['/training/new', trainingNew, 'training'],
-  ['/training/live', trainingLive, 'training'],
-  ['/assistant', assistantView, 'assistant'],
+  ['/training', training, 'me'],
+  ['/training/new', trainingNew, 'me'],
+  ['/training/live', trainingLive, 'me'],
+  ['/me', meView, 'me'],
+  ['/assistant', assistantView, 'me'],
   ['/coach/athlete/:id', coachAthlete, 'profile'],
   ['/athlete/:id', athleteView, 'rankings'],
   ['/media', media, 'media'],
@@ -89,13 +91,12 @@ const NAV = [
   { id: 'home', href: '/', icon: icon.home, key: 'nav.home' },
   { id: 'rankings', href: '/rankings', icon: icon.trophy, key: 'nav.rankings' },
   { id: 'scout', href: '/scout', icon: icon.scout, key: 'nav.scout' },
-  { id: 'training', href: '/training', icon: icon.diary, key: 'nav.training' },
-  { id: 'assistant', href: '/assistant', icon: icon.chat, key: 'nav.assistant' },
+  { id: 'me', href: '/me', icon: icon.user, key: 'nav.me' },
   { id: 'media', href: '/media', icon: icon.media, key: 'nav.events' },
   { id: 'shop', href: '/shop', icon: icon.bag, key: 'nav.shop' },
 ];
 // На телефоне 5 пунктов: турниры доступны с главной
-const BOTTOM_NAV = NAV.filter((n) => n.id !== 'media' && n.id !== 'assistant');
+const BOTTOM_NAV = NAV.filter((n) => n.id !== 'media');
 
 function shell() {
   document.body.innerHTML = `
@@ -115,7 +116,7 @@ function shell() {
             ${LANGS.map((l) => `<button type="button" data-lang="${l.code}" aria-pressed="${l.code === getLang()}">${l.label}</button>`).join('')}
           </div>
           <a class="icon-btn" href="#/cart" aria-label="${esc(t('nav.cart'))}">${icon.cart}<span class="dot" data-cart hidden></span></a>
-          <a class="icon-btn" href="#/profile" data-nav="profile" aria-label="${esc(t('nav.profile'))}">${icon.user}</a>
+          <a class="icon-btn" href="#/profile" data-nav="profile" aria-label="${esc(t('nav.profile'))}">${icon.settings || icon.user}</a>
         </div>
       </div>
     </header>

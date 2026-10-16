@@ -4,6 +4,9 @@ import { esc, icon, toast, sheet } from '../ui.js';
 import { getUser, setUser, getTrainings, getPains, addPain, savePains, getWater, addWater, getChat, saveChat, getAiKey, setAiKey, uid } from '../store.js';
 import { plan as makePlan, reply, trainingText, pick, ALLERGENS, AREAS, areaById, PAIN_KINDS, RED_FLAGS, foodById, exName, areaAlt } from '../assistant.js';
 import { askClaude } from '../assistant-ai.js';
+import { smartReply, KB, kbTitle } from '../dost-kb.js';
+import { dostFace } from '../dost-ui.js';
+import { load as sload, save as ssave, coachDirective } from '../store.js';
 import { iso } from '../training-lib.js';
 
 const L = (o) => pick(o, curLang());
@@ -15,23 +18,25 @@ const FIGURE = `<g class="bm-fig"><circle cx="60" cy="20" r="13"/><rect x="54" y
 
 export default function assistant({ user, query, go }) {
   if (!user?.profile) return { redirect: '/login?next=/assistant' };
-  let tab = ['today', 'chat', 'pain', 'data'].includes(query.tab) ? query.tab : (user.profile.health?.height ? 'today' : 'data');
+  if (query.tab === 'today' && user.profile.health?.height) return { redirect: '/me' };
+  let tab = ['chat', 'pain', 'data'].includes(query.tab) ? query.tab : (user.profile.health?.height ? 'chat' : 'data');
+  const autoQ = query.q === 'food' ? t('dost.q_food') : null;
   let painDraft = { area: query.area || null, side: null, level: query.level ? +query.level : 4, kind: 'dull', flags: [], note: '' };
   let root, busy = false;
 
   const ctx = () => {
     const u = getUser();
-    return { lang: curLang(), profile: u.profile, plan: makePlan(u.profile, getTrainings(), getPains()) };
+    return { lang: curLang(), profile: u.profile, plan: makePlan(u.profile, getTrainings(), getPains(), new Date(), coachDirective('me')) };
   };
 
   const html = `
   <section class="container dost-head">
-    <div class="row" style="gap:16px;align-items:center">
-      ${dostAvatar}
-      <div><p class="eyebrow">${esc(t('dost.eyebrow'))}</p><h1 class="display mt-2" style="font-size:var(--fs-h2)">${esc(t('dost.title'))}</h1></div>
+    <div class="row" style="gap:14px;align-items:center">
+      ${dostFace('happy', 'mid')}
+      <div><h1 class="display" style="font-size:var(--fs-h3, 1.6rem)">Dost</h1><p class="muted" style="font-size:var(--fs-small)">${esc(t('dost.status'))}</p></div>
+      <a class="btn btn-quiet btn-sm" href="#/me" style="margin-left:auto">${esc(t('me.title'))}</a>
     </div>
-    <p class="muted mt-3 max-prose">${esc(t('dost.lead'))}</p>
-    <div class="tabs mt-6" role="tablist">${['today', 'chat', 'pain', 'data'].map((x) => `<button role="tab" data-tab="${x}" aria-selected="${x === tab}">${esc(t('dost.tab_' + x))}</button>`).join('')}</div>
+    <div class="tabs mt-4" role="tablist">${['chat', 'pain', 'data'].map((x) => `<button role="tab" data-tab="${x}" aria-selected="${x === tab}">${esc(t('dost.tab_' + x))}</button>`).join('')}</div>
   </section>
   <section class="container" style="padding-bottom:var(--s-16)" id="dost"></section>`;
 
@@ -45,8 +50,7 @@ export default function assistant({ user, query, go }) {
     const host = root.querySelector('#dost');
     if (tab === 'data') return renderData(host);
     if (!getUser().profile.health?.height) { tab = 'data'; return setTab('data'); }
-    if (tab === 'today') renderToday(host);
-    else if (tab === 'chat') renderChat(host);
+    if (tab === 'chat') renderChat(host);
     else renderPain(host);
     import('../fx.js').then(({ initFx }) => initFx(host));
   }
@@ -116,38 +120,55 @@ export default function assistant({ user, query, go }) {
   function renderChat(host) {
     const key = getAiKey();
     const msgs = getChat();
+    const lang = curLang();
+    const sugg = ['q_water', 'q_food', 'q_palaw', 'q_knee'].map((k) => t('dost.' + k)).concat(['warmup', 'nerves', 'soreness', 'weighin'].map((id) => kbTitle(KB.find((x) => x.id === id), lang)));
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const micLang = { ru: 'ru-RU', en: 'en-US' }[lang];
     host.innerHTML = `
       <div class="chat panel">
-        <div class="chat-top"><span class="badge ${key ? 'badge-gold' : ''}">${esc(t(key ? 'dost.mode_ai' : 'dost.mode_local'))}</span><button class="btn btn-quiet btn-sm" data-ai>${esc(t('dost.ai_settings'))}</button></div>
+        <div class="chat-top"><span class="badge ${key ? 'badge-gold' : ''}">${esc(t(key ? 'dost.mode_ai' : 'dost.mode_smart'))}</span><button class="btn btn-quiet btn-sm" data-ai>${esc(t('dost.ai_settings'))}</button></div>
         <div class="chat-log" data-log aria-live="polite">
-          ${msgs.length ? '' : bubble({ role: 'bot', text: t('dost.hello', { n: (getUser().profile.name || '').split(' ')[0] }) })}
+          ${msgs.length ? '' : `<div class="chat-empty">${dostFace('happy', 'big')}<p>${esc(t('dost.hello', { n: (getUser().profile.name || '').split(' ')[0] }))}</p></div>`}
           ${msgs.map(bubble).join('')}
         </div>
-        <div class="chat-quick">${['q_water', 'q_food', 'q_palaw', 'q_knee', 'q_train', 'q_comp'].map((k) => `<button class="chip" data-q="${k}">${esc(t('dost.' + k))}</button>`).join('')}</div>
+        <div class="chat-quick">${sugg.map((q) => `<button class="chip" data-say="${esc(q)}">${esc(q)}</button>`).join('')}</div>
         <form class="chat-in" data-form>
           <input class="input" name="m" autocomplete="off" placeholder="${esc(t('dost.placeholder'))}" aria-label="${esc(t('dost.placeholder'))}">
+          ${SR && micLang ? `<button class="btn btn-ghost mic" type="button" data-mic aria-label="${esc(t('dost.mic'))}">${icon.mic}</button>` : ''}
           <button class="btn btn-gold" type="submit" aria-label="${esc(t('dost.send'))}">${icon.arrow}</button>
         </form>
       </div>
-      <p class="muted mt-3" style="font-size:var(--fs-micro)">${esc(t('dost.langs'))}</p>`;
+      <p class="muted mt-3" style="font-size:var(--fs-micro)">${esc(t('dost.langs'))} ${esc(t('dost.not_doctor'))}</p>`;
     const log = host.querySelector('[data-log]');
     log.scrollTop = log.scrollHeight;
     host.querySelector('[data-form]').addEventListener('submit', (e) => { e.preventDefault(); const v = e.target.m.value.trim(); if (v) { e.target.m.value = ''; send(v); } });
-    host.querySelectorAll('[data-q]').forEach((b) => b.addEventListener('click', () => send(t('dost.' + b.dataset.q))));
+    host.querySelectorAll('[data-say]').forEach((b) => b.addEventListener('click', () => send(b.dataset.say)));
     host.querySelector('[data-ai]').addEventListener('click', aiSettings);
+    const mic = host.querySelector('[data-mic]');
+    if (mic) mic.addEventListener('click', () => {
+      try {
+        const rec = new SR(); rec.lang = micLang; rec.interimResults = false;
+        mic.classList.add('on');
+        rec.onresult = (e) => { const v = e.results[0][0].transcript; if (v) send(v); };
+        rec.onend = () => mic.classList.remove('on');
+        rec.onerror = () => { mic.classList.remove('on'); toast(t('dost.mic_err'), 'error'); };
+        rec.start();
+      } catch { toast(t('dost.mic_err'), 'error'); }
+    });
     bindActions(host);
   }
 
   function bubble(m) {
     const acts = (m.actions || []).map((a) => a.id === 'pain'
       ? `<button class="btn btn-ghost btn-sm" data-act="pain" data-area="${a.area || ''}" data-level="${a.level ?? ''}">${esc(t('dost.act_pain'))}</button>`
-      : a.id === 'today' ? `<button class="btn btn-quiet btn-sm" data-act="today">${esc(t('dost.act_today'))}</button>` : '').join('');
-    return `<div class="msg ${m.role === 'user' ? 'me' : 'bot'}">${m.role === 'user' ? '' : dostAvatar}<div><div class="bub">${esc(m.text)}</div>${m.via === 'ai' ? `<small class="via">Claude AI</small>` : ''}${acts ? `<div class="row row-wrap mt-2">${acts}</div>` : ''}</div></div>`;
+      : a.id === 'today' ? `<a class="btn btn-quiet btn-sm" href="#/me">${esc(t('dost.act_today'))}</a>`
+      : a.id === 'ask' ? `<button class="chip" data-say="${esc(a.text)}">${esc(a.text)}</button>` : '').join('');
+    return `<div class="msg ${m.role === 'user' ? 'me' : 'bot'}">${m.role === 'user' ? '' : dostFace(m.mood || 'happy', 'sm')}<div><div class="bub">${esc(m.text)}</div>${m.via === 'ai' ? `<small class="via">Claude AI</small>` : ''}${acts ? `<div class="row row-wrap mt-2">${acts}</div>` : ''}</div></div>`;
   }
 
   function bindActions(host) {
+    host.querySelectorAll('.msg [data-say]').forEach((b) => b.addEventListener('click', () => send(b.dataset.say)));
     host.querySelectorAll('[data-act]').forEach((b) => b.addEventListener('click', () => {
-      if (b.dataset.act === 'today') return setTab('today');
       painDraft = { ...painDraft, area: b.dataset.area || null, level: b.dataset.level ? +b.dataset.level : painDraft.level };
       setTab('pain');
     }));
@@ -155,18 +176,21 @@ export default function assistant({ user, query, go }) {
 
   async function send(text) {
     if (busy) return;
-    if (tab !== 'chat') setTab('chat');
+    if (tab !== 'chat') { tab = 'chat'; root.querySelectorAll('[data-tab]').forEach((z) => z.setAttribute('aria-selected', z.dataset.tab === 'chat')); }
     const msgs = getChat();
     msgs.push({ role: 'user', text, at: Date.now() });
     saveChat(msgs);
     renderChat(root.querySelector('#dost'));
     const log = root.querySelector('[data-log]');
-    log.insertAdjacentHTML('beforeend', `<div class="msg bot typing">${dostAvatar}<div class="bub"><i></i><i></i><i></i></div></div>`);
+    log.insertAdjacentHTML('beforeend', `<div class="msg bot typing">${dostFace('happy', 'sm')}<div class="bub"><i></i><i></i><i></i></div></div>`);
     log.scrollTop = log.scrollHeight;
     busy = true;
     const c = ctx();
-    const local = reply(text, c);
-    let answer = { role: 'bot', text: local.text, actions: local.actions, at: Date.now() };
+    const mem = sload('dostmem', {});
+    const local = smartReply(text, c, mem);
+    ssave('dostmem', local.memory || mem);
+    const mood = local.kind === 'pain' && /⚠️/.test(local.text) ? 'worried' : local.kind === 'suggest' || local.kind === 'fallback' ? 'calm' : 'happy';
+    let answer = { role: 'bot', text: local.text, actions: local.actions, mood, at: Date.now() };
     const key = getAiKey();
     if (key) {
       try { answer = { ...answer, text: await askClaude(key, getChat(), c), via: 'ai' }; }
@@ -301,8 +325,7 @@ export default function assistant({ user, query, go }) {
       u2.profile.health = { height, goal, targetClass: goal === 'make_weight' && target > 0 ? target : null, sessions: ses, trainHour: +host.querySelector('#dth').value, wake: +host.querySelector('#dwk').value, sleep: +host.querySelector('#dsl').value, allergies: [...allg], notes: host.querySelector('#dn').value.trim() };
       setUser(u2);
       toast(t('dost.data_saved'));
-      setTab('today');
-      window.scrollTo(0, 0);
+      go('/me');
     });
   }
 
@@ -313,6 +336,7 @@ export default function assistant({ user, query, go }) {
       root = r;
       root.querySelectorAll('[data-tab]').forEach((b) => b.addEventListener('click', () => setTab(b.dataset.tab)));
       render();
+      if (autoQ && tab === 'chat') send(autoQ);
     },
   };
 }

@@ -144,3 +144,13 @@ export function getChat() { return load('chat', []); }
 export function saveChat(list) { save('chat', list.slice(-80)); }
 export function getAiKey() { return load('aikey', ''); }
 export function setAiKey(k) { save('aikey', k || ''); }
+
+// ---------- Сообщения и указания тренера ученику ----------
+// kind: msg — сообщение, light — облегчить тренировку, doctor — к врачу, ok — проверено
+export function getCoachMsgs(to) { const l = load('coachmsgs', []); return to ? l.filter((m) => m.to === to) : l; }
+export function addCoachMsg(m) { save('coachmsgs', [{ id: uid('m'), at: new Date().toISOString(), ...m }, ...load('coachmsgs', [])].slice(0, 200)); emit('coachmsgs'); }
+export function markCoachMsgsRead(to) { save('coachmsgs', load('coachmsgs', []).map((m) => (m.to === to ? { ...m, read: true } : m))); }
+// Действующее указание тренера (за последние 2 дня)
+export function coachDirective(to) {
+  return getCoachMsgs(to).find((m) => ['light', 'doctor'].includes(m.kind) && Date.now() - new Date(m.at) < 2 * 864e5) || null;
+}
