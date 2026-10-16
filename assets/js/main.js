@@ -4,6 +4,7 @@ import { icon, golMark, logoMark, esc, observeReveals, hydratePhotos } from './u
 import { cartCount, onChange, getUser } from './store.js';
 import { initFx, initGlobalFx, routeSweep } from './fx.js';
 import { playIntro } from './intro.js';
+import { startReminders } from './reminders.js';
 
 import home from './views/home.js';
 import scout from './views/scout.js';
@@ -229,3 +230,4 @@ onChange((key) => { if (key === 'cart') updateCart(); });
 shell();
 render();
 playIntro();
+startReminders();

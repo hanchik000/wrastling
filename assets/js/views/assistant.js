@@ -5,6 +5,7 @@ import { getUser, setUser, getTrainings, getPains, addPain, savePains, getWater,
 import { plan as makePlan, reply, trainingText, pick, ALLERGENS, AREAS, areaById, PAIN_KINDS, RED_FLAGS, foodById, exName, areaAlt } from '../assistant.js';
 import { askClaude } from '../assistant-ai.js';
 import { smartReply, KB, kbTitle } from '../dost-kb.js';
+import { openMealLog, currentSlot } from '../meal-log.js';
 import { dostFace } from '../dost-ui.js';
 import { load as sload, save as ssave, coachDirective } from '../store.js';
 import { iso } from '../training-lib.js';
@@ -20,7 +21,7 @@ export default function assistant({ user, query, go }) {
   if (!user?.profile) return { redirect: '/login?next=/assistant' };
   if (query.tab === 'today' && user.profile.health?.height) return { redirect: '/me' };
   let tab = ['chat', 'pain', 'data'].includes(query.tab) ? query.tab : (user.profile.health?.height ? 'chat' : 'data');
-  const autoQ = query.q === 'food' ? t('dost.q_food') : null;
+  const autoQ = query.q === 'food' ? t('dost.q_food') : query.q === 'diet' ? t('food.q_diet') : null;
   let painDraft = { area: query.area || null, side: null, level: query.level ? +query.level : 4, kind: 'dull', flags: [], note: '' };
   let root, busy = false;
 
@@ -121,7 +122,7 @@ export default function assistant({ user, query, go }) {
     const key = getAiKey();
     const msgs = getChat();
     const lang = curLang();
-    const sugg = ['q_water', 'q_food', 'q_palaw', 'q_knee'].map((k) => t('dost.' + k)).concat(['warmup', 'nerves', 'soreness', 'weighin'].map((id) => kbTitle(KB.find((x) => x.id === id), lang)));
+    const sugg = [t('food.q_ate'), t('food.q_diet'), ...['q_water', 'q_food', 'q_palaw', 'q_knee'].map((k) => t('dost.' + k))].concat(['warmup', 'nerves', 'soreness', 'weighin'].map((id) => kbTitle(KB.find((x) => x.id === id), lang)));
     const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
     const micLang = { ru: 'ru-RU', en: 'en-US' }[lang];
     host.innerHTML = `
@@ -162,13 +163,15 @@ export default function assistant({ user, query, go }) {
     const acts = (m.actions || []).map((a) => a.id === 'pain'
       ? `<button class="btn btn-ghost btn-sm" data-act="pain" data-area="${a.area || ''}" data-level="${a.level ?? ''}">${esc(t('dost.act_pain'))}</button>`
       : a.id === 'today' ? `<a class="btn btn-quiet btn-sm" href="#/me">${esc(t('dost.act_today'))}</a>`
-      : a.id === 'ask' ? `<button class="chip" data-say="${esc(a.text)}">${esc(a.text)}</button>` : '').join('');
+      : a.id === 'ask' ? `<button class="chip" data-say="${esc(a.text)}">${esc(a.text)}</button>`
+      : a.id === 'meallog' ? `<button class="btn btn-gold btn-sm" data-act="meallog">${icon.plus}${esc(t('food.log'))}</button>` : '').join('');
     return `<div class="msg ${m.role === 'user' ? 'me' : 'bot'}">${m.role === 'user' ? '' : dostFace(m.mood || 'happy', 'sm')}<div><div class="bub">${esc(m.text)}</div>${m.via === 'ai' ? `<small class="via">Claude AI</small>` : ''}${acts ? `<div class="row row-wrap mt-2">${acts}</div>` : ''}</div></div>`;
   }
 
   function bindActions(host) {
     host.querySelectorAll('.msg [data-say]').forEach((b) => b.addEventListener('click', () => send(b.dataset.say)));
     host.querySelectorAll('[data-act]').forEach((b) => b.addEventListener('click', () => {
+      if (b.dataset.act === 'meallog') return openMealLog({ onSaved: (m, j) => { const all = getChat(); all.push({ role: 'bot', text: t('food.chat_logged'), at: Date.now() }); saveChat(all); renderChat(root.querySelector('#dost')); } });
       painDraft = { ...painDraft, area: b.dataset.area || null, level: b.dataset.level ? +b.dataset.level : painDraft.level };
       setTab('pain');
     }));
@@ -187,7 +190,7 @@ export default function assistant({ user, query, go }) {
     busy = true;
     const c = ctx();
     const mem = sload('dostmem', {});
-    const local = smartReply(text, c, mem);
+    const local = smartReply(text, { ...c, slot: currentSlot(c.plan) }, mem);
     ssave('dostmem', local.memory || mem);
     const mood = local.kind === 'pain' && /⚠️/.test(local.text) ? 'worried' : local.kind === 'suggest' || local.kind === 'fallback' ? 'calm' : 'happy';
     let answer = { role: 'bot', text: local.text, actions: local.actions, mood, at: Date.now() };

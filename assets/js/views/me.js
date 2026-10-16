@@ -9,11 +9,16 @@ import { dostFace, readinessGol, waterGlass, exTile, sparkline } from '../dost-u
 import { iso, addDays, series, load as sLoad } from '../training-lib.js';
 import { styleName, regionName } from '../data.js';
 import { tr } from '../i18n.js';
+import { dayStats, weekInsights, mealsOn, slotById, PLAN_SLOTS, demoMeals, getMeals } from '../nutrition.js';
+import { openMealLog } from '../meal-log.js';
+import { remindSettingsHtml, bindRemindSettings, getSettings } from '../reminders.js';
+import { sheet } from '../ui.js';
+import { save as ssave } from '../store.js';
 
 const SPOTS = { head: [60, 20], neck: [60, 44], shoulder: [35, 58], chest: [60, 74], elbow: [27, 98], back: [60, 112], wrist: [22, 128], hip: [49, 138], knee: [49, 190], ankle: [49, 238] };
 const FIG = '<g class="bm-fig"><circle cx="60" cy="20" r="13"/><rect x="54" y="32" width="12" height="12" rx="4"/><path d="M34 50h52q6 0 6 8l-2 54q0 8-8 10l-4 18H42l-4-18q-8-2-8-10l-2-54q0-8 6-8z"/><path d="M33 54 22 100l-2 30 6 2 6-30 8-36z"/><path d="M87 54l11 46 2 30-6 2-6-30-8-36z"/><path d="M42 136h17l-2 50-2 52h-9l-2-52z"/><path d="M61 136h17l-2 50-2 52h-9l-2-52z"/></g>';
 
-export default function me({ user, go }) {
+export default function me({ user, go, query }) {
   if (!user?.profile) return { redirect: '/login?next=/me' };
   if (user.role === 'coach') return { redirect: '/coach' };
   if (!user.profile.health?.height) return { redirect: '/assistant?tab=data' };
@@ -46,6 +51,9 @@ export default function me({ user, go }) {
     const prog = ['pullups', 'squats', 'weight'].map((m) => ({ m, s: series(trainings, m) })).filter((x) => x.s.length >= 2);
     const tests = getResults();
     const zoneTxt = t('me.zone_' + R.zone);
+    const DS = dayStats(today, P);
+    const WI = weekInsights(P, p);
+    const rs = getSettings();
 
     return `
     <section class="container me-head">
@@ -54,7 +62,7 @@ export default function me({ user, go }) {
         <div><h1 class="display">${esc(p.name)}</h1>
           <p class="muted">${esc(tr(styleName(p.style)))}, ${p.weight} ${esc(t('unit.kg'))}${p.region ? ', ' + esc(tr(regionName(p.region))) : ''}</p></div>
       </div>
-      <a class="btn btn-quiet btn-sm" href="#/profile">${icon.user}${esc(t('me.settings'))}</a>
+      <div class="row" style="gap:8px"><button class="icon-btn bell ${rs.on ? 'on' : ''}" data-bell aria-label="${esc(t('rem.title'))}">${icon.bell}</button><a class="btn btn-quiet btn-sm" href="#/profile">${icon.user}${esc(t('me.settings'))}</a></div>
     </section>
 
     <section class="container">
@@ -88,11 +96,15 @@ export default function me({ user, go }) {
         </article>
 
         <article class="mcard m-meal">
-          <h2>${esc(t('me.next_meal'))}</h2>
-          <p class="meal-t"><b class="num">${esc(meal.at)}</b> ${esc(L(meal.name))}</p>
-          <div class="meal-foods">${meal.what.map((id) => `<span><i>${FOOD_EMOJI[id] || '🍽'}</i>${esc(L(foodById(id).name).split(/[:(,]/)[0])}</span>`).join('')}</div>
-          ${P.kcal ? `<p class="muted mt-3" style="font-size:var(--fs-small)">${esc(t('me.day_need', { k: P.kcal, p: P.protein }))}</p>` : ''}
-          <a class="mlink" href="#/assistant?tab=chat&q=food">${esc(t('me.whole_menu'))}</a>
+          <div class="row between"><h2>${esc(t('food.today'))}</h2><button class="btn btn-gold btn-sm" data-meal>${icon.plus}${esc(t('food.log'))}</button></div>
+          <div class="nbars">
+            <div><span>${esc(t('dost.kcal').split(' ')[0])}</span><i><b style="width:${Math.min(100, (DS.kcalPct || 0) * 100)}%"></b></i><em class="num">${DS.kcal} / ${P.kcal ?? '—'}</em></div>
+            <div><span>${esc(t('dost.protein'))}</span><i><b class="p" style="width:${Math.min(100, DS.proteinPct * 100)}%"></b></i><em class="num">${DS.protein} / ${P.protein} ${esc(t('dost.g'))}</em></div>
+          </div>
+          <div class="slots">${PLAN_SLOTS.map((sl, i) => { const ms = DS.meals.filter((m) => m.slot === sl); const st = ms.some((m) => !m.skipped) ? 'ok' : ms.length ? 'skip' : 'none'; return `<button class="slot ${st}" data-meal="${sl}" title="${esc(L(slotById(sl).name))}"><i>${st === 'ok' ? ms.flatMap((m) => m.items).slice(0, 2).map((id) => FOOD_EMOJI[id] || '🍽').join('') : st === 'skip' ? '✕' : slotById(sl).emoji}</i><span>${esc(P.meals[i].at)}</span></button>`; }).join('')}</div>
+          <p class="meal-next"><b class="num">${esc(meal.at)}</b> ${esc(L(meal.name))}: ${meal.what.map((id) => FOOD_EMOJI[id] || '').join(' ')} ${esc(meal.what.map((id) => L(foodById(id).name).split(/[:(,]/)[0].trim()).join(', '))}</p>
+          ${WI.notes.length ? `<ul class="verdicts mt-3">${WI.notes.slice(0, 3).map((n) => `<li class="${n.tone}">${esc(L(n.text))}</li>`).join('')}</ul>` : `<p class="muted mt-3" style="font-size:var(--fs-small)">${esc(t(WI.logged < 2 ? 'food.need_days' : 'food.all_good'))}</p>`}
+          ${!getMeals().length ? `<button class="mlink" data-demo-food style="background:none;border:0;padding:0;cursor:pointer">${esc(t('food.demo'))}</button>` : `<a class="mlink" href="#/assistant?tab=chat&q=diet">${esc(t('food.ask_more'))}</a>`}
         </article>
 
         <article class="mcard m-week">
@@ -136,12 +148,26 @@ export default function me({ user, go }) {
       render();
       if (v > 0) { root.querySelector('.glass-btn')?.classList.add('gulp'); }
     }));
+    root.querySelectorAll('[data-meal]').forEach((b) => b.addEventListener('click', () => openMealLog({ slot: b.dataset.meal || undefined, onSaved: () => render() })));
+    root.querySelector('[data-demo-food]')?.addEventListener('click', () => { ssave('meals', demoMeals()); render(); toast(t('food.demo_added')); });
+    root.querySelector('[data-bell]').addEventListener('click', function openRs() {
+      sheet(`<div data-rsh>${remindSettingsHtml()}</div>`, (panel, close) => {
+        const re = () => { panel.querySelector('[data-rsh]').innerHTML = remindSettingsHtml(); panel.querySelector('[data-rsh] [data-close]')?.addEventListener('click', close); bindRemindSettings(panel, close, re); };
+        bindRemindSettings(panel, close, re);
+      });
+    });
     root.querySelector('[data-read]')?.addEventListener('click', () => { markCoachMsgsRead('me'); render(); toast(t('me.got_it_toast')); });
   }
 
   return {
     html: '<div id="me-root"></div>',
     title: t('me.title'),
-    mount(r) { root = r.querySelector('#me-root'); render(); },
+    mount(r) {
+      root = r.querySelector('#me-root'); render();
+      this._h = () => render(); window.addEventListener('wt-refresh', this._h);
+      // Переход из системного уведомления «что ты ел?»
+      if (query?.rem?.startsWith('a:') || query?.rem?.startsWith('m:')) openMealLog({ slot: query.rem.slice(2), onSaved: () => render() });
+    },
+    unmount() { window.removeEventListener('wt-refresh', this._h); },
   };
 }

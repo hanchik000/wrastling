@@ -2,6 +2,8 @@
 // Поиск нечёткий: нормализация букв, обрезка окончаний, допуск одной опечатки в слове, вес редких слов.
 // Ответы персональные — берут вес, возраст, план и боли из анкеты.
 import { pick, reply as baseReply, detectLang, trainingText, foodById } from './assistant.js';
+import { parseFoods, addMeal, judgeMeal, dayStats, weekInsights, slotById } from './nutrition.js';
+import { iso } from './training-lib.js';
 
 const T3 = (tk, ru, en) => ({ tk, ru, en });
 
@@ -141,6 +143,23 @@ export function smartReply(text, ctx, memory = {}) {
     const f = foodById(memory.food);
     if (f?.why) return { lang, text: pick(f.why, lang), actions: [], memory };
   }
+  // «Съел плов и чай» — записываем в дневник питания и сразу разбираем
+  const low = text.toLowerCase();
+  const ATE = /(съел|съела|поел|поела|покушал|покушала|кушал|кушала|выпил|выпила|позавтракал|пообедал|поужинал|перекусил|я ел|я ела|iýdim|iydim|içdim|icdim|nahar etdim|ertirlik etdim|i ate|i had|i drank|ate )/;
+  const ASKED = /(что я (ел|съел|кушал)|как я пита|итог.*(пита|еда)|вывод.*(пита|еда)|näme iýdim|name iydim|iýmitim nähili|nähili iýmitlen|nahili iymitlen|iýmitlenişim|what did i eat|my diet|how am i eating)/;
+  if (ASKED.test(low)) return { lang, text: foodSummary(ctx, lang), actions: [{ id: 'meallog' }], kind: 'food_summary', memory };
+  if (ATE.test(low)) {
+    const items = parseFoods(text);
+    if (!items.length) return { lang, text: pick(T3('Näme iýdiň? Sanawdan saýla ýa-da önümleri ýaz.', 'Что именно ты ел? Выбери в списке или перечисли продукты.', 'What exactly did you eat? Pick from the list or name the foods.'), lang), actions: [{ id: 'meallog' }], kind: 'food_ask', memory };
+    const slot = /завтрак|позавтрак|ertirlik|breakfast/.test(low) ? 'breakfast' : /обед|пообед|günortan|gunortan|lunch/.test(low) ? 'lunch' : /ужин|поужин|agşam|agsam|dinner/.test(low) ? 'dinner' : /перекус|arakesme|snack/.test(low) ? 'snack' : ctx.slot || 'snack';
+    const meal = { id: 'ml' + Date.now(), date: iso(new Date()), slot, items, size: /много|большую|две тарелки|köp|uly|a lot|big/.test(low) ? 'l' : /немного|чуть|az|little/.test(low) ? 's' : 'm', text, at: new Date().toISOString() };
+    addMeal(meal);
+    const j = judgeMeal(meal, P, ctx.profile);
+    const head = pick(T3(`Ýazdym ${slotById(slot).emoji} ${pick(slotById(slot).name, 'tk')}: ${items.map((id) => pick(foodById(id).name, 'tk').split(/[:(]/)[0].trim()).join(', ')} — ~${Math.round(j.kcal)} kkal, belok ${Math.round(j.protein)} g.`,
+      `Записал ${slotById(slot).emoji} ${pick(slotById(slot).name, 'ru').toLowerCase()}: ${items.map((id) => pick(foodById(id).name, 'ru').split(/[:(]/)[0].trim()).join(', ')} — ~${Math.round(j.kcal)} ккал, белок ${Math.round(j.protein)} г.`,
+      `Logged ${slotById(slot).emoji} ${pick(slotById(slot).name, 'en').toLowerCase()}: ${items.map((id) => pick(foodById(id).name, 'en').split(/[:(]/)[0].trim()).join(', ')} — ~${Math.round(j.kcal)} kcal, protein ${Math.round(j.protein)} g.`), lang);
+    return { lang, text: [head, ...j.notes.map((n) => (n.tone === 'good' ? '✅ ' : n.tone === 'bad' ? '⛔ ' : '🟡 ') + pick(n.text, lang))].join('\n'), actions: [], kind: 'food_logged', memory, refresh: true };
+  }
   const r = baseReply(text, ctx);
   const m = kbMatch(text);
   const mem = { ...memory, food: r.food || memory.food, area: r.area || memory.area };
@@ -181,4 +200,20 @@ export function todayBrief(ctx, lang) {
     L(T3(`💧 Suw: günde ${(P.water / 1000).toFixed(1)} l.`, `💧 Вода: ${(P.water / 1000).toFixed(1)} л за день.`, `💧 Water: ${(P.water / 1000).toFixed(1)} L today.`)),
     `🍽 ${meal.at} — ${L(meal.name)}: ${meal.what.map((id) => L(foodById(id).name)).join(', ')}`,
   ].join('\n');
+}
+
+// Итоги питания: сегодня + привычки за неделю
+export function foodSummary(ctx, lang) {
+  const P = ctx.plan;
+  const d = dayStats(iso(new Date()), P);
+  const w = weekInsights(P, ctx.profile);
+  const L = (o) => pick(o, lang);
+  const lines = [];
+  if (d.meals.length) {
+    lines.push(L(T3(`Şu gün: ~${d.kcal} kkal (${P.kcal || '—'}-den), belok ${d.protein} g (${P.protein}-den).`, `Сегодня: ~${d.kcal} ккал из ${P.kcal || '—'}, белок ${d.protein} г из ${P.protein}.`, `Today: ~${d.kcal} of ${P.kcal || '—'} kcal, protein ${d.protein} of ${P.protein} g.`)));
+    if (d.proteinPct < 0.6) lines.push('🟡 ' + L(T3('Belok az — agşam towuk, balyk ýa-da süzme iý.', 'Белка пока мало — на ужин курица, рыба или творог.', 'Protein is low — have chicken, fish or cottage cheese for dinner.')));
+  } else lines.push(L(T3('Şu gün entek hiç zat ýazylmady.', 'Сегодня пока ничего не записано.', 'Nothing logged today yet.')));
+  if (w.notes.length) { lines.push(L(T3('Hepdäniň netijesi:', 'Выводы за неделю:', 'This week:'))); w.notes.forEach((n) => lines.push((n.tone === 'good' ? '✅ ' : n.tone === 'bad' ? '⛔ ' : '🟡 ') + L(n.text))); }
+  else if (w.logged < 2) lines.push(L(T3('Netije çykarmak üçin 2–3 günüň naharyny ýaz.', 'Чтобы сделать выводы, записывай еду 2–3 дня.', 'Log food for 2–3 days so I can spot patterns.')));
+  return lines.join('\n');
 }

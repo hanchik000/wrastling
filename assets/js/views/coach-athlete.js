@@ -9,6 +9,8 @@ import { barsChart, lineChart, heatGrid, bindTips, setsLine, moodFace } from './
 import { trainingText, pick, areaById, PAIN_KINDS, RED_FLAGS, exName } from '../assistant.js';
 import { load, save, addCoachMsg, getCoachMsgs } from '../store.js';
 import { readinessGol } from '../dost-ui.js';
+import { weekInsights, dayStats } from '../nutrition.js';
+import { iso } from '../training-lib.js';
 
 export default function coachAthlete({ params, user }) {
   if (!user?.profile) return { redirect: '/login?next=/coach' };
@@ -92,6 +94,7 @@ export default function coachAthlete({ params, user }) {
           <div><span>${esc(t('dost.carbs'))}</span><b class="num">${P.carbs ?? '—'} ${esc(t('dost.g'))}</b></div>
         </div>
         ${P.avoid.length ? `<p class="mt-4" style="font-size:var(--fs-small)"><b>${esc(t('dost.skip'))}</b> ${esc(P.avoid.map((x) => exName(x, lang)).join(', '))}</p>` : ''}
+        ${s.me ? (() => { const w = weekInsights(P, s.profile); const d = dayStats(iso(new Date()), P); return `<p class="eyebrow mt-6">${esc(t('food.today'))}: ${d.kcal} ${esc(t('dost.kcal').split(' ')[0])}, ${esc(t('dost.protein').toLowerCase())} ${d.protein} ${esc(t('dost.g'))}</p>${w.notes.length ? `<ul class="verdicts mt-2">${w.notes.map((n) => `<li class="${n.tone}">${esc(pick(n.text, lang))}</li>`).join('')}</ul>` : ''}`; })() : ''}
       </div>
       <form class="panel" data-note>
         <label class="eyebrow" for="cnote">${esc(t('coach.note'))}</label>
