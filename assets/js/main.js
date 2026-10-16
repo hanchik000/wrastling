@@ -1,8 +1,9 @@
 // Каркас приложения: шапка, нижнее меню, маршрутизация по #адресам.
 import { t, LANGS, getLang, setLang, onLang } from './i18n.js';
-import { icon, golMark, esc, observeReveals, hydratePhotos } from './ui.js';
+import { icon, golMark, logoMark, esc, observeReveals, hydratePhotos } from './ui.js';
 import { cartCount, onChange, getUser } from './store.js';
 import { initFx, initGlobalFx, routeSweep } from './fx.js';
+import { playIntro } from './intro.js';
 
 import home from './views/home.js';
 import scout from './views/scout.js';
@@ -95,7 +96,7 @@ function shell() {
     <header class="topbar">
       <div class="container">
         <a class="brand" href="#/" aria-label="${esc(t('brand.name'))}">
-          ${golMark()}
+          ${logoMark()}
           <span class="brand-word">Wrestling Talent<small>AI · ${esc(t('brand.country'))}</small></span>
         </a>
         <nav class="topnav" aria-label="${esc(t('a11y.main_nav'))}">
@@ -117,7 +118,7 @@ function shell() {
       <div class="container">
         <div class="cols">
           <div>
-            <a class="brand" href="#/">${golMark()}<span class="brand-word">Wrestling Talent<small>AI · ${esc(t('brand.country'))}</small></span></a>
+            <a class="brand" href="#/">${logoMark()}<span class="brand-word">Wrestling Talent<small>AI · ${esc(t('brand.country'))}</small></span></a>
             <p class="mt-4" style="max-width:32ch">${esc(t('footer.about_text'))}</p>
             <p class="mt-4"><a href="https://www.instagram.com/turkmenistanwrestling" target="_blank" rel="noopener">Instagram ↗</a></p>
           </div>
@@ -202,3 +203,4 @@ onChange((key) => { if (key === 'cart') updateCart(); });
 
 shell();
 render();
+playIntro();

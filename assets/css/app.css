@@ -1167,3 +1167,34 @@ select.input { appearance: none; -webkit-appearance: none; padding-right: 34px;
 @media (max-width: 819px) { .rb-rules .rb-grid { grid-template-columns: 1fr; } }
 .theme-light .rres-c i.medal.m1 { color: #8a6a00; } .theme-light .rres-c i.medal.m2 { color: #555; } .theme-light .rres-c i.medal.m3 { color: #8a4a12; }
 .theme-light .rres-c i.plus { color: #0b6b35; } .theme-light .rres-c i.half { color: #126b72; }
+
+/* ---------- Логотип ---------- */
+.brand .logo-mark { width: 36px; height: 36px; flex: none; }
+.logo-mark .lm-a, .logo-mark .lm-b { transition: transform 300ms var(--ease-out); }
+.brand:hover .logo-mark .lm-a { transform: translateX(1.2px); }
+.brand:hover .logo-mark .lm-b { transform: translateX(-1.2px); }
+.logo-mark .lm-ring { transform-origin: 24px 24px; transition: transform 600ms var(--ease-out); }
+.brand:hover .logo-mark .lm-ring { transform: rotate(45deg); }
+
+/* ---------- Заставка ---------- */
+html.intro-on, html.intro-on body { overflow: hidden; }
+.intro { position: fixed; inset: 0; z-index: 300; background: radial-gradient(90% 70% at 50% 60%, #0f1a14, #050606 70%); cursor: pointer; transition: opacity 600ms var(--ease-out), transform 600ms var(--ease-out); }
+.intro::before { content: ""; position: absolute; inset: 0; background: var(--c-gold); opacity: .05; -webkit-mask: url(../img/orn/gol-pattern.svg) 0 0 / 180px 140px repeat; mask: url(../img/orn/gol-pattern.svg) 0 0 / 180px 140px repeat; }
+.intro canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.intro.out { opacity: 0; transform: scale(1.04); pointer-events: none; }
+.intro-logo { position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; gap: 22px; pointer-events: none; }
+.intro-logo .logo-mark { width: clamp(96px, 22vmin, 150px); height: auto; opacity: 0; transform: scale(.4) rotate(-25deg); filter: drop-shadow(0 0 40px rgba(39,182,99,.45)); }
+.intro-word { text-align: center; color: #f4f2ee; }
+.intro-word b { display: block; font-family: var(--font-display); font-weight: 600; font-size: clamp(1.7rem, 6.5vw, 3.6rem); letter-spacing: .08em; line-height: 1; white-space: nowrap; }
+.intro-word i { font-style: normal; display: inline-block; opacity: 0; transform: translateY(40%); }
+.intro-word small { display: block; margin-top: 10px; font-size: clamp(.7rem, 2.2vw, .9rem); letter-spacing: .4em; color: var(--c-gold); font-weight: 700; opacity: 0; }
+.intro.show-logo .intro-logo .logo-mark { animation: introMark 700ms var(--ease-out) forwards; }
+.intro.show-logo .intro-word i { animation: introChar 500ms var(--ease-out) forwards; animation-delay: calc(250ms + var(--i) * 35ms); }
+.intro.show-logo .intro-word small { animation: introFade 500ms 900ms forwards; }
+@keyframes introMark { 60% { opacity: 1; transform: scale(1.08) rotate(4deg); } 100% { opacity: 1; transform: none; } }
+@keyframes introChar { to { opacity: 1; transform: none; } }
+@keyframes introFade { to { opacity: 1; } }
+.intro-band { position: absolute; left: 0; right: 0; bottom: calc(18px + env(safe-area-inset-bottom)); transform: scaleX(0); transition: transform 900ms var(--ease-out); }
+.intro.show-logo .intro-band { transform: none; }
+.intro-skip { position: absolute; right: 16px; top: calc(16px + env(safe-area-inset-top)); width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgba(255,255,255,.25); background: rgba(0,0,0,.3); color: #fff; font-size: 1.4rem; cursor: pointer; }
+.intro.calm .intro-logo .logo-mark, .intro.calm .intro-word i, .intro.calm .intro-word small { animation: none !important; opacity: 1; transform: none; }
