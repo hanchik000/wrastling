@@ -1561,3 +1561,17 @@ html.intro-on .dost-fab { opacity: 0; }
 @media (prefers-reduced-motion: reduce) { .orb * { animation: none !important; } }
 .msg.typing .orb { }
 .orb .o-swirl { filter: blur(5px); background: conic-gradient(from 0deg, transparent 0%, color-mix(in srgb, var(--c2) 70%, transparent) 18%, transparent 38%, transparent 55%, color-mix(in srgb, var(--c3) 55%, transparent) 72%, transparent 92%); }
+
+/* Champ AI v2: стеклянная звезда, всегда зелёный */
+.orb, .orb.calm, .orb.worried { --c1: #2bff86; --c2: #00d26a; --c3: #e4fff0; color: #2fd174; }
+.orb .o-glass { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; animation: orbSpin 40s linear infinite; filter: drop-shadow(0 0 6px rgba(47,209,116,.45)); }
+.orb .o-sheen { animation: orbSheen 5s ease-in-out infinite; }
+@keyframes orbSheen { 0%, 20% { transform: rotate(25deg) translateX(0); } 70%, 100% { transform: rotate(25deg) translateX(190px); } }
+.orb .o-ring { display: none; }
+.orb .o-core { inset: 25%; background: radial-gradient(circle at 36% 32%, #f2fff7 0%, #8dffbe 16%, #2bff86 38%, #10b858 68%, #05532a 100%); box-shadow: 0 0 14px 2px rgba(43,255,134,.7), 0 0 34px rgba(43,255,134,.45), inset 0 -4px 10px rgba(0,40,20,.45); }
+.orb .o-swirl { inset: 25%; filter: blur(3px); background: conic-gradient(from 0deg, transparent 0%, rgba(210,255,230,.55) 16%, transparent 36%, transparent 56%, rgba(0,255,120,.5) 74%, transparent 92%); }
+.orb .o-swirl.s2 { inset: 31%; }
+.orb .o-shine { inset: 31% 50% 53% 33%; opacity: .9; }
+.orb .o-glow { inset: -24%; background: radial-gradient(circle, rgba(43,255,134,.38), transparent 60%); }
+.orb.worried .o-core { animation-duration: 1.8s; }
+.orb.think .o-glass { animation-duration: 6s; }

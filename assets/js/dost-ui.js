@@ -5,12 +5,26 @@ import { exName } from './assistant.js';
 
 const OCT = (cx, cy, r) => { const a = r * 0.414; return `M${cx - a} ${cy - r}h${2 * a}l${r - a} ${r - a}v${2 * a}l${a - r} ${r - a}h${-2 * a}l${a - r} ${a - r}v${-2 * a}z`; };
 
-// Образ Champ AI: живая светящаяся сфера внутри гёля. Настроение меняет цвет, состояние — движение.
-// mood: happy (зелёный), calm (бирюзовый), worried (янтарный); cls: sm/mid/big, think — думает, talk — отвечает
+// Образ Champ AI: стеклянная восьмиконечная звезда, внутри — яркая зелёная живая сфера.
+// mood влияет только на ритм (всегда зелёный); cls: sm/mid/big/huge, think — думает
+let orbN = 0;
 export function dostFace(mood = 'happy', cls = '') {
+  const id = 'ob' + (++orbN);
   return `<span class="orb ${mood} ${cls}" aria-hidden="true">
-    <i class="o-glow"></i><i class="o-core"></i><i class="o-swirl"></i><i class="o-swirl s2"></i><i class="o-shine"></i>
-    <svg class="o-ring" viewBox="0 0 100 100"><path d="${OCT(50, 50, 47)}" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="${OCT(50, 50, 47)}" fill="none" stroke="currentColor" stroke-width="3.2" stroke-dasharray="6 18" pathLength="120"/></svg>
+    <i class="o-glow"></i>
+    <svg class="o-glass" viewBox="0 0 100 100">
+      <defs>
+        <linearGradient id="${id}g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff" stop-opacity=".34"/><stop offset=".45" stop-color="#bfffd9" stop-opacity=".08"/><stop offset="1" stop-color="#2fd174" stop-opacity=".22"/></linearGradient>
+        <linearGradient id="${id}e" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff" stop-opacity=".95"/><stop offset=".5" stop-color="#9dffc6" stop-opacity=".35"/><stop offset="1" stop-color="#ffffff" stop-opacity=".7"/></linearGradient>
+        <clipPath id="${id}c"><path d="M50.00 2.00L64.06 16.06L83.94 16.06L83.94 35.94L98.00 50.00L83.94 64.06L83.94 83.94L64.06 83.94L50.00 98.00L35.94 83.94L16.06 83.94L16.06 64.06L2.00 50.00L16.06 35.94L16.06 16.06L35.94 16.06Z"/></clipPath>
+      </defs>
+      <path d="M50.00 2.00L64.06 16.06L83.94 16.06L83.94 35.94L98.00 50.00L83.94 64.06L83.94 83.94L64.06 83.94L50.00 98.00L35.94 83.94L16.06 83.94L16.06 64.06L2.00 50.00L16.06 35.94L16.06 16.06L35.94 16.06Z" fill="url(#${id}g)"/>
+      <g clip-path="url(#${id}c)"><rect class="o-sheen" x="-60" y="-10" width="34" height="140" fill="#ffffff" opacity=".22" transform="rotate(25 50 50)"/></g>
+      <path d="M50.00 5.50L63.03 18.53L81.47 18.53L81.47 36.97L94.50 50.00L81.47 63.03L81.47 81.47L63.03 81.47L50.00 94.50L36.97 81.47L18.53 81.47L18.53 63.03L5.50 50.00L18.53 36.97L18.53 18.53L36.97 18.53Z" fill="none" stroke="#ffffff" stroke-opacity=".18" stroke-width=".8"/>
+      <path d="M50.00 9.00L62.01 21.01L78.99 21.01L78.99 37.99L91.00 50.00L78.99 62.01L78.99 78.99L62.01 78.99L50.00 91.00L37.99 78.99L21.01 78.99L21.01 62.01L9.00 50.00L21.01 37.99L21.01 21.01L37.99 21.01Z" fill="none" stroke="#7dffb4" stroke-opacity=".25" stroke-width=".6"/>
+      <path d="M50.00 2.00L64.06 16.06L83.94 16.06L83.94 35.94L98.00 50.00L83.94 64.06L83.94 83.94L64.06 83.94L50.00 98.00L35.94 83.94L16.06 83.94L16.06 64.06L2.00 50.00L16.06 35.94L16.06 16.06L35.94 16.06Z" fill="none" stroke="url(#${id}e)" stroke-width="1.6" stroke-linejoin="round"/>
+    </svg>
+    <i class="o-core"></i><i class="o-swirl"></i><i class="o-swirl s2"></i><i class="o-shine"></i>
   </span>`;
 }
 
