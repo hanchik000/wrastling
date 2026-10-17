@@ -1539,3 +1539,25 @@ html.intro-on .dost-fab { opacity: 0; }
 @media (max-width: 900px) { .me-grid > .mcard { grid-column: 1 / -1; } }
 .flag.okf input { accent-color: var(--c-gold); }
 .flag.okf:has(input:checked) { border-color: rgba(39,182,99,.5); background: var(--c-gold-soft); }
+
+/* ---------- Образ Champ AI: живая сфера ---------- */
+.orb { --c1: #2fd174; --c2: #3cc6cf; --c3: #b8ffd7; position: relative; display: inline-block; flex: none; width: 40px; height: 40px; color: var(--c1); isolation: isolate; }
+.orb.sm { width: 32px; height: 32px; } .orb.mid { width: 56px; height: 56px; } .orb.big { width: 76px; height: 76px; } .orb.huge { width: 140px; height: 140px; }
+.orb.calm { --c1: #3cc6cf; --c2: #2fd174; --c3: #c9fbff; }
+.orb.worried { --c1: #f0a92a; --c2: #e2563b; --c3: #ffe6b3; }
+.orb > i { position: absolute; border-radius: 50%; }
+.orb .o-glow { inset: -30%; background: radial-gradient(circle, color-mix(in srgb, var(--c1) 45%, transparent), transparent 62%); filter: blur(4px); animation: orbBreath 4.2s ease-in-out infinite; z-index: -1; }
+.orb .o-core { inset: 14%; background: radial-gradient(circle at 38% 34%, var(--c3) 0%, var(--c1) 34%, color-mix(in srgb, var(--c1) 55%, #031a0e) 70%, #02100a 100%); box-shadow: 0 0 18px color-mix(in srgb, var(--c1) 60%, transparent), inset 0 0 12px rgba(0,0,0,.45); animation: orbBreath 4.2s ease-in-out infinite; }
+.orb .o-swirl { inset: 14%; background: conic-gradient(from 0deg, transparent 0 20%, color-mix(in srgb, var(--c2) 85%, transparent) 30%, transparent 45% 65%, color-mix(in srgb, var(--c3) 70%, transparent) 75%, transparent 88%); mix-blend-mode: screen; filter: blur(2px); animation: orbSpin 7s linear infinite; opacity: .9; }
+.orb .o-swirl.s2 { inset: 22%; animation-duration: 4.5s; animation-direction: reverse; opacity: .6; }
+.orb .o-shine { inset: 24% 46% 52% 26%; background: radial-gradient(circle, rgba(255,255,255,.9), transparent 70%); filter: blur(1px); opacity: .75; }
+.orb .o-ring { position: absolute; inset: 0; width: 100%; height: 100%; opacity: .85; animation: orbSpin 24s linear infinite reverse; overflow: visible; filter: drop-shadow(0 0 3px color-mix(in srgb, var(--c1) 70%, transparent)); }
+.orb.think .o-swirl { animation-duration: 1.4s; } .orb.think .o-swirl.s2 { animation-duration: 1s; }
+.orb.think .o-ring { animation-duration: 3s; }
+.orb.talk .o-core, .orb.talk .o-glow { animation: orbTalk .9s ease-in-out 3; }
+@keyframes orbBreath { 50% { transform: scale(1.06); } }
+@keyframes orbSpin { to { transform: rotate(360deg); } }
+@keyframes orbTalk { 30% { transform: scale(1.12); } 60% { transform: scale(.97); } }
+@media (prefers-reduced-motion: reduce) { .orb * { animation: none !important; } }
+.msg.typing .orb { }
+.orb .o-swirl { filter: blur(5px); background: conic-gradient(from 0deg, transparent 0%, color-mix(in srgb, var(--c2) 70%, transparent) 18%, transparent 38%, transparent 55%, color-mix(in srgb, var(--c3) 55%, transparent) 72%, transparent 92%); }

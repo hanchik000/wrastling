@@ -129,7 +129,7 @@ export default function assistant({ user, query, go }) {
       <div class="chat panel">
         <div class="chat-top"><span class="badge ${key ? 'badge-gold' : ''}">${esc(key ? t('dost.mode_ai_p', { p: providerName(key) }) : t('dost.mode_smart'))}</span><button class="btn btn-quiet btn-sm" data-ai>${esc(t('dost.ai_settings'))}</button></div>
         <div class="chat-log" data-log aria-live="polite">
-          ${msgs.length ? '' : `<div class="chat-empty">${dostFace('happy', 'big')}<p>${esc(t('dost.hello', { n: (getUser().profile.name || '').split(' ')[0] }))}</p></div>`}
+          ${msgs.length ? '' : `<div class="chat-empty">${dostFace('happy', 'huge')}<p>${esc(t('dost.hello', { n: (getUser().profile.name || '').split(' ')[0] }))}</p></div>`}
           ${msgs.map(bubble).join('')}
         </div>
         <div class="chat-quick">${sugg.map((q) => `<button class="chip" data-say="${esc(q)}">${esc(q)}</button>`).join('')}</div>
@@ -185,7 +185,7 @@ export default function assistant({ user, query, go }) {
     saveChat(msgs);
     renderChat(root.querySelector('#dost'));
     const log = root.querySelector('[data-log]');
-    log.insertAdjacentHTML('beforeend', `<div class="msg bot typing">${dostFace('happy', 'sm')}<div class="bub"><i></i><i></i><i></i></div></div>`);
+    log.insertAdjacentHTML('beforeend', `<div class="msg bot typing">${dostFace('happy', 'sm think')}<div class="bub"><i></i><i></i><i></i></div></div>`);
     log.scrollTop = log.scrollHeight;
     busy = true;
     const c = ctx();

@@ -5,17 +5,13 @@ import { exName } from './assistant.js';
 
 const OCT = (cx, cy, r) => { const a = r * 0.414; return `M${cx - a} ${cy - r}h${2 * a}l${r - a} ${r - a}v${2 * a}l${a - r} ${r - a}h${-2 * a}l${a - r} ${a - r}v${-2 * a}z`; };
 
-// Лицо Champ AI: настроение меняет рот и брови. Глаза моргают.
+// Образ Champ AI: живая светящаяся сфера внутри гёля. Настроение меняет цвет, состояние — движение.
+// mood: happy (зелёный), calm (бирюзовый), worried (янтарный); cls: sm/mid/big, think — думает, talk — отвечает
 export function dostFace(mood = 'happy', cls = '') {
-  const mouth = { happy: 'M17 29q7 6 14 0', calm: 'M18 30h12', worried: 'M18 31q6-4 12 0' }[mood];
-  const brows = mood === 'worried' ? '<path d="M14 15l6 2M34 15l-6 2" stroke="#f4f2ee" stroke-width="1.8" stroke-linecap="round"/>' : '';
-  return `<span class="dface ${mood} ${cls}" aria-hidden="true"><svg viewBox="0 0 48 48">
-    <path d="${OCT(24, 24, 22.5)}" fill="#0d1210"/>
-    <path d="${OCT(24, 24, 20)}" fill="none" stroke="#27b663" stroke-width="2"/>
-    ${brows}
-    <g class="eyes"><ellipse cx="18" cy="21" rx="2.7" ry="3.1" fill="#f4f2ee"/><ellipse cx="30" cy="21" rx="2.7" ry="3.1" fill="#f4f2ee"/></g>
-    <path d="${mouth}" fill="none" stroke="#27b663" stroke-width="2.6" stroke-linecap="round"/>
-  </svg></span>`;
+  return `<span class="orb ${mood} ${cls}" aria-hidden="true">
+    <i class="o-glow"></i><i class="o-core"></i><i class="o-swirl"></i><i class="o-swirl s2"></i><i class="o-shine"></i>
+    <svg class="o-ring" viewBox="0 0 100 100"><path d="${OCT(50, 50, 47)}" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="${OCT(50, 50, 47)}" fill="none" stroke="currentColor" stroke-width="3.2" stroke-dasharray="6 18" pathLength="120"/></svg>
+  </span>`;
 }
 
 // Кольцо готовности в форме гёля
