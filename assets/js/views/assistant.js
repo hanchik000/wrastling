@@ -3,7 +3,7 @@ import { t, getLang as curLang, fmtDate } from '../i18n.js';
 import { esc, icon, toast, sheet } from '../ui.js';
 import { getUser, setUser, getTrainings, getPains, addPain, savePains, getWater, addWater, getChat, saveChat, getAiKey, setAiKey, uid } from '../store.js';
 import { plan as makePlan, reply, trainingText, pick, ALLERGENS, AREAS, areaById, PAIN_KINDS, RED_FLAGS, foodById, exName, areaAlt } from '../assistant.js';
-import { askClaude } from '../assistant-ai.js';
+import { askAI, providerName } from '../assistant-ai.js';
 import { smartReply, KB, kbTitle } from '../dost-kb.js';
 import { openMealLog, currentSlot } from '../meal-log.js';
 import { dostFace } from '../dost-ui.js';
@@ -127,7 +127,7 @@ export default function assistant({ user, query, go }) {
     const micLang = { ru: 'ru-RU', en: 'en-US' }[lang];
     host.innerHTML = `
       <div class="chat panel">
-        <div class="chat-top"><span class="badge ${key ? 'badge-gold' : ''}">${esc(t(key ? 'dost.mode_ai' : 'dost.mode_smart'))}</span><button class="btn btn-quiet btn-sm" data-ai>${esc(t('dost.ai_settings'))}</button></div>
+        <div class="chat-top"><span class="badge ${key ? 'badge-gold' : ''}">${esc(key ? t('dost.mode_ai_p', { p: providerName(key) }) : t('dost.mode_smart'))}</span><button class="btn btn-quiet btn-sm" data-ai>${esc(t('dost.ai_settings'))}</button></div>
         <div class="chat-log" data-log aria-live="polite">
           ${msgs.length ? '' : `<div class="chat-empty">${dostFace('happy', 'big')}<p>${esc(t('dost.hello', { n: (getUser().profile.name || '').split(' ')[0] }))}</p></div>`}
           ${msgs.map(bubble).join('')}
@@ -165,7 +165,7 @@ export default function assistant({ user, query, go }) {
       : a.id === 'today' ? `<a class="btn btn-quiet btn-sm" href="#/me">${esc(t('dost.act_today'))}</a>`
       : a.id === 'ask' ? `<button class="chip" data-say="${esc(a.text)}">${esc(a.text)}</button>`
       : a.id === 'meallog' ? `<button class="btn btn-gold btn-sm" data-act="meallog">${icon.plus}${esc(t('food.log'))}</button>` : '').join('');
-    return `<div class="msg ${m.role === 'user' ? 'me' : 'bot'}">${m.role === 'user' ? '' : dostFace(m.mood || 'happy', 'sm')}<div><div class="bub">${esc(m.text)}</div>${m.via === 'ai' ? `<small class="via">Claude AI</small>` : ''}${acts ? `<div class="row row-wrap mt-2">${acts}</div>` : ''}</div></div>`;
+    return `<div class="msg ${m.role === 'user' ? 'me' : 'bot'}">${m.role === 'user' ? '' : dostFace(m.mood || 'happy', 'sm')}<div><div class="bub">${esc(m.text)}</div>${m.via ? `<small class="via">${esc(m.via === 'ai' ? 'Claude' : m.via)}</small>` : ''}${acts ? `<div class="row row-wrap mt-2">${acts}</div>` : ''}</div></div>`;
   }
 
   function bindActions(host) {
@@ -196,7 +196,7 @@ export default function assistant({ user, query, go }) {
     let answer = { role: 'bot', text: local.text, actions: local.actions, mood, at: Date.now() };
     const key = getAiKey();
     if (key) {
-      try { answer = { ...answer, text: await askClaude(key, getChat(), c), via: 'ai' }; }
+      try { answer = { ...answer, text: await askAI(key, getChat(), c), via: providerName(key) }; }
       catch (e) { console.warn(e); answer.text = t('dost.ai_failed') + '\n\n' + local.text; }
     } else await new Promise((r) => setTimeout(r, 450));
     busy = false;
@@ -206,7 +206,7 @@ export default function assistant({ user, query, go }) {
 
   function aiSettings() {
     sheet(`<h3>${esc(t('dost.ai_t'))}</h3><p class="muted mt-2" style="font-size:var(--fs-small)">${esc(t('dost.ai_d'))}</p>
-      <div class="field mt-4"><label for="aik">${esc(t('dost.ai_key'))}</label><input id="aik" class="input" type="password" autocomplete="off" placeholder="sk-ant-…" value="${esc(getAiKey())}"></div>
+      <div class="field mt-4"><label for="aik">${esc(t('dost.ai_key'))}</label><input id="aik" class="input" type="password" autocomplete="off" placeholder="AQ.… / AIza… / sk-ant-…" value="${esc(getAiKey())}"></div>
       <div class="stack mt-6"><button class="btn btn-gold btn-block" data-save>${esc(t('dost.ai_save'))}</button>${getAiKey() ? `<button class="btn btn-ghost btn-block" data-off>${esc(t('dost.ai_off'))}</button>` : ''}<button class="btn btn-quiet btn-block" data-close>${esc(t('common.cancel'))}</button></div>`,
     (panel, close) => {
       panel.querySelector('[data-save]').addEventListener('click', () => { setAiKey(panel.querySelector('#aik').value.trim()); close(); render(); toast(t('dost.ai_saved')); });

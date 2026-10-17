@@ -1,4 +1,5 @@
-// Настоящий ИИ для свободного разговора (Claude). Подключается ключом в настройках помощника;
+// Настоящий ИИ для свободного разговора: Gemini (Google) или Claude (Anthropic) — тип определяется по ключу.
+// Подключается ключом в настройках помощника;
 // ключ хранится только на этом устройстве. Без ключа или без связи отвечает встроенный помощник.
 // В рабочей версии запрос идёт через сервер федерации, а ключ на телефон не попадает.
 import { pick, FOODS, exName, areaById } from './assistant.js';
@@ -32,6 +33,41 @@ Rules you never break:
 
 Athlete data (computed by the platform today):
 ${JSON.stringify(facts)}`;
+}
+
+export const providerOf = (key) => (/^sk-ant/.test(key) ? 'claude' : /^(AIza|AQ\.)/.test(key) ? 'gemini' : key ? 'gemini' : null);
+export const providerName = (key) => ({ claude: 'Claude', gemini: 'Gemini' }[providerOf(key)] || '');
+
+export function askAI(key, history, ctx) {
+  return providerOf(key) === 'claude' ? askClaude(key, history, ctx) : askGemini(key, history, ctx);
+}
+
+// Gemini: быстрая модель Flash, при недоступности — запасные
+const GEMINI_MODELS = ['gemini-3.8-flash', 'gemini-3.6-flash', 'gemini-3.5-flash-lite', 'gemini-flash-latest'];
+let geminiOk = null; // модель, которая ответила, — запоминаем
+export async function askGemini(key, history, ctx) {
+  const msgs = history.slice(-12).map((m) => ({ role: m.role === 'user' ? 'user' : 'model', parts: [{ text: m.text }] }));
+  while (msgs.length && msgs[0].role !== 'user') msgs.shift();
+  const body = JSON.stringify({ systemInstruction: { parts: [{ text: systemPrompt(ctx) }] }, contents: msgs, generationConfig: { maxOutputTokens: 900, temperature: 0.6 } });
+  const models = geminiOk ? [geminiOk, ...GEMINI_MODELS.filter((m) => m !== geminiOk)] : GEMINI_MODELS;
+  let lastErr;
+  for (const model of models) {
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), 30000);
+    try {
+      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
+        method: 'POST', signal: ctrl.signal, headers: { 'content-type': 'application/json', 'x-goog-api-key': key }, body,
+      });
+      if (res.status === 404 || res.status === 400) { lastErr = new Error('model_' + res.status); continue; } // модели нет — пробуем следующую
+      if (!res.ok) throw new Error('http_' + res.status);
+      const data = await res.json();
+      const text = (data.candidates?.[0]?.content?.parts || []).map((p) => p.text || '').join('\n').trim();
+      if (!text) throw new Error('empty');
+      geminiOk = model;
+      return text;
+    } catch (e) { lastErr = e; if (e.message?.startsWith('http_')) throw e; } finally { clearTimeout(timer); }
+  }
+  throw lastErr || new Error('gemini_failed');
 }
 
 export async function askClaude(key, history, ctx) {
